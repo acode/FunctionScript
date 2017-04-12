@@ -39,7 +39,10 @@ The problem is that the abstraction layer of compute resources has moved faster
 than developers can keep up. Each infrastructure provider imposes its own
 standard and way of doing things around FaaS to the point we're relying on
 developers implementing their own workflows and toolchains instead of
-standardizing the offering.
+standardizing the offering. This is what the current workflow resembles, for
+most FaaS providers:
+
+![Current FaaS Workflow](/current-faas-workflow.jpg)
 
 This is where FaaSlang comes in. The goal of FaaSlang is simple; provide a
 unified, standardized definition and request interface for FaaS resources. This
@@ -47,11 +50,13 @@ standard should be enforceable at the request layer, ideally through a gateway,
 and polyglot, meaning it must be able to communicate with functions written in a
 majority of industry-standard programming languages from standard web protocols.
 
+![FaaSlang Workflow](/faaslang-workflow.jpg)
+
 # Specification
 
 ## FaaSlang Resource Definition
 
-A FaaSlang definition is a `resource.json` file that respects the following
+A FaaSlang definition is a `definition.json` file that respects the following
 format:
 
 ```json
