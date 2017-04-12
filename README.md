@@ -88,7 +88,7 @@ format:
   }
 }
 ```
-This definition is *extensible*, meaning you can add additional field to it,
+This definition is *extensible*, meaning you can add additional fields to it,
 but must obey this schema.
 
 A definition must implement the following fields;
