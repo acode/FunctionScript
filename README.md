@@ -96,6 +96,17 @@ A definition must implement the following fields;
 | params | An array of `NamedParameter`s, representing function arguments
 | returns | A `Parameter` without a `defaultValue` representing function return value |
 
+## Context Definition
+
+If the function does not access execution context details, this should always
+be null. If it is an object, it indicates that the function *does* access
+context details (i.e. `remoteAddress`, http headers, etc. - see [Context](#Context)).
+
+This object **does not have to be empty**, it can contain vendor-specific
+details; for example `"context": {"user": ["id", "email"]}` may indicate
+that the execution context specifically accesses authenticated user id and email
+addresses.
+
 ## Parameters
 
 Parameters have the following format;
@@ -134,9 +145,30 @@ for how each language should interface with FaaSlang types.
 
 ### Type Conversion
 
-Types will *not* automatically be converted, with the exception of `buffer` which
-will automatically be read from any `object` with a **single key-value pair
-matching the footprints** `{"_bytes": []}` or `{"_base64": ""}`.
+The `buffer` type will automatically be converted from any `object` with a
+**single key-value pair matching the footprints** `{"_bytes": []}` or `{"_base64": ""}`.
+
+Otherwise, parameters provided to a function are expected to match their
+defined types. Requests to a FaaSlang compatible service **must support** a
+`Type-Conversion` option upon handshake
+(see [FaaSlang Resource Requests](#FaaSlang-Resource-Requests)) below)
+that converts any string parameters to respective expected types based on
+the following rules:
+
+**NOTE:** Type conversion is only from `string` -> (type). Non-strings should
+not be converted.
+
+| Type | Conversion Rule |
+| ---- | --------------- |
+| boolean | `"t"` and `"true"` become `true`, `"f"` and `"false"` become `false`, otherwise **do not convert** |
+| string | No conversion |
+| number | Determine float value, if NaN **do not convert**, otherwise convert |
+| float | Determine float value, if NaN **do not convert**, otherwise convert |
+| integer | Determine float value, if NaN **do not convert**, may fail integer type check if not in range |
+| object | Parse as JSON, if invalid **do not convert**, object may fail type check (array, buffer) |
+| array | Parse as JSON, if invalid **do not convert**, object may fail type check (object, buffer) |
+| buffer | Parse as JSON, if invalid **do not convert**, object may fail type check (object, array) |
+| any | No conversion |
 
 ### Nullability
 
@@ -149,10 +181,14 @@ if a default value is provided, the type is no longer nullable.
 FaaSlang-compliant requests *must* complete the following steps;
 
 1. Ensure the **Resource Definition** is valid and compliant, either on storage
-   or accession.
-2. Accept an `Array` or `Object` of parameters as a request body
-3. If the `Array` consists of a single `Object` (that is not a `Buffer`), it
+    or accession.
+2. Performs a handshake (i.e. HTTP) with initial request details optionally
+    including a `Type-Conversion` setting.
+3. Accept an `Array` or `Object` of parameters as a request body
+4. If the `Array` consists of a single `Object` (that is not a `Buffer`), it
    will be treated as an `Object` request (with that `Object`)
+5. If `Type-Conversion` is set to true, automatically convert strings to
+    FaaSlang types based on [Type Conversion](#Type-Conversion)
 4. If `Array`: Parameters will be checked for type consistency in the order of
    the definition `params`
 5. If `Object`: Parameters will be checked for type consistency based on names
@@ -199,6 +235,11 @@ format:
 Valid Error types are `ParameterError`, `RuntimeError`, `ValueError` and the
 generic `Error`.
 
+### HTTP
+
+If handling FaaSlang-compliant requests over HTTP, use `X-Type-Conversion` as
+the `Type-Conversion` header when enabled, with `true` (a string) as the value.
+
 #### Errors Over HTTP
 
 If sent over HTTP, `ParameterError` and `Error` **must return status code:** `400`,
@@ -211,7 +252,8 @@ of implementation issues.
 ## Example
 
 Here's a quick example of how you would translate a JavaScript (Node 8+)
-function into a FaaSlang definition.
+function into a FaaSlang definition. Note the `context` object is
+ignored as a parameter.
 
 ```javascript
 /**
@@ -221,7 +263,7 @@ function into a FaaSlang definition.
 * @param {Boolean} gamma True or false?
 * @return {Object} some value
 */
-module.exports = async function my_function (alpha, beta = 2, gamma) {
+module.exports = async function my_function (alpha, beta = 2, gamma, context) {
   /* your code */
 };
 ```
@@ -232,7 +274,7 @@ And the resulting definition:
 {
   "name": "my_function",
   "description": "This is my function, it likes the greek alphabet",
-  "context": null,
+  "context": {},
   "params": [
     {
       "name": "alpha",
