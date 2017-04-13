@@ -59,7 +59,24 @@ majority of industry-standard programming languages from standard web protocols.
 ## FaaSlang Resource Definition
 
 A FaaSlang definition is a `definition.json` file that respects the following
-format:
+format.
+
+Given a function like this (filename `my_function.js`):
+
+```javascript
+/**
+* This is my function, it likes the greek alphabet
+* @param {String} alpha Some letters, I guess
+* @param {Number} beta And a number
+* @param {Boolean} gamma True or false?
+* @return {Object} some value
+*/
+module.exports = async function my_function (alpha, beta = 2, gamma, context) {
+  /* your code */
+};
+```
+
+You would provide a function definition that looks like this:
 
 ```json
 {
@@ -90,6 +107,7 @@ format:
   }
 }
 ```
+
 This definition is *extensible*, meaning you can add additional fields to it,
 but must obey this schema.
 
@@ -107,7 +125,7 @@ A definition must implement the following fields;
 
 If the function does not access execution context details, this should always
 be null. If it is an object, it indicates that the function *does* access
-context details (i.e. `remoteAddress`, http headers, etc. - see [Context](#Context)).
+context details (i.e. `remoteAddress`, http headers, etc. - see [Context](#context)).
 
 This object **does not have to be empty**, it can contain vendor-specific
 details; for example `"context": {"user": ["id", "email"]}` may indicate
@@ -158,7 +176,7 @@ The `buffer` type will automatically be converted from any `object` with a
 Otherwise, parameters provided to a function are expected to match their
 defined types. Requests to a FaaSlang compatible service **must support** a
 `Type-Conversion` option upon handshake
-(see [FaaSlang Resource Requests](#FaaSlang-Resource-Requests)) below)
+(see [FaaSlang Resource Requests](#faaslang-resource-requests)) below)
 that converts any string parameters to respective expected types based on
 the following rules:
 
@@ -195,11 +213,11 @@ FaaSlang-compliant requests *must* complete the following steps;
 4. If the `Array` consists of a single `Object` (that is not a `Buffer`), it
    will be treated as an `Object` request (with that `Object`)
 5. If `Type-Conversion` is set to true, automatically convert strings to
-    FaaSlang types based on [Type Conversion](#Type-Conversion)
+    FaaSlang types based on [Type Conversion](#type-conversion)
 4. If `Array`: Parameters will be checked for type consistency in the order of
    the definition `params`
 5. If `Object`: Parameters will be checked for type consistency based on names
-   of the definitions `params`
+   of the definition `params`
 6. If any inconsistencies are found, cease execution and immediately return a `ParameterError`
 7. If a parameter has no defaultValue specified and is not provided, immediately return a `ParameterError`
 8. Load function into memory, if the function fails to parse or is not valid, immediately return a `RuntimeError`
@@ -255,57 +273,6 @@ whereas `RuntimeError` and `ValueError` **must return status code:** `500`.
 `ParameterError`s and thrown `Error`s should be in response to bad client input
 or lack of authorization, whereas `RuntimeError`s and `ValueError`s are a result
 of implementation issues.
-
-## Example
-
-Here's a quick example of how you would translate a JavaScript (Node 8+)
-function into a FaaSlang definition. Note the `context` object is
-ignored as a parameter.
-
-```javascript
-/**
-* This is my function, it likes the greek alphabet
-* @param {String} alpha Some letters, I guess
-* @param {Number} beta And a number
-* @param {Boolean} gamma True or false?
-* @return {Object} some value
-*/
-module.exports = async function my_function (alpha, beta = 2, gamma, context) {
-  /* your code */
-};
-```
-
-And the resulting definition:
-
-```json
-{
-  "name": "my_function",
-  "description": "This is my function, it likes the greek alphabet",
-  "context": {},
-  "params": [
-    {
-      "name": "alpha",
-      "type": "string",
-      "description": "Some letters, I guess"
-    },
-    {
-      "name": "beta",
-      "type": "number",
-      "defaultValue": 2,
-      "description": "And a number"
-    },
-    {
-      "name": "gamma",
-      "type": "boolean",
-      "description": "True or false?"
-    }
-  ],
-  "returns": {
-    "type": "object",
-    "description": "some value"
-  }
-}
-```
 
 # Implementation
 
