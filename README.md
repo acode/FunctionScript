@@ -265,7 +265,7 @@ Otherwise, parameters provided to a function are expected to match their
 defined types. Requests made over HTTP via query parameters or POST data
 with type `application/x-www-form-urlencoded` will be automatically
 converted from strings to their respective expected types, when possible
-(see [FaaSlang Resource Requests](#faaslang-resource-requests)) below):
+(see [FaaSlang Resource Requests](#faaslang-resource-requests) below):
 
 | Type | Conversion Rule |
 | ---- | --------------- |
