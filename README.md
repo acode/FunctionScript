@@ -2,7 +2,7 @@
 ## Function as a Service Language
 
 The following is a working draft of the latest FaaSlang specification, version
-**0.0.1**, dated **April 12th, 2017**.
+**0.0.1**, dated **April 18th, 2017**.
 
 FaaSlang is a simple **open specification** intended to standardize implementation
 details around FaaS ("serverless") functions, gateways and client interfaces
@@ -10,8 +10,8 @@ across languages. It has been designed with the goal of decreasing
 organizational complexity around FaaS microservices by encouraging a simple
 convention for how we document and interface with them, **including type safety
 mechanisms**. In the same way GraphQL is intended to standardize the way
-developers interface with nested relational data, FaaSlang is intended to do the
-same for FaaS resources.
+developers interface with nested relational data, FaaSlang does the same for
+FaaS resources.
 
 The current working draft of the FaaSlang specification is
 more akin to a query language and protocol rather than a Turing-complete
@@ -81,6 +81,10 @@ You would provide a function definition that looks like this:
 ```json
 {
   "name": "my_function",
+  "format": {
+    "language": "nodejs",
+    "async": true
+  },
   "description": "This is my function, it likes the greek alphabet",
   "context": null,
   "params": [
@@ -109,13 +113,14 @@ You would provide a function definition that looks like this:
 ```
 
 This definition is *extensible*, meaning you can add additional fields to it,
-but must obey this schema.
+but it **must** obey this schema.
 
 A definition must implement the following fields;
 
 | Field | Definition |
 | ----- | ---------- |
 | name | A user-readable function name (used to execute the function), must match `/[A-Z][A-Z0-9_]*/i` |
+| format | An object requiring a `language` field, along with any implementation details |
 | description | A brief description of what the function does, can be empty (`""`) |
 | context | An object `{}` or `null`, representing whether or not this function accesses the execution context |
 | params | An array of `NamedParameter`s, representing function arguments
@@ -154,7 +159,8 @@ across all language implementations.
 As FaaSlang is intended to be polyglot, functions defined with it must have
 a strongly typed signature. Not all types are guaranteed to be consumable in
 the same way in every language, and we will continue to define specifications
-for how each language should interface with FaaSlang types.
+for how each language should interface with FaaSlang types. At present,
+the types are a limited superset of JSON values.
 
 | Type | Definition | Example Input Values (JSON) |
 | ---- | ---------- | -------------- |
@@ -174,14 +180,10 @@ The `buffer` type will automatically be converted from any `object` with a
 **single key-value pair matching the footprints** `{"_bytes": []}` or `{"_base64": ""}`.
 
 Otherwise, parameters provided to a function are expected to match their
-defined types. Requests to a FaaSlang compatible service **must support** a
-`Type-Conversion` option upon handshake
-(see [FaaSlang Resource Requests](#faaslang-resource-requests)) below)
-that converts any string parameters to respective expected types based on
-the following rules:
-
-**NOTE:** Type conversion is only from `string` -> (type). Non-strings should
-not be converted.
+defined types. Requests made over HTTP via query parameters or POST data
+with type `application/x-www-form-urlencoded` will be automatically
+converted from strings to their respective expected types, when possible
+(see [FaaSlang Resource Requests](#faaslang-resource-requests)) below):
 
 | Type | Conversion Rule |
 | ---- | --------------- |
@@ -207,21 +209,30 @@ FaaSlang-compliant requests *must* complete the following steps;
 
 1. Ensure the **Resource Definition** is valid and compliant, either on storage
     or accession.
-2. Performs a handshake (i.e. HTTP) with initial request details optionally
-    including a `Type-Conversion` setting.
-3. Accept an `Array` or `Object` of parameters as a request body
-4. If the `Array` consists of a single `Object` (that is not a `Buffer`), it
-   will be treated as an `Object` request (with that `Object`)
-5. If `Type-Conversion` is set to true, automatically convert strings to
-    FaaSlang types based on [Type Conversion](#type-conversion)
+2. Performs a handshake (i.e. HTTP) with initial request details
+3. Accept an `Array`, `Object` or a string of URLencoded variables
+4. If over HTTP and query parameters present, query parameters used as
+   URL encoded variables
+5. If over HTTP POST and query parameters present, reject requests that try to
+   specify a POST body as well with a `GatewayError`
+6. If over HTTP POST, requests **must** include a `Content-Type` header or
+   a `GatewayError` is immediately returned
+7. If over HTTP POST, `Content-Type` **must** be `application/json` for `Array`
+   or `Object` data, or `application/x-www-form-urlencoded` for string data or
+   a `GatewayError` is immediately returned
+5. If `application/x-www-form-urlencoded` values are provided (either via POST
+   body or query parameters), convert types based on [Type Conversion](#type-conversion)
+   and knowledge of the function definition and create an `Object`
 4. If `Array`: Parameters will be checked for type consistency in the order of
    the definition `params`
 5. If `Object`: Parameters will be checked for type consistency based on names
    of the definition `params`
-6. If any inconsistencies are found, cease execution and immediately return a `ParameterError`
-7. If a parameter has no defaultValue specified and is not provided, immediately return a `ParameterError`
-8. Load function into memory, if the function fails to parse or is not valid, immediately return a `RuntimeError`
-8. Execute function, if any errors are thrown immediately return a generic `Error`
+6. If any inconsistencies are found, cease execution and immediately return a
+   `ParameterError`
+7. If a parameter has no defaultValue specified and is not provided, immediately
+   return a `ParameterError`
+8. Try to execute the function, if the function fails to parse or is not valid,
+   immediately return a `RuntimeError`
 9. If function returns inconsistent response (does not match `returns` type),
    immediately return a `ValueError`
 10. Return value of function to client
@@ -249,7 +260,7 @@ format:
 ```json
 {
   "error": {
-    "type": "ParameterError",
+    "type": "GatewayError",
     "message": "You know nothing, Jon Snow",
     "details": {}
   }
@@ -257,22 +268,112 @@ format:
 ```
 
 `details` is an optional object that can provide additional Parameter details.
-Valid Error types are `ParameterError`, `RuntimeError`, `ValueError` and the
-generic `Error`.
+Valid Error types are `GatewayError`, `ParameterError`, `FatalError`,
+`RuntimeError` and `ValueError`.
 
-### HTTP
+#### Error Types
 
-If handling FaaSlang-compliant requests over HTTP, use `X-Type-Conversion` as
-the `Type-Conversion` header when enabled, with `true` (a string) as the value.
+FaaSlang currently defines five different error types. These are listed
+here in the order they're expected to be encountered during the function
+execution lifecycle.
 
-#### Errors Over HTTP
+`GatewayError`s are returned as a result of bad or malformed client data,
+  including lack of authorization or a missing function (not found). If over
+  HTTP, they **must** returns status codes in the range of `4xx`.
 
-If sent over HTTP, `ParameterError` and `Error` **must return status code:** `400`,
-whereas `RuntimeError` and `ValueError` **must return status code:** `500`.
+`ParameterError`s are a result of Parameters not passing type-safety checks,
+  and **must** return status code `400` if over HTTP. See [Parameter Error](#parameter-error)
+  for more details.
 
-`ParameterError`s and thrown `Error`s should be in response to bad client input
-or lack of authorization, whereas `RuntimeError`s and `ValueError`s are a result
-of implementation issues.
+`FatalError`s are a result of function mismanagement - either your function
+  could not be loaded, executed, or it timed out. These **must** return status
+  code `500` if over HTTP.
+
+`RuntimeError`s are a result of uncaught exceptions in your code as it runs,
+  including errors you explicitly choose to throw (or send to clients via a
+  callback, for example). These **must** return status code `403` if over
+  HTTP.
+
+`ValueError`s are a result of your function returning an unexpected value
+  based on FaaSlang type-safety mechanisms. These **must** return status code
+  `502` if over HTTP. See [Value Error](#value-error)
+  for more details.
+
+#### Parameter Error
+
+Parameter Errors **must** have the following format;
+
+```json
+{
+  "error": {
+    "type": "ParameterError",
+    "message": "ParameterError",
+    "details": {...}
+  }
+}
+```
+
+`"details"` should be an object mapping parameter names to their respective
+validation (type-checking) errors. Currently, this specification defines
+two classifications of a ParameterError for a parameter; *required* and
+*invalid*. The format of `"details": {}` should follow this format;
+
+##### Details: Required
+
+```json
+{
+  "param_name": {
+    "message": "((descriptive message stating parameter is required))",
+    "required": true
+  }
+}
+```
+
+##### Details: Invalid
+
+```json
+{
+  "param_name": {
+    "message": "((descriptive message stating parameter is invalid))",
+    "invalid": true,
+    "expected": {
+      "type": "number"
+    },
+    "actual": {
+      "type": "string",
+      "value": "hello world"
+    }
+  }
+}
+```
+
+#### ValueError
+
+`ValueError` looks like an *invalid* ParameterError, where the `details`
+Object only ever contains a single key called `"returns"`. These are encountered
+due to implementation issues on the part of the function developer.
+
+```json
+{
+  "error": {
+    "type": "ValueError",
+    "message": "ValueError",
+    "details": {
+      "returns": {
+        "message": "((descriptive message stating return value is invalid))",
+        "invalid": true,
+        "expected": {
+          "type": "boolean"
+        },
+        "actual": {
+          "type": "number",
+          "value": 2017
+        }
+      }
+    }
+  }
+}
+```
 
 # Implementation
 
