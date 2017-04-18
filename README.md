@@ -13,10 +13,6 @@ mechanisms**. In the same way GraphQL is intended to standardize the way
 developers interface with nested relational data, FaaSlang does the same for
 FaaS resources.
 
-FaaSlang is the result of tens of thousands of FaaS deployments across cloud
-service providers and the need to standardize our ability to organize and
-communicate with these functions.
-
 The current working draft of the FaaSlang specification is
 more akin to a query language and protocol rather than a Turing-complete
 programming language.
@@ -43,7 +39,7 @@ programming language.
          1. [FatalError](#fatalerror)
          1. [RuntimeError](#runtimeerror)
          1. [ValueError](#valueerror)
-1. [Implementation](#implementation)
+1. [FaaSlang Server and Gateway: Implementation](#faaslang-server-and-gateway-implementation)
 1. [Acknowledgements](#acknowledgements)
 
 # Introduction
@@ -90,6 +86,10 @@ by vendors (or developers running their own compute clusters). By defining and
 enforcing conventions around FaaS, we're creating a standard language and
 idioms for how developers think about interfacing with functions as web
 services.
+
+FaaSlang is the result of tens of thousands of FaaS deployments, by thousands of
+developers, spread across a number of cloud service providers and the need to
+standardize our ability to organize and communicate with these functions.
 
 Take a current example of an AWS Lambda function **(A)**;
 
@@ -471,7 +471,7 @@ due to implementation issues on the part of the function developer.
 }
 ```
 
-# Implementation
+# FaaSlang Server and Gateway: Implementation
 
 A fully-compliant FaaSlang gateway (that just uses local function resources)
 is available with this package, simply clone it and run `npm test` or look
