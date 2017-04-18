@@ -13,6 +13,10 @@ mechanisms**. In the same way GraphQL is intended to standardize the way
 developers interface with nested relational data, FaaSlang does the same for
 FaaS resources.
 
+FaaSlang is the result of tens of thousands of FaaS deployments across cloud
+service providers and the need to standardize our ability to organize and
+communicate with these functions.
+
 The current working draft of the FaaSlang specification is
 more akin to a query language and protocol rather than a Turing-complete
 programming language.
@@ -479,10 +483,6 @@ provider [StdLib](https://stdlib.com), and is available for local use with the
 repository as a dependency.
 
 # Acknowledgements
-
-FaaSlang is the result of tens of thousands of FaaS deployments across cloud
-service providers and the need to standardize our ability to organize and
-communicate with these functions.
 
 The software contained within this repository has been developed and is
 copyrighted by the [StdLib](https://stdlib.com) Team at Polybit Inc. and is
