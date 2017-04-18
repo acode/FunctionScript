@@ -17,6 +17,31 @@ The current working draft of the FaaSlang specification is
 more akin to a query language and protocol rather than a Turing-complete
 programming language.
 
+# Table of Contents
+
+1. [Introduction](#introduction)
+1. [Why FaaSlang?](#why-faaslang)
+1. [Specification](#specification)
+  1. [FaaSlang Resource Definition](#faaslang-resource-definition)
+  1. [Context Definition](#context-definition)
+  1. [Parameters](#parameters)
+    1. [Constraints](#constraints)
+    1. [Types](#types)
+    1. [Type Conversion](#type-conversion)
+    1. [Nullability](#nullability)
+  1. [FaaSlang Resource Requests](#faaslang-resource-requests)
+    1. [Context](#context)
+    1. [Errors](#errors)
+      1. [GatewayError](#gatewayerror)
+      1. [ParameterError](#parametererror)
+        1. [Details: Required](#details--required)
+        1. [Details: Invalid](#details--invalid)
+      1. [FatalError](#fatalerror)
+      1. [RuntimeError](#runtimeerror)
+      1. [ValueError](#valueerror)
+1. [Implementation](#implementation)
+1. [Acknowledgements](#acknowledgements)
+
 # Introduction
 
 The way we access resources on the web is changing. What started as SOAP evolved
@@ -53,6 +78,63 @@ and polyglot, meaning it must be able to communicate with functions written in a
 majority of industry-standard programming languages from standard web protocols.
 
 ![FaaSlang Workflow](/images/faaslang-workflow.jpg)
+
+# Why FaaSlang?
+
+FaaSlang defines semantics for how functions "as services" should be implemented
+by vendors (or developers running their own compute clusters). By defining and
+enforcing conventions around FaaS, we're creating a standard language and
+idioms for how developers think about interfacing with functions as web
+services.
+
+Take a current example of an AWS Lambda function **(A)**;
+
+```javascript
+exports.handler = (event, context, callback) => {
+  // TODO implement
+  callback(null, 'Hello from Lambda');
+};
+```
+
+Or a Microsoft Azure function **(B)**;
+
+```javascript
+module.exports = function (context, req) {
+  context.res = {body: 'Hell from Microsoft Azure'};
+  context.done();
+}
+```
+
+FaaSlang instead defines the Node.js function footprint;
+
+```javascript
+/**
+* @param {Number} myVar A number
+* @param {String} requiredVar must be a string!
+* @returns {String}
+*/
+module.exports = (myVar = 1, requiredVar, context, callback) => {
+  callback(null, 'Hello from FaaSlang-compliant service vendor.');
+};
+```
+
+Or the async Node.js function footprint;
+
+```javascript
+/**
+* @param {Number} myVar A number
+* @param {String} requiredVar must be a string!
+* @returns {String}
+*/
+module.exports = async function (myVar = 1, requiredVar, context) => {
+  return 'Hello from FaaSlang-compliant service vendor.';
+};
+```
+
+Where **comments are used as part of the semantic definition** for type-safety
+(if they can't be inferred from defaults), expected parameters can be
+specifically defined, and you still have an optional `context` object for
+more robust execution (argument overloading, etc.)
 
 # Specification
 
@@ -209,33 +291,33 @@ FaaSlang-compliant requests *must* complete the following steps;
 
 1. Ensure the **Resource Definition** is valid and compliant, either on storage
     or accession.
-2. Performs a handshake (i.e. HTTP) with initial request details
-3. Accept an `Array`, `Object` or a string of URLencoded variables
-4. If over HTTP and query parameters present, query parameters used as
+1. Performs a handshake (i.e. HTTP) with initial request details
+1. Accept an `Array`, `Object` or a string of URLencoded variables
+1. If over HTTP and query parameters present, query parameters used as
    URL encoded variables
-5. If over HTTP POST and query parameters present, reject requests that try to
+1. If over HTTP POST and query parameters present, reject requests that try to
    specify a POST body as well with a `GatewayError`
-6. If over HTTP POST, requests **must** include a `Content-Type` header or
+1. If over HTTP POST, requests **must** include a `Content-Type` header or
    a `GatewayError` is immediately returned
-7. If over HTTP POST, `Content-Type` **must** be `application/json` for `Array`
+1. If over HTTP POST, `Content-Type` **must** be `application/json` for `Array`
    or `Object` data, or `application/x-www-form-urlencoded` for string data or
    a `GatewayError` is immediately returned
-5. If `application/x-www-form-urlencoded` values are provided (either via POST
+1. If `application/x-www-form-urlencoded` values are provided (either via POST
    body or query parameters), convert types based on [Type Conversion](#type-conversion)
    and knowledge of the function definition and create an `Object`
-4. If `Array`: Parameters will be checked for type consistency in the order of
+1. If `Array`: Parameters will be checked for type consistency in the order of
    the definition `params`
-5. If `Object`: Parameters will be checked for type consistency based on names
+1. If `Object`: Parameters will be checked for type consistency based on names
    of the definition `params`
-6. If any inconsistencies are found, cease execution and immediately return a
+1. If any inconsistencies are found, cease execution and immediately return a
    `ParameterError`
-7. If a parameter has no defaultValue specified and is not provided, immediately
+1. If a parameter has no defaultValue specified and is not provided, immediately
    return a `ParameterError`
-8. Try to execute the function, if the function fails to parse or is not valid,
+1. Try to execute the function, if the function fails to parse or is not valid,
    immediately return a `RuntimeError`
-9. If function returns inconsistent response (does not match `returns` type),
+1. If function returns inconsistent response (does not match `returns` type),
    immediately return a `ValueError`
-10. Return value of function to client
+1. Return value of function to client
 
 ### Context
 
@@ -268,38 +350,24 @@ format:
 ```
 
 `details` is an optional object that can provide additional Parameter details.
-Valid Error types are `GatewayError`, `ParameterError`, `FatalError`,
-`RuntimeError` and `ValueError`.
+Valid Error types are:
 
-#### Error Types
+- `GatewayError`
+- `ParameterError`
+- `FatalError`
+- `RuntimeError`
+- `ValueError`
 
-FaaSlang currently defines five different error types. These are listed
-here in the order they're expected to be encountered during the function
-execution lifecycle.
+#### GatewayError
 
 `GatewayError`s are returned as a result of bad or malformed client data,
   including lack of authorization or a missing function (not found). If over
   HTTP, they **must** returns status codes in the range of `4xx`.
 
+#### ParameterError
+
 `ParameterError`s are a result of Parameters not passing type-safety checks,
-  and **must** return status code `400` if over HTTP. See [Parameter Error](#parameter-error)
-  for more details.
-
-`FatalError`s are a result of function mismanagement - either your function
-  could not be loaded, executed, or it timed out. These **must** return status
-  code `500` if over HTTP.
-
-`RuntimeError`s are a result of uncaught exceptions in your code as it runs,
-  including errors you explicitly choose to throw (or send to clients via a
-  callback, for example). These **must** return status code `403` if over
-  HTTP.
-
-`ValueError`s are a result of your function returning an unexpected value
-  based on FaaSlang type-safety mechanisms. These **must** return status code
-  `502` if over HTTP. See [Value Error](#value-error)
-  for more details.
-
-#### Parameter Error
+  and **must** return status code `400` if over HTTP.
 
 Parameter Errors **must** have the following format;
 
@@ -347,7 +415,24 @@ two classifications of a ParameterError for a parameter; *required* and
 }
 ```
 
+#### FatalError
+
+`FatalError`s are a result of function mismanagement - either your function
+  could not be loaded, executed, or it timed out. These **must** return status
+  code `500` if over HTTP.
+
+#### RuntimeError
+
+`RuntimeError`s are a result of uncaught exceptions in your code as it runs,
+  including errors you explicitly choose to throw (or send to clients via a
+  callback, for example). These **must** return status code `403` if over
+  HTTP.
+
 #### ValueError
+
+`ValueError`s are a result of your function returning an unexpected value
+  based on FaaSlang type-safety mechanisms. These **must** return status code
+  `502` if over HTTP.
 
 `ValueError` looks like an *invalid* ParameterError, where the `details`
 Object only ever contains a single key called `"returns"`. These are encountered
@@ -377,11 +462,14 @@ due to implementation issues on the part of the function developer.
 
 # Implementation
 
-A Node.js implementation of a basic FaaSlang definition parser and gateway
-will be made shortly.
+A fully-compliant FaaSlang gateway (that just uses local function resources)
+is available with this package, simply clone it and run `npm test` or look
+at the `/tests` folder for more information.
 
 The current FaaSlang specification is used in production by the FaaS
-provider [StdLib](https://stdlib.com).
+provider [StdLib](https://stdlib.com), and is available for local use with the
+[StdLib CLI Package](https://github.com/stdlib/lib) which relies on this
+repository as a dependency.
 
 # Acknowledgements
 
@@ -389,6 +477,8 @@ FaaSlang is the result of tens of thousands of FaaS deployments across cloud
 service providers and the need to standardize our ability to organize and
 communicate with these functions.
 
-This work is © 2017 Polybit Inc., but is fully MIT licensed and further input
-and discussion is encouraged. Open an issue to ask questions, FaaSlang
-is in very active development.
+The software contained within this repository has been developed and is
+copyrighted by the [StdLib](https://stdlib.com) Team at Polybit Inc. and is
+MIT licensed. The specification itself is not intended to be owned by a
+specific corporate entity, and has been developed in conjunction with other
+developers and organizations.
