@@ -1,4 +1,4 @@
-# FaaSlang [!Build](https://travis-ci.org/faaslang/faaslang.svg?branch=master)
+# FaaSlang ![Build](https://travis-ci.org/faaslang/faaslang.svg?branch=master)
 ## Function as a Service Language
 
 The following is a working draft of the latest FaaSlang specification, version
