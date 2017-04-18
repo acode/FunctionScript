@@ -314,10 +314,17 @@ FaaSlang-compliant requests *must* complete the following steps;
 1. If a parameter has no defaultValue specified and is not provided, immediately
    return a `ParameterError`
 1. Try to execute the function, if the function fails to parse or is not valid,
+   immediately return a `FatalError`
+1. If a function hits a specified timeout (execution time limit), immediately
+   return a `FatalError`
+1. If a function returns an error (via callback) or one is thrown and not caught,
    immediately return a `RuntimeError`
 1. If function returns inconsistent response (does not match `returns` type),
    immediately return a `ValueError`
-1. Return value of function to client
+1. If no errors are encountered, return the value to the client
+1. If over HTTP and `content-type` is not being overloaded (i.e. developer
+   specified through a vendor-specific mechanism), return `buffer` type data as
+   `application/octet-stream` and any other values as `application/json`.
 
 ### Context
 
