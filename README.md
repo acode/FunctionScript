@@ -1,10 +1,11 @@
 # FaaSlang
 
-![FaaSlang Logo](/images/faaslang-logo.png)
+![FaaSlang Logo](/images/faaslang-logo-small.png)
 
 ## Function as a Service Language
 
-![Build](https://travis-ci.org/faaslang/faaslang.svg?branch=master)
+![travis-ci build](https://travis-ci.org/faaslang/faaslang.svg?branch=master)
+![npm version](https://badge.fury.io/js/faaslang.svg)
 
 The following is a working draft of the latest FaaSlang specification, version
 **0.0.1**, dated **April 18th, 2017**.
