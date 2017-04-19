@@ -101,8 +101,10 @@ Take a current example of an AWS Lambda function **(A)**;
 
 ```javascript
 exports.handler = (event, context, callback) => {
-  // TODO implement
-  callback(null, 'Hello from Lambda');
+  let myVar = event.myVar;
+  let requiredVar = event.requiredVar;
+  myVar = myVar === undefined ? 1 : myVar;
+  callback(null, 'Hello from Lambda!');
 };
 ```
 
@@ -110,7 +112,10 @@ Or a Microsoft Azure function **(B)**;
 
 ```javascript
 module.exports = function (context, req) {
-  context.res = {body: 'Hell from Microsoft Azure'};
+  let myVar = req.query.myVar || req.body && req.body.myVar;
+  let requiredVar = req.query.requiredVar || req.body && req.body.requiredVar;
+  myVar = myVar === undefined ? 1 : myVar;
+  context.res = {body: 'Hello from Microsoft Azure!'};
   context.done();
 }
 ```
