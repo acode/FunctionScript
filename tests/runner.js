@@ -383,7 +383,8 @@ describe('LibDoc', () => {
       expect(types.convert('boolean', 'true')).to.equal(true);
       expect(types.convert('object', '{"a":1}')).to.deep.equal({a: 1});
       expect(types.convert('array', '[1,2,3]')).to.deep.equal([1, 2, 3]);
-      expect(types.convert('buffer', 'AAA')).to.be.instanceof(Buffer);
+      expect(types.convert('buffer', '{"_bytes":[1,2]}')).to.be.instanceof(Buffer);
+      expect(types.convert('buffer', '{"_base64":"Y2FyZWVyc0BzdGRsaWIuY29t"}')).to.be.instanceof(Buffer);
 
     });
 
