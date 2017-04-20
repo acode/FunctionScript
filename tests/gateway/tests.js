@@ -56,7 +56,7 @@ module.exports = (expect) => {
 
   });
 
-  it('Should return 404 + GatewayError for not found function', done => {
+  it('Should return 404 + ClientError for not found function', done => {
     request('GET', '/', '', (err, res, result) => {
 
       expect(err).to.not.exist;
@@ -66,7 +66,7 @@ module.exports = (expect) => {
       expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
       expect(result).to.exist;
       expect(result.error).to.exist;
-      expect(result.error.type).to.equal('GatewayError');
+      expect(result.error.type).to.equal('ClientError');
       done();
 
     });
@@ -114,7 +114,7 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should return 400 Bad Request + GatewayError when no Content-Type specified on POST', done => {
+  it('Should return 400 Bad Request + ClientError when no Content-Type specified on POST', done => {
     request('POST', '/my_function/', undefined, (err, res, result) => {
 
       expect(err).to.not.exist;
@@ -124,7 +124,7 @@ module.exports = (expect) => {
       expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
       expect(result).to.exist;
       expect(result.error).to.exist;
-      expect(result.error.type).to.equal('GatewayError');
+      expect(result.error.type).to.equal('ClientError');
       done();
 
     });
@@ -181,7 +181,7 @@ module.exports = (expect) => {
       expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
       expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
       expect(result.error).to.exist;
-      expect(result.error.type).to.equal('GatewayError');
+      expect(result.error.type).to.equal('ClientError');
       done();
 
     });
@@ -210,7 +210,7 @@ module.exports = (expect) => {
       expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
       expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
       expect(result.error).to.exist;
-      expect(result.error.type).to.equal('GatewayError');
+      expect(result.error.type).to.equal('ClientError');
       done();
 
     });
@@ -239,7 +239,7 @@ module.exports = (expect) => {
       expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
       expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
       expect(result.error).to.exist;
-      expect(result.error.type).to.equal('GatewayError');
+      expect(result.error.type).to.equal('ClientError');
       done();
 
     });

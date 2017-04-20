@@ -38,7 +38,7 @@ programming language.
    1. [FaaSlang Resource Requests](#faaslang-resource-requests)
       1. [Context](#context)
       1. [Errors](#errors)
-         1. [GatewayError](#gatewayerror)
+         1. [ClientError](#clienterror)
          1. [ParameterError](#parametererror)
             1. [Details: Required](#details-required)
             1. [Details: Invalid](#details-invalid)
@@ -311,12 +311,12 @@ FaaSlang-compliant requests *must* complete the following steps;
 1. If over HTTP and query parameters present, query parameters used as
    URL encoded variables
 1. If over HTTP POST and query parameters present, reject requests that try to
-   specify a POST body as well with a `GatewayError`
+   specify a POST body as well with a `ClientError`
 1. If over HTTP POST, requests **must** include a `Content-Type` header or
-   a `GatewayError` is immediately returned
+   a `ClientError` is immediately returned
 1. If over HTTP POST, `Content-Type` **must** be `application/json` for `Array`
    or `Object` data, or `application/x-www-form-urlencoded` for string data or
-   a `GatewayError` is immediately returned
+   a `ClientError` is immediately returned
 1. If `application/x-www-form-urlencoded` values are provided (either via POST
    body or query parameters), convert types based on [Type Conversion](#type-conversion)
    and knowledge of the function definition and create an `Object`
@@ -364,7 +364,7 @@ format:
 ```json
 {
   "error": {
-    "type": "GatewayError",
+    "type": "ClientError",
     "message": "You know nothing, Jon Snow",
     "details": {}
   }
@@ -374,15 +374,15 @@ format:
 `details` is an optional object that can provide additional Parameter details.
 Valid Error types are:
 
-- `GatewayError`
+- `ClientError`
 - `ParameterError`
 - `FatalError`
 - `RuntimeError`
 - `ValueError`
 
-#### GatewayError
+#### ClientError
 
-`GatewayError`s are returned as a result of bad or malformed client data,
+`ClientError`s are returned as a result of bad or malformed client data,
   including lack of authorization or a missing function (not found). If over
   HTTP, they **must** returns status codes in the range of `4xx`.
 
