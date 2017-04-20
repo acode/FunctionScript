@@ -8,11 +8,11 @@ const ROOT = './tests/gateway';
 const FaaSGateway = new Gateway({debug: true, root: ROOT});
 const parser = new FunctionParser();
 
-function request(method, path, data, callback) {
+function request(method, headers, path, data, callback) {
+  headers = headers || {};
   method = method || 'GET';
   path = path || '';
   path = path.startsWith('/') ? path : `/${path}`;
-  let headers = {};
   if (typeof data === 'object') {
     data = JSON.stringify(data);
     headers['Content-Type'] = 'application/json';
@@ -57,7 +57,7 @@ module.exports = (expect) => {
   });
 
   it('Should return 404 + ClientError for not found function', done => {
-    request('GET', '/', '', (err, res, result) => {
+    request('GET', {}, '/', '', (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(404);
@@ -72,8 +72,8 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should return 302 redirect when missing trailing /', done => {
-    request('GET', '/my_function', '', (err, res, result) => {
+  it('Should return 302 redirect when missing trailing / with user agent', done => {
+    request('GET', {'user-agent': 'testing'}, '/my_function', '', (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(302);
@@ -87,8 +87,21 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should not return 302 redirect when missing trailing / without user agent', done => {
+    request('GET', {}, '/my_function', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.not.equal(302);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      done();
+
+    });
+  });
+
   it('Should give 200 OK and property headers for OPTIONS', done => {
-    request('OPTIONS', '/my_function/', {}, (err, res, result) => {
+    request('OPTIONS', {}, '/my_function/', {}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -101,7 +114,7 @@ module.exports = (expect) => {
   });
 
   it('Should return 200 OK when no Content-Type specified on GET', done => {
-    request('GET', '/my_function/', undefined, (err, res, result) => {
+    request('GET', {}, '/my_function/', undefined, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -115,7 +128,7 @@ module.exports = (expect) => {
   });
 
   it('Should return 400 Bad Request + ClientError when no Content-Type specified on POST', done => {
-    request('POST', '/my_function/', undefined, (err, res, result) => {
+    request('POST', {}, '/my_function/', undefined, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(400);
@@ -131,7 +144,7 @@ module.exports = (expect) => {
   });
 
   it('Should return 200 OK + result when executed', done => {
-    request('GET', '/my_function/', '', (err, res, result) => {
+    request('GET', {}, '/my_function/', '', (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -145,7 +158,7 @@ module.exports = (expect) => {
   });
 
   it('Should parse arguments from URL', done => {
-    request('GET', '/my_function/?a=10&b=20&c=30', '', (err, res, result) => {
+    request('GET', {}, '/my_function/?a=10&b=20&c=30', '', (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -159,7 +172,7 @@ module.exports = (expect) => {
   });
 
   it('Should parse arguments from POST (URL encoded)', done => {
-    request('POST', '/my_function/', 'a=10&b=20&c=30', (err, res, result) => {
+    request('POST', {}, '/my_function/', 'a=10&b=20&c=30', (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -173,7 +186,7 @@ module.exports = (expect) => {
   });
 
   it('Should not overwrite POST (URL encoded) data with query parameters', done => {
-    request('POST', '/my_function/?c=300', 'a=10&b=20&c=30', (err, res, result) => {
+    request('POST', {}, '/my_function/?c=300', 'a=10&b=20&c=30', (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(400);
@@ -188,7 +201,7 @@ module.exports = (expect) => {
   });
 
   it('Should parse arguments from POST (JSON)', done => {
-    request('POST', '/my_function/', {a: 10, b: 20, c: 30}, (err, res, result) => {
+    request('POST', {}, '/my_function/', {a: 10, b: 20, c: 30}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -202,7 +215,7 @@ module.exports = (expect) => {
   });
 
   it('Should not overwrite POST (JSON) data with query parameters', done => {
-    request('POST', '/my_function/?c=300', {a: 10, b: 20, c: 30}, (err, res, result) => {
+    request('POST', {}, '/my_function/?c=300', {a: 10, b: 20, c: 30}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(400);
@@ -217,7 +230,7 @@ module.exports = (expect) => {
   });
 
   it('Should parse arguments from POST (JSON Array)', done => {
-    request('POST', '/my_function/', [10, 20, 30], (err, res, result) => {
+    request('POST', {}, '/my_function/', [10, 20, 30], (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -231,7 +244,7 @@ module.exports = (expect) => {
   });
 
   it('Should not overwrite POST (JSON Array) data with query parameters', done => {
-    request('POST', '/my_function/?c=300', [10, 20, 30], (err, res, result) => {
+    request('POST', {}, '/my_function/?c=300', [10, 20, 30], (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(400);
@@ -246,7 +259,7 @@ module.exports = (expect) => {
   });
 
   it('Should give ParameterError if parameter doesn\'t match (converted)', done => {
-    request('POST', '/my_function/', 'a=10&b=20&c=hello%20world', (err, res, result) => {
+    request('POST', {}, '/my_function/', 'a=10&b=20&c=hello%20world', (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(400);
@@ -268,7 +281,7 @@ module.exports = (expect) => {
   });
 
   it('Should give ParameterError if parameter doesn\'t match (not converted)', done => {
-    request('POST', '/my_function/', {a: 10, b: 20, c: '30'}, (err, res, result) => {
+    request('POST', {}, '/my_function/', {a: 10, b: 20, c: '30'}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(400);
@@ -290,7 +303,7 @@ module.exports = (expect) => {
   });
 
   it('Should give 502 + ValueError if unexpected value', done => {
-    request('POST', '/my_function/', {c: 100}, (err, res, result) => {
+    request('POST', {}, '/my_function/', {c: 100}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(502);
@@ -313,7 +326,7 @@ module.exports = (expect) => {
   });
 
   it('Should give 200 OK for not found function', done => {
-    request('POST', '/test/', {}, (err, res, result) => {
+    request('POST', {}, '/test/', {}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -327,7 +340,7 @@ module.exports = (expect) => {
   });
 
   it('Should allow status setting from third callback parameter', done => {
-    request('POST', '/test/status/', {}, (err, res, result) => {
+    request('POST', {}, '/test/status/', {}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(404);
