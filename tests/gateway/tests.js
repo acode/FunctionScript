@@ -100,8 +100,22 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should return 400 Bad Request + GatewayError when no Content-Type specified', done => {
+  it('Should return 200 OK when no Content-Type specified on GET', done => {
     request('GET', '/my_function/', undefined, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.equal(6);
+      done();
+
+    });
+  });
+
+  it('Should return 400 Bad Request + GatewayError when no Content-Type specified on POST', done => {
+    request('POST', '/my_function/', undefined, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(400);
