@@ -67,11 +67,11 @@ describe('LibDoc', () => {
 
     it('Should have correct filenames', () => {
 
-      expect(definitions[''].pathname).to.equal('__init__.js');
+      expect(definitions[''].pathname).to.equal('__main__.js');
       expect(definitions['test'].pathname).to.equal('test.js');
       expect(definitions['returns'].pathname).to.equal('returns.js');
       expect(definitions['dir/test'].pathname).to.equal('dir/test.js');
-      expect(definitions['dir/sub'].pathname).to.equal('dir/sub/__init__.js');
+      expect(definitions['dir/sub'].pathname).to.equal('dir/sub/__main__.js');
       expect(definitions['dir/sub/test'].pathname).to.equal('dir/sub/test.js');
 
     });
