@@ -10,18 +10,14 @@
 The following is a working draft of the latest FaaSlang specification, version
 **0.0.1**, dated **April 18th, 2017**.
 
-FaaSlang is a simple **open specification** intended to standardize implementation
-details around FaaS ("serverless") functions, gateways and client interfaces
-across languages. It has been designed with the goal of decreasing
-organizational complexity around FaaS microservices by encouraging a simple
-convention for how we document and interface with them, **including type safety
-mechanisms**. In the same way GraphQL is intended to standardize the way
-developers interface with nested relational data, FaaSlang does the same for
-FaaS resources.
-
-The current working draft of the FaaSlang specification is
-more akin to a query language and protocol rather than a Turing-complete
-programming language.
+FaaSlang is a simple **open specification** intended to define semantics and
+implementation details around FaaS ("serverless") functions, gateways and
+client interfaces (requests from any language / SDK). It has been designed with
+the goal of decreasing organizational complexity around FaaS microservices by
+encouraging simple conventions for how we document and interface with them,
+**including type safety mechanisms**. In the same way GraphQL is intended to
+provide opinions and a specification for the way developers interface with
+nested relational (graph) data, FaaSlang does the same for FaaS resources.
 
 # Table of Contents
 
