@@ -370,6 +370,37 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should parse object properly', done => {
+    request('POST', {}, '/object_parsing/', {}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.equal(null);
+      done();
+
+    });
+  });
+
+  it('Should error object on string provided', done => {
+    request('POST', {}, '/object_parsing/', {obj: 'xxx'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('ParameterError');
+      expect(result.error.details).to.exist;
+      expect(result.error.details.obj).to.exist;
+      expect(result.error.details.obj.message).to.exist;
+      expect(result.error.details.obj.expected).to.exist;
+      expect(result.error.details.obj.expected.type).to.equal('object');
+      expect(result.error.details.obj.actual).to.exist;
+      expect(result.error.details.obj.actual.type).to.equal('string');
+      expect(result.error.details.obj.actual.value).to.equal('xxx');
+      done();
+
+    });
+  });
+
   after(() => FaaSGateway.close());
 
 };
