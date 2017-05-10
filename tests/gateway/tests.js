@@ -401,6 +401,59 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should run a background function', done => {
+    request('POST', {}, '/bg/:bg', {data: 'xxx'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(202);
+      expect(result).to.exist;
+      expect(result).to.be.instanceof(Buffer);
+      expect(result.length).to.be.greaterThan(0);
+      done();
+
+    });
+  });
+
+  it('Should run a background function with bg mode "info"', done => {
+    request('POST', {}, '/bg/info/:bg', {data: 'xxx'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(202);
+      expect(result).to.exist;
+      expect(result).to.be.instanceof(Buffer);
+      expect(result.length).to.be.greaterThan(0);
+      done();
+
+    });
+  });
+
+  it('Should run a background function with bg mode "empty"', done => {
+    request('POST', {}, '/bg/empty/:bg', {data: 'xxx'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(202);
+      expect(result).to.exist;
+      expect(result).to.be.instanceof(Buffer);
+      expect(result.length).to.equal(0);
+      done();
+
+    });
+  });
+
+  it('Should run a background function with bg mode "params"', done => {
+    request('POST', {}, '/bg/params/:bg', {data: 'xxx'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(202);
+      expect(result).to.exist;
+      expect(result).to.be.an('object');
+      expect(result).to.haveOwnProperty('data');
+      expect(result.data).to.equal('xxx');
+      done();
+
+    });
+  });
+
   after(() => FaaSGateway.close());
 
 };
