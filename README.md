@@ -8,7 +8,7 @@
 ## Function as a Service Language
 
 The following is a working draft of the latest FaaSlang specification, version
-**0.0.1**, dated **April 18th, 2017**.
+**0.1.x**, dated **May 10th, 2017**.
 
 FaaSlang is a simple **open specification** intended to define semantics and
 implementation details around FaaS ("serverless") functions, gateways and
@@ -18,6 +18,19 @@ encouraging simple conventions for how we document and interface with them,
 **including type safety mechanisms**. In the same way GraphQL is intended to
 provide opinions and a specification for the way developers interface with
 nested relational (graph) data, FaaSlang does the same for FaaS resources.
+
+If you use a FaaSlang-compliant deployment and API gateway (for example, as
+  used by https://stdlib.com) you get the following benefits over traditional
+  gateways for serverless functions:
+
+- Standard Calling Conventions (HTTP)
+- Type Safety
+- Enforced Documentation
+- Background Execution (immediately return response, run logic as a worker)
+
+And that's just the beginning. All of the goodies you're looking for like
+rate limiting, authentication, etc. are not part of the FaaSlang specification
+but can easily be added to the example provided in this repository.
 
 # Table of Contents
 
@@ -44,54 +57,67 @@ nested relational (graph) data, FaaSlang does the same for FaaS resources.
 1. [FaaSlang Server and Gateway: Implementation](#faaslang-server-and-gateway-implementation)
 1. [Acknowledgements](#acknowledgements)
 
-# Introduction
+# What is FaaSlang?
 
-The way we access resources on the web is changing. What started as SOAP evolved
-into the more palatable and standardized RESTful interfaces, and now we're
-seeing CRUD take a another step forward as GraphQL begins to mature.
+To put it simply, FaaSlang defines semantics and rules for a "serverless"
+function deployment and execution (API) gateway to turn this:
 
-This evolution runs in parallel with the changing way we're thinking about
-managing compute resources. We started with servers, physical boxes sitting in
-warehouses or maybe even our basement, that we sent information to. These gave
-way to the abstractions of VMs, containers, and now individual functional units
-with services like AWS Lambda, Google Cloud Functions and Microsoft Azure
-Functions.
+```javascript
+// hello_world.js
 
-CRUD isn't the only thing we do on the web, and the emergence of these Function
-as a Service (often referred to colloquially as **"serverless"**) offerings
-paints that picture very clearly - we now have a tool at our fingertips that
-allows us to execute any individual function resource we'd like, conceptually
-written in any language, at an unconstrained and massively parallel scale
-without managing any server resources directly.
+/**
+* My hello world function!
+*/
+module.exports = function (name = 'world', callback) {
 
-The problem is that the abstraction layer of compute resources has moved faster
-than developers can keep up. Each infrastructure provider imposes its own
-standard and way of doing things around FaaS to the point we're relying on
-developers implementing their own workflows and toolchains instead of
-standardizing the offering. This is what the current workflow resembles, for
-most FaaS providers:
+  callback(null, `hello ${world}`);
 
-![Current FaaS Workflow](/images/current-faas-workflow.jpg)
+};
+```
 
-This is where FaaSlang comes in. The goal of FaaSlang is simple; provide a
-unified, standardized definition and request interface for FaaS resources. This
-standard should be enforceable at the request layer, ideally through a gateway,
-and polyglot, meaning it must be able to communicate with functions written in a
-majority of industry-standard programming languages from standard web protocols.
+Into an infinitely scalable web API (using "serverless" providers) that can
+be called over HTTP like this (GET):
 
-![FaaSlang Workflow](/images/faaslang-workflow.jpg)
+```
+https://myhost.com/username/servicename/hello_world?name=joe
+```
+
+Or like this (POST):
+
+```json
+{
+  "name": "joe"
+}
+```
+
+And gives a result like this:
+
+```json
+"hello joe"
+```
+
+Or, when a type mismatch occurs (like `{"name":10}`):
+
+```json
+{
+  "error": {
+    "type":"ParameterError"
+    ...
+  }
+}
+```
 
 # Why FaaSlang?
 
-FaaSlang defines semantics for how functions "as services" should be implemented
-by vendors (or developers running their own compute clusters). By defining and
-enforcing conventions around FaaS, we're creating a standard language and
-idioms for how developers think about interfacing with functions as web
-services.
+The "serverless" space is growing rapidly, and as it grows, so do the toolchains
+required to keep up. Each infrastructure provider imposes its own
+standard and way of doing things around FaaS to the point we're relying on
+individual developers to pick and choose the best framework for deployment.
 
-FaaSlang is the result of tens of thousands of FaaS deployments, by thousands of
-developers, spread across a number of cloud service providers and the need to
-standardize our ability to organize and communicate with these functions.
+FaaSlang takes a different approach, and offers a specification for an API
+Gateway (and a reasonably robust, non-vendor-specific Node.js implementation of
+such) that acts as a way to "lock in" the way you and your team members
+deploy to and execute your "serverless" functions.
 
 Take a current example of an AWS Lambda function **(A)**;
 
@@ -129,23 +155,22 @@ module.exports = (myVar = 1, requiredVar, context, callback) => {
 };
 ```
 
-Or the async Node.js function footprint;
-
-```javascript
-/**
-* @param {Number} myVar A number
-* @param {String} requiredVar must be a string!
-* @returns {String}
-*/
-module.exports = async function (myVar = 1, requiredVar, context) => {
-  return 'Hello from FaaSlang-compliant service vendor.';
-};
-```
-
 Where **comments are used as part of the semantic definition** for type-safety
 (if they can't be inferred from defaults), expected parameters can be
 specifically defined, and you still have an optional `context` object for
 more robust execution (argument overloading, etc.)
+
+Here's what the current FaaS workflow looks like:
+
+![Current FaaS Workflow](/images/current-faas-workflow.jpg)
+
+And this is what a FaaSlang-enabled workflow looks like.
+
+![FaaSlang Workflow](/images/faaslang-workflow.jpg)
+
+FaaSlang is the result of tens of thousands of FaaS deployments, by thousands of
+developers, spread across a number of cloud service providers and the need to
+standardize our ability to organize and communicate with these functions.
 
 # Specification
 
@@ -179,6 +204,10 @@ You would provide a function definition that looks like this:
     "async": true
   },
   "description": "This is my function, it likes the greek alphabet",
+  "bg": {
+    "mode": "info",
+    "value": ""
+  },
   "context": null,
   "params": [
     {
@@ -215,6 +244,7 @@ A definition must implement the following fields;
 | name | A user-readable function name (used to execute the function), must match `/[A-Z][A-Z0-9_]*/i` |
 | format | An object requiring a `language` field, along with any implementation details |
 | description | A brief description of what the function does, can be empty (`""`) |
+| bg | An object containing "mode" and "value" parameters specifying the behavior of function responses when executed in the background |
 | context | An object `{}` or `null`, representing whether or not this function accesses the execution context |
 | params | An array of `NamedParameter`s, representing function arguments
 | returns | A `Parameter` without a `defaultValue` representing function return value |
