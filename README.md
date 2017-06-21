@@ -70,7 +70,7 @@ function deployment and execution (API) gateway to turn this:
 */
 module.exports = function (name = 'world', callback) {
 
-  callback(null, `hello ${world}`);
+  callback(null, `hello ${name}`);
 
 };
 ```
