@@ -208,6 +208,7 @@ You would provide a function definition that looks like this:
     "mode": "info",
     "value": ""
   },
+  "charge": 1,
   "context": null,
   "params": [
     {
@@ -245,7 +246,7 @@ A definition must implement the following fields;
 | format | An object requiring a `language` field, along with any implementation details |
 | description | A brief description of what the function does, can be empty (`""`) |
 | bg | An object containing "mode" and "value" parameters specifying the behavior of function responses when executed in the background |
-| context | An object `{}` or `null`, representing whether or not this function accesses the execution context |
+| charge | An integer between 0 and 100 defining the cost (arbitrary units) to run this function, charged to authenticated users |
 | params | An array of `NamedParameter`s, representing function arguments
 | returns | A `Parameter` without a `defaultValue` representing function return value |
 
