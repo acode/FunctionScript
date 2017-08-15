@@ -187,7 +187,7 @@ Given a function like this (filename `my_function.js`):
 * @param {String} alpha Some letters, I guess
 * @param {Number} beta And a number
 * @param {Boolean} gamma True or false?
-* @return {Object} some value
+* @returns {Object} some value
 */
 module.exports = async function my_function (alpha, beta = 2, gamma, context) {
   /* your code */
