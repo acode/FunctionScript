@@ -7,6 +7,6 @@
 */
 module.exports = (callback) => {
 
-  return callback(null, 'valid blacklist');
+  return callback(null, 'invalid acl entry');
 
 };
