@@ -414,6 +414,21 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should return 302 redirect with correct url when running a background function missing a slash before :bg', done => {
+    request('POST', {'user-agent': 'testing'}, '/bg:bg', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(302);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(res.headers).to.haveOwnProperty('location');
+      expect(res.headers.location).to.equal('/bg/:bg/');
+      done();
+
+    });
+  });
+
   it('Should run a background function with bg mode "info"', done => {
     request('POST', {}, '/bg/info/:bg', {data: 'xxx'}, (err, res, result) => {
 
