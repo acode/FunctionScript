@@ -327,6 +327,33 @@ All types are nullable, but **nullability can only be specified** by setting
 `"defaultValue": null` in the `NamedParameter` definition. That is to say,
 if a default value is provided, the type is no longer nullable.
 
+### Setting HTTP headers
+
+The FaaSlang specification is not intended to be solely used over HTTP, though
+if used over HTTP with a provided callback method, **the third parameter passed
+to callback should be an Object representing HTTP Header key-value pairs**.
+
+For example, to return an image that's of type `image/png`...
+
+```javascript
+module.exports = (imageName, callback) => {
+
+  // fetch image, returns a buffer
+  let png = imageName === 'cat' ?
+    fs.readFileSync(`/images/kitty.png`) :
+    fs.readFileSync(`/images/no-image.png`);
+
+  // Forces image/png over HTTP requests, default
+  //  for buffer would otherwise be application/octet-stream
+  return callback(null, png, {'Content-Type': 'image/png'});
+
+};
+```
+
+You can use the third parameter **only when a callback ends the function**,
+i.e. *not for use with async functions*. This can be used to serve any type
+of content via HTTP, set cache details (E-Tag header), etc.
+
 ## FaaSlang Resource Requests
 
 FaaSlang-compliant requests *must* complete the following steps;
