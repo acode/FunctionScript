@@ -514,6 +514,126 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should register a runtime error properly', done => {
+    request('POST', {}, '/runtime/', {}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(result).to.exist;
+      expect(result).to.be.an('object');
+      expect(result.error).to.exist;
+      expect(result.error).to.be.an('object');
+      expect(result.error.type).to.equal('RuntimeError');
+      done();
+
+    });
+  });
+
+  it('Should register a fatal error properly', done => {
+    request('POST', {}, '/runtime/fatal/', {}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(500);
+      expect(result).to.exist;
+      expect(result).to.be.an('object');
+      expect(result.error).to.exist;
+      expect(result.error).to.be.an('object');
+      expect(result.error.type).to.equal('FatalError');
+      done();
+
+    });
+  });
+
+  it('Should register a thrown error properly', done => {
+    request('POST', {}, '/runtime/thrown/', {}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(result).to.exist;
+      expect(result).to.be.an('object');
+      expect(result.error).to.exist;
+      expect(result.error).to.be.an('object');
+      expect(result.error.type).to.equal('RuntimeError');
+      done();
+
+    });
+  });
+
+  it('Should respond to an array as an implementation error', done => {
+    request('POST', {}, '/runtime/array/', {}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(result).to.exist;
+      expect(result).to.be.an('object');
+      expect(result.error).to.exist;
+      expect(result.error).to.be.an('object');
+      expect(result.error.type).to.equal('RuntimeError');
+      done();
+
+    });
+  });
+
+  it('Should respond to a boolean as an implementation error', done => {
+    request('POST', {}, '/runtime/boolean/', {}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(result).to.exist;
+      expect(result).to.be.an('object');
+      expect(result.error).to.exist;
+      expect(result.error).to.be.an('object');
+      expect(result.error.type).to.equal('RuntimeError');
+      done();
+
+    });
+  });
+
+  it('Should respond to a number as an implementation error', done => {
+    request('POST', {}, '/runtime/number/', {}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(result).to.exist;
+      expect(result).to.be.an('object');
+      expect(result.error).to.exist;
+      expect(result.error).to.be.an('object');
+      expect(result.error.type).to.equal('RuntimeError');
+      done();
+
+    });
+  });
+
+  it('Should respond to an object as an implementation error', done => {
+    request('POST', {}, '/runtime/object/', {}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(result).to.exist;
+      expect(result).to.be.an('object');
+      expect(result.error).to.exist;
+      expect(result.error).to.be.an('object');
+      expect(result.error.type).to.equal('RuntimeError');
+      done();
+
+    });
+  });
+
+  it('Should respond to a string as an implementation error', done => {
+    request('POST', {}, '/runtime/string/', {}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(result).to.exist;
+      expect(result).to.be.an('object');
+      expect(result.error).to.exist;
+      expect(result.error).to.be.an('object');
+      expect(result.error.type).to.equal('RuntimeError');
+      done();
+
+    });
+  });
+
   after(() => FaaSGateway.close());
 
 };
