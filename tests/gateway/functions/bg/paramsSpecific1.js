@@ -1,5 +1,7 @@
 /**
-* @bg params data
+* Comment for the function is here
+* @bg params 
+* data 
 * @returns {string}
 */
 module.exports = (callback) => {
