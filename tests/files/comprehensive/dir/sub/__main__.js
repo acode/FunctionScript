@@ -1,5 +1,6 @@
 /**
 * Test function
+* @charge 19
 * @param {Boolean} a alpha
 * @param {String} b beta
 * @param {Number} c gamma
