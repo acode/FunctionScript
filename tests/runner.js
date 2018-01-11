@@ -120,6 +120,12 @@ describe('LibDoc', () => {
 
     });
 
+    it('Should have correct charge value', () => {
+
+      expect(definitions['dir/sub'].charge).to.equal(19);
+
+    });
+
     it('Should read "" (default) parameters', () => {
 
       let params = definitions[''].params;
