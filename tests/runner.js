@@ -122,8 +122,12 @@ describe('LibDoc', () => {
 
     it('Should have correct charge value', () => {
 
-      expect(definitions['dir/sub'].charge).to.equal(19);
+      expect(definitions[''].charge).to.equal(1);
       expect(definitions['test'].charge).to.equal(0);
+      expect(definitions['returns'].charge).to.equal(1);
+      expect(definitions['dir/test'].charge).to.equal(1);
+      expect(definitions['dir/sub'].charge).to.equal(19);
+      expect(definitions['dir/sub/test'].charge).to.equal(1);
 
     });
 
