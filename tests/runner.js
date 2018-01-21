@@ -55,10 +55,11 @@ describe('LibDoc', () => {
 
     it('Should read all functions correctly', () => {
 
-      expect(Object.keys(definitions).length).to.equal(6);
+      expect(Object.keys(definitions).length).to.equal(7);
       expect(definitions).to.haveOwnProperty('');
       expect(definitions).to.haveOwnProperty('test');
       expect(definitions).to.haveOwnProperty('returns');
+      expect(definitions).to.haveOwnProperty('default');
       expect(definitions).to.haveOwnProperty('dir/test');
       expect(definitions).to.haveOwnProperty('dir/sub');
       expect(definitions).to.haveOwnProperty('dir/sub/test');
@@ -70,6 +71,7 @@ describe('LibDoc', () => {
       expect(definitions[''].pathname).to.equal('__main__.js');
       expect(definitions['test'].pathname).to.equal('test.js');
       expect(definitions['returns'].pathname).to.equal('returns.js');
+      expect(definitions['default'].pathname).to.equal('default.js');
       expect(definitions['dir/test'].pathname).to.equal('dir/test.js');
       expect(definitions['dir/sub'].pathname).to.equal('dir/sub/__main__.js');
       expect(definitions['dir/sub/test'].pathname).to.equal('dir/sub/test.js');
@@ -81,6 +83,7 @@ describe('LibDoc', () => {
       expect(definitions[''].description).to.equal('');
       expect(definitions['test'].description).to.equal('Test function');
       expect(definitions['returns'].description).to.equal('');
+      expect(definitions['default'].description).to.equal('Test default parameters');
       expect(definitions['dir/test'].description).to.equal('');
       expect(definitions['dir/sub'].description).to.equal('Test function');
       expect(definitions['dir/sub/test'].description).to.equal('');
@@ -92,6 +95,7 @@ describe('LibDoc', () => {
       expect(definitions[''].context).to.equal(null);
       expect(definitions['test'].context).to.exist;
       expect(definitions['returns'].context).to.equal(null);
+      expect(definitions['default'].context).to.exist;
       expect(definitions['dir/test'].context).to.exist;
       expect(definitions['dir/sub'].context).to.equal(null);
       expect(definitions['dir/sub/test'].context).to.exist;
@@ -103,6 +107,7 @@ describe('LibDoc', () => {
       expect(definitions[''].returns.description).to.equal('');
       expect(definitions['test'].returns.description).to.equal('');
       expect(definitions['returns'].returns.description).to.equal('hello');
+      expect(definitions['default'].returns.description).to.equal('');
       expect(definitions['dir/test'].returns.description).to.equal('');
       expect(definitions['dir/sub'].returns.description).to.equal('A return value!');
       expect(definitions['dir/sub/test'].returns.description).to.equal('');
@@ -114,6 +119,7 @@ describe('LibDoc', () => {
       expect(definitions[''].returns.type).to.equal('any');
       expect(definitions['test'].returns.type).to.equal('boolean');
       expect(definitions['returns'].returns.type).to.equal('number');
+      expect(definitions['default'].returns.type).to.equal('string');
       expect(definitions['dir/test'].returns.type).to.equal('any');
       expect(definitions['dir/sub'].returns.type).to.equal('boolean');
       expect(definitions['dir/sub/test'].returns.type).to.equal('any');
@@ -125,6 +131,7 @@ describe('LibDoc', () => {
       expect(definitions[''].charge).to.equal(1);
       expect(definitions['test'].charge).to.equal(0);
       expect(definitions['returns'].charge).to.equal(1);
+      expect(definitions['default'].charge).to.equal(1);
       expect(definitions['dir/test'].charge).to.equal(1);
       expect(definitions['dir/sub'].charge).to.equal(19);
       expect(definitions['dir/sub/test'].charge).to.equal(1);
@@ -145,6 +152,25 @@ describe('LibDoc', () => {
       expect(params[0].name).to.equal('a');
       expect(params[0].type).to.equal('boolean');
       expect(params[0].description).to.equal('alpha');
+
+    });
+
+    it('Should read "default" parameters', () => {
+
+      let params = definitions['default'].params;
+      expect(params.length).to.equal(2);
+      expect(params[0].name).to.equal('name');
+      expect(params[0].type).to.equal('string');
+      expect(params[0].description).to.equal('A name');
+      expect(params[0].defaultValue).to.equal('hello');
+      expect(params[1].name).to.equal('obj');
+      expect(params[1].type).to.equal('object');
+      expect(params[1].description).to.equal('An object');
+      expect(params[1].defaultValue).to.exist;
+      expect(params[1].defaultValue).to.haveOwnProperty('result');
+      expect(params[1].defaultValue.result).to.haveOwnProperty('a-string-key');
+      expect(params[1].defaultValue.result['a-string-key']).to.equal(1);
+      expect(params[1].defaultValue.result[1]).to.equal('one');
 
     });
 

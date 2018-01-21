@@ -603,6 +603,21 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should register an uncaught promise', done => {
+    request('POST', {}, '/runtime/promise_uncaught/', {}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(result).to.exist;
+      expect(result).to.be.an('object');
+      expect(result.error).to.exist;
+      expect(result.error).to.be.an('object');
+      expect(result.error.type).to.equal('RuntimeError');
+      done();
+
+    });
+  });
+
   it('Should respond to an array as an implementation error', done => {
     request('POST', {}, '/runtime/array/', {}, (err, res, result) => {
 
