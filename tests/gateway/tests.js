@@ -401,6 +401,68 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should reject integer type when provided float (GET)', done => {
+    request('GET', {}, '/type_rejection/?alpha=47.2', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('ParameterError');
+      expect(result.error.details).to.exist;
+      expect(result.error.details.alpha).to.exist;
+      expect(result.error.details.alpha.message).to.exist;
+      expect(result.error.details.alpha.expected).to.exist;
+      expect(result.error.details.alpha.expected.type).to.equal('integer');
+      expect(result.error.details.alpha.actual).to.exist;
+      expect(result.error.details.alpha.actual.type).to.equal('number');
+      expect(result.error.details.alpha.actual.value).to.equal(47.2);
+      done();
+
+    });
+  });
+
+  it('Should reject integer type when provided float (POST)', done => {
+    request('POST', {}, '/type_rejection/', {alpha: 47.2}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('ParameterError');
+      expect(result.error.details).to.exist;
+      expect(result.error.details.alpha).to.exist;
+      expect(result.error.details.alpha.message).to.exist;
+      expect(result.error.details.alpha.expected).to.exist;
+      expect(result.error.details.alpha.expected.type).to.equal('integer');
+      expect(result.error.details.alpha.actual).to.exist;
+      expect(result.error.details.alpha.actual.type).to.equal('number');
+      expect(result.error.details.alpha.actual.value).to.equal(47.2);
+      done();
+
+    });
+  });
+
+  it('Should accept integer type when provided integer (GET)', done => {
+    request('GET', {}, '/type_rejection/?alpha=47', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.equal(47);
+      done();
+
+    });
+  });
+
+  it('Should accept integer type when provided integer (POST)', done => {
+    request('POST', {}, '/type_rejection/', {alpha: 47}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.equal(47);
+      done();
+
+    });
+  });
+
   it('Should run a background function', done => {
     request('POST', {}, '/bg/:bg', {data: 'xxx'}, (err, res, result) => {
 
