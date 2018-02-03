@@ -52,6 +52,7 @@ describe('LibDoc', () => {
   describe('Comprehensive Test', () => {
 
     let definitions = parser.load('./tests/files/comprehensive');
+    let ignoredDefinitions = parser.load('./tests/files/ignore', null, ['ignoreme.js']);
 
     it('Should read all functions correctly', () => {
 
@@ -63,6 +64,13 @@ describe('LibDoc', () => {
       expect(definitions).to.haveOwnProperty('dir/test');
       expect(definitions).to.haveOwnProperty('dir/sub');
       expect(definitions).to.haveOwnProperty('dir/sub/test');
+
+    });
+
+    it('Should read all functions correctly with ignore parameter set', () => {
+
+      expect(Object.keys(ignoredDefinitions).length).to.equal(1);
+      expect(ignoredDefinitions).to.haveOwnProperty('');
 
     });
 
