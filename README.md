@@ -8,7 +8,7 @@
 ## Function as a Service Language
 
 The following is a working draft of the latest FaaSlang specification, version
-**0.1.x**, dated **May 10th, 2017**.
+**0.3.x**, dated **February 12th, 2018**.
 
 FaaSlang is a simple **open specification** intended to define semantics and
 implementation details around FaaS ("serverless") functions, gateways and
@@ -294,6 +294,7 @@ the types are a limited superset of JSON values.
 | float | Alias for `number` | `2e+100`, `1.02`, `-5` |
 | integer | Subset of `number`, integers between `-2^53 + 1` and `+2^53 - 1` (inclusive) | `0`, `-5`, `2000` |
 | object | Any JSON-serializable Object | `{}`, `{"a":true}`, `{"hello":["world"]}` |
+| object.http | An object representing an HTTP Response. Accepts `headers`, `body` and `statusCode` keys | `{body: 'Hello world'}`, `{headers: {'Content-Type': 'image/png'}, body: new Buffer(...)}` |
 | array | Any JSON-serializable Array | `[]`, `[1, 2, 3]`, `[{"a":true}, null, 5]` |
 | buffer | Raw binary octet (byte) data representing a file | `{"_bytes": [8, 255]}` or `{"_base64": "d2h5IGRpZCB5b3UgcGFyc2UgdGhpcz8/"}` |
 | any | Any value mentioned above | `5`, `"hello"`, `[]` |
@@ -317,6 +318,7 @@ converted from strings to their respective expected types, when possible
 | float | Determine float value, if NaN **do not convert**, otherwise convert |
 | integer | Determine float value, if NaN **do not convert**, may fail integer type check if not in range |
 | object | Parse as JSON, if invalid **do not convert**, object may fail type check (array, buffer) |
+| object.http | Parse as JSON, if invalid **do not convert**, object may fail type check (array, buffer) |
 | array | Parse as JSON, if invalid **do not convert**, object may fail type check (object, buffer) |
 | buffer | Parse as JSON, if invalid **do not convert**, object may fail type check (object, array) |
 | any | No conversion |
