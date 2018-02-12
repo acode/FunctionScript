@@ -294,7 +294,7 @@ the types are a limited superset of JSON values.
 | float | Alias for `number` | `2e+100`, `1.02`, `-5` |
 | integer | Subset of `number`, integers between `-2^53 + 1` and `+2^53 - 1` (inclusive) | `0`, `-5`, `2000` |
 | object | Any JSON-serializable Object | `{}`, `{"a":true}`, `{"hello":["world"]}` |
-| object.http | An object representing an HTTP Response. Accepts `headers`, `body` and `statusCode` keys | `{body: 'Hello world'}`, `{headers: {'Content-Type': 'image/png'}, body: new Buffer(...)}` |
+| object.http | An object representing an HTTP Response. Accepts `headers`, `body` and `statusCode` keys | `{"body": "Hello World"}`, `{"statusCode": 404, "body": "not found"}`, `{"headers": {"Content-Type": "image/png"}, "body": new Buffer(...)}` |
 | array | Any JSON-serializable Array | `[]`, `[1, 2, 3]`, `[{"a":true}, null, 5]` |
 | buffer | Raw binary octet (byte) data representing a file | `{"_bytes": [8, 255]}` or `{"_base64": "d2h5IGRpZCB5b3UgcGFyc2UgdGhpcz8/"}` |
 | any | Any value mentioned above | `5`, `"hello"`, `[]` |
