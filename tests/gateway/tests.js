@@ -381,6 +381,32 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should null number properly (POST)', done => {
+    request('POST', {}, '/number_nullable/', {}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.be.an.array;
+      expect(result[0]).to.equal(null);
+      expect(result[1]).to.equal(null);
+      done();
+
+    });
+  });
+
+  it('Should null number properly (GET)', done => {
+    request('GET', {}, '/number_nullable/', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.be.an.array;
+      expect(result[0]).to.equal(null);
+      expect(result[1]).to.equal(null);
+      done();
+
+    });
+  });
+
   it('Should error object on string provided', done => {
     request('POST', {}, '/object_parsing/', {obj: 'xxx'}, (err, res, result) => {
 
@@ -458,6 +484,89 @@ module.exports = (expect) => {
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
       expect(result).to.equal(47);
+      done();
+
+    });
+  });
+
+  it('Should not accept empty object.http', done => {
+    request('GET', {}, '/sanitize/http_object_empty/', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(502);
+      expect(result.error).to.exist;
+      expect(result.error.details).to.exist;
+      expect(result.error.details.returns).to.exist
+      expect(result.error.details.returns.invalid).to.equal(true);
+      done();
+
+    });
+  });
+
+  it('Should not accept object.http with null body', done => {
+    request('GET', {}, '/sanitize/http_object/', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(502);
+      expect(result.error).to.exist;
+      expect(result.error.details).to.exist;
+      expect(result.error.details.returns).to.exist
+      expect(result.error.details.returns.invalid).to.equal(true);
+      done();
+
+
+    });
+  });
+
+  it('Should accept object.http with string body', done => {
+    request('GET', {}, '/sanitize/http_object/?body=hello', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/plain');
+      expect(result.toString()).to.equal('hello');
+      done();
+
+    });
+  });
+
+  it('Should not accept object.http with statusCode out of range', done => {
+    request('GET', {}, '/sanitize/http_object/?statusCode=600', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(502);
+      expect(result.error).to.exist;
+      expect(result.error.details).to.exist;
+      expect(result.error.details.returns).to.exist
+      expect(result.error.details.returns.invalid).to.equal(true);
+      done();
+
+
+    });
+  });
+
+  it('Should not accept object.http with invalid headers object', done => {
+    request('POST', {}, '/sanitize/http_object/', {headers: true}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(502);
+      expect(result.error).to.exist;
+      expect(result.error.details).to.exist;
+      expect(result.error.details.returns).to.exist
+      expect(result.error.details.returns.invalid).to.equal(true);
+      done();
+
+
+    });
+  });
+
+  it('Should allow header setting', done => {
+    request('POST', {}, '/sanitize/http_object/', {body: '<b>hello</b>', headers: {'content-type': 'text/html'}}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/html');
+      expect(result.toString()).to.equal('<b>hello</b>');
       done();
 
     });
