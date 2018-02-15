@@ -1,4 +1,5 @@
 const http = require('http');
+const FormData = require('form-data');
 const {Gateway, FunctionParser} = require('../../index.js');
 
 const PORT = 7357;
@@ -862,6 +863,142 @@ module.exports = (expect) => {
       done();
 
     });
+  });
+
+  it('Should handle multipart/form-data', done => {
+    
+    let form = new FormData();
+    form.append('my_field', 'my value');
+    form.append('my_other_field', 'my other value');
+
+    form.submit(`http://${HOST}:${PORT}/reflect`, (err, response) => {
+      
+      expect(err).to.not.exist;
+      expect(response.statusCode).to.equal(200);
+
+      let body = [];
+      response.on('readable', function() {
+          body.push(response.read());
+      });
+  
+      response.on('end', function() {
+        let results = JSON.parse(body);
+        expect(results.my_field).to.equal('my value');
+        expect(results.my_other_field).to.equal('my other value');
+        done();
+      });
+
+      response.on('err', function(err) {
+        expect(err).to.not.exist;
+        done();
+      })
+
+    })
+  });
+
+  it('Should handle multipart/form-data with buffer', done => {
+    const fs = require('fs')
+    let pkgJson = fs.readFileSync(process.cwd() + '/package.json')
+    
+    let form = new FormData();
+    form.append('my_field', 'my value');
+    form.append('my_string_buffer', Buffer.from('123'));
+    form.append('my_file_buffer', pkgJson);
+
+    form.submit(`http://${HOST}:${PORT}/reflect`, (err, response) => {
+      
+      expect(err).to.not.exist;
+      expect(response.statusCode).to.equal(200);
+
+      let body = [];
+      response.on('readable', function() {
+          body.push(response.read());
+      });
+  
+      response.on('end', function() {
+        let results = JSON.parse(body);
+        let stringBuffer = Buffer.from(results.my_string_buffer.data)
+        let fileBuffer = Buffer.from(results.my_file_buffer.data)
+        expect(results.my_field).to.equal('my value');
+        expect(stringBuffer).to.be.deep.equal(Buffer.from('123'))
+        expect(fileBuffer).to.be.deep.equal(pkgJson)
+        done();
+      });
+
+      response.on('err', function(err) {
+        expect(err).to.not.exist;
+        done();
+      })
+
+    })
+  });
+
+  it('Should handle multipart/form-data with json', done => {
+    
+    let form = new FormData();
+    form.append('my_field', 'my value');
+    form.append('my_json', JSON.stringify({
+      someJsonNums: 123,
+      someJson: 'hello'
+    }), 'my.json');
+
+    form.submit(`http://${HOST}:${PORT}/reflect`, (err, response) => {
+      
+      expect(err).to.not.exist;
+      expect(response.statusCode).to.equal(200);
+
+      let body = [];
+      response.on('readable', function() {
+          body.push(response.read());
+      });
+  
+      response.on('end', function() {
+        let results = JSON.parse(body);
+        expect(results.my_field).to.equal('my value');
+        expect(results.my_json).to.deep.equal({
+          someJsonNums: 123,
+          someJson: 'hello'
+        });
+        done();
+      });
+
+      response.on('err', function(err) {
+        expect(err).to.not.exist;
+        done();
+      })
+
+    })
+  });
+
+  it('Should handle multipart/form-data with bad json', done => {
+    
+    let form = new FormData();
+    form.append('my_field', 'my value');
+    form.append('my_json', 'totally not json', 'my.json');
+
+    form.submit(`http://${HOST}:${PORT}/reflect`, (err, response) => {
+
+      expect(err).to.not.exist;
+      expect(response.statusCode).to.equal(400);
+
+      let body = [];
+      response.on('readable', function() {
+          body.push(response.read());
+      });
+  
+      response.on('end', function() {
+        let results = JSON.parse(body);
+        expect(results.error).to.exist
+        expect(results.error.message).to.equal('Bad Request: Invalid multipart form-data with key: my_json')
+        done();
+      });
+
+      response.on('err', function(err) {
+        expect(err).to.not.exist;
+        done();
+      })
+
+    })
   });
 
   after(() => FaaSGateway.close());
