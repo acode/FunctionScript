@@ -1,6 +1,6 @@
 {
   "name": "faaslang",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "FaaSlang defines FaaS execution semantics and type-safety mechanisms",
   "author": "Keith Horwood <keithwhor@gmail.com>",
   "main": "index.js",
@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
+    "form-data": "^2.3.2",
     "mocha": "^3.2.0"
   }
 }
