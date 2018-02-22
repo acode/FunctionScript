@@ -382,6 +382,18 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should populate HTTP body', done => {
+    request('POST', {}, '/http_body/', {abc: 123}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.be.a.string;
+      expect(result).to.equal('{"abc":123}');
+      done();
+
+    });
+  });
+
   it('Should null number properly (POST)', done => {
     request('POST', {}, '/number_nullable/', {}, (err, res, result) => {
 
@@ -866,13 +878,13 @@ module.exports = (expect) => {
   });
 
   it('Should handle multipart/form-data', done => {
-    
+
     let form = new FormData();
     form.append('my_field', 'my value');
     form.append('my_other_field', 'my other value');
 
     form.submit(`http://${HOST}:${PORT}/reflect`, (err, response) => {
-      
+
       expect(err).to.not.exist;
       expect(response.statusCode).to.equal(200);
 
@@ -880,7 +892,7 @@ module.exports = (expect) => {
       response.on('readable', function() {
           body.push(response.read());
       });
-  
+
       response.on('end', function() {
         let results = JSON.parse(body);
         expect(results.my_field).to.equal('my value');
@@ -899,14 +911,14 @@ module.exports = (expect) => {
   it('Should handle multipart/form-data with buffer', done => {
     const fs = require('fs')
     let pkgJson = fs.readFileSync(process.cwd() + '/package.json')
-    
+
     let form = new FormData();
     form.append('my_field', 'my value');
     form.append('my_string_buffer', Buffer.from('123'));
     form.append('my_file_buffer', pkgJson);
 
     form.submit(`http://${HOST}:${PORT}/reflect`, (err, response) => {
-      
+
       expect(err).to.not.exist;
       expect(response.statusCode).to.equal(200);
 
@@ -914,7 +926,7 @@ module.exports = (expect) => {
       response.on('readable', function() {
           body.push(response.read());
       });
-  
+
       response.on('end', function() {
         let results = JSON.parse(body);
         let stringBuffer = Buffer.from(results.my_string_buffer.data)
@@ -934,7 +946,7 @@ module.exports = (expect) => {
   });
 
   it('Should handle multipart/form-data with json', done => {
-    
+
     let form = new FormData();
     form.append('my_field', 'my value');
     form.append('my_json', JSON.stringify({
@@ -943,7 +955,7 @@ module.exports = (expect) => {
     }), 'my.json');
 
     form.submit(`http://${HOST}:${PORT}/reflect`, (err, response) => {
-      
+
       expect(err).to.not.exist;
       expect(response.statusCode).to.equal(200);
 
@@ -951,7 +963,7 @@ module.exports = (expect) => {
       response.on('readable', function() {
           body.push(response.read());
       });
-  
+
       response.on('end', function() {
         let results = JSON.parse(body);
         expect(results.my_field).to.equal('my value');
@@ -971,7 +983,7 @@ module.exports = (expect) => {
   });
 
   it('Should handle multipart/form-data with bad json', done => {
-    
+
     let form = new FormData();
     form.append('my_field', 'my value');
     form.append('my_json', 'totally not json', 'my.json');
@@ -985,7 +997,7 @@ module.exports = (expect) => {
       response.on('readable', function() {
           body.push(response.read());
       });
-  
+
       response.on('end', function() {
         let results = JSON.parse(body);
         expect(results.error).to.exist
