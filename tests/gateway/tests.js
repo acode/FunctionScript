@@ -516,6 +516,19 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should accept uppercase Content-Type', done => {
+    request('GET', {}, '/sanitize/http_object_header_case/?contentType=image/png', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.exist;
+      expect(res.headers).to.haveOwnProperty('content-type');
+      expect(res.headers['content-type']).to.equal('image/png');
+      done();
+
+    });
+  });
+
   it('Should not accept object.http with null body', done => {
     request('GET', {}, '/sanitize/http_object/', '', (err, res, result) => {
 
