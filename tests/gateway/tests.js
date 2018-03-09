@@ -516,6 +516,18 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should sanitize a {_base64: ...} buffer input', done => {
+    request('GET', {}, '/sanitize/http_object_base64/', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result.error).to.not.exist;
+      expect(result.toString()).to.equal('fix for steven');
+      done();
+
+    });
+  });
+
   it('Should accept uppercase Content-Type', done => {
     request('GET', {}, '/sanitize/http_object_header_case/?contentType=image/png', '', (err, res, result) => {
 
