@@ -1038,6 +1038,20 @@ module.exports = (expect) => {
     })
   });
 
+  it('Should handle large buffer parameters', done => {
+    request('POST', {'x-convert-strings': true}, '/runtime/largebuffer/', {
+      file: `{"_base64": "${'a'.repeat(50000000)}"}`
+    }, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result.error).to.not.exist;
+      done();
+
+    });
+  });
+
   after(() => FaaSGateway.close());
 
 };
