@@ -623,6 +623,30 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should overwrite access-control-allow-origin', done => {
+    request('POST', {}, '/sanitize/http_object/', {body: '<b>hello</b>', headers: {'access-control-allow-origin': '$'}}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['access-control-allow-origin']).to.equal('$');
+      expect(result.toString()).to.equal('<b>hello</b>');
+      done();
+
+    });
+  });
+
+  it('Should NOT overwrite x-faaslang', done => {
+    request('POST', {}, '/sanitize/http_object/', {body: '<b>hello</b>', headers: {'x-faaslang': '$'}}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['x-faaslang']).to.not.equal('$');
+      expect(result.toString()).to.equal('<b>hello</b>');
+      done();
+
+    });
+  });
+
   it('Should run a background function', done => {
     request('POST', {}, '/bg/:bg', {data: 'xxx'}, (err, res, result) => {
 
