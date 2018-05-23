@@ -272,12 +272,6 @@ Parameters have the following format;
 | description | yes | A short description of the parameter, can be empty string (`""`) |
 | defaultValue | no | Must match the specified type, **if not provided this parameter is required** |
 
-### Constraints
-
-The **first parameter can never be of type "Object"**. This is to ensure
-request consistency with generic calls (i.e. support for argument overloading)
-across all language implementations.
-
 ### Types
 
 As FaaSlang is intended to be polyglot, functions defined with it must have

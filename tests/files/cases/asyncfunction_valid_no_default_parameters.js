@@ -1,2 +1,2 @@
 module.exports = async function(a, b, c, d, e, f, context) {};
-// Invalid, first parameter can not be "any"
+// Valid, first parameter can be "any"

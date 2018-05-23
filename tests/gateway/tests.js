@@ -243,30 +243,14 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should parse arguments from POST (JSON Array)', done => {
+  it('Should not parse arguments from POST (JSON Array)', done => {
     request('POST', {}, '/my_function/', [10, 20, 30], (err, res, result) => {
 
       expect(err).to.not.exist;
-      expect(res.statusCode).to.equal(200);
-      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
-      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
-      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
-      expect(result).to.equal(60);
-      done();
-
-    });
-  });
-
-  it('Should not overwrite POST (JSON Array) data with query parameters', done => {
-    request('POST', {}, '/my_function/?c=300', [10, 20, 30], (err, res, result) => {
-
-      expect(err).to.not.exist;
       expect(res.statusCode).to.equal(400);
-      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
-      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
-      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
       expect(result.error).to.exist;
       expect(result.error.type).to.equal('ClientError');
+      expect(result.error.message).to.equal('Bad Request: Invalid JSON: Must be Object');
       done();
 
     });
