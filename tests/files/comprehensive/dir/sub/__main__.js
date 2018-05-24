@@ -1,5 +1,6 @@
 /**
 * Test function
+* @keys TEST_KEY TEST_KEY2
 * @charge 19
 * @param {Boolean} a alpha
 * @param {String} b beta

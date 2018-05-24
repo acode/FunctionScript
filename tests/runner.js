@@ -146,6 +146,27 @@ describe('LibDoc', () => {
 
     });
 
+    it('Should have correct keys', () => {
+
+      expect(definitions[''].keys).to.be.an('Array');
+      expect(definitions[''].keys).to.have.length(0);
+      expect(definitions['test'].keys).to.be.an('Array');
+      expect(definitions['test'].keys).to.have.length(0);
+      expect(definitions['returns'].keys).to.be.an('Array');
+      expect(definitions['returns'].keys).to.have.length(0);
+      expect(definitions['default'].keys).to.be.an('Array');
+      expect(definitions['default'].keys).to.have.length(0);
+      expect(definitions['dir/test'].keys).to.be.an('Array');
+      expect(definitions['dir/test'].keys).to.have.length(0);
+      expect(definitions['dir/sub'].keys).to.be.an('Array');
+      expect(definitions['dir/sub'].keys).to.have.length(2);
+      expect(definitions['dir/sub'].keys[0]).to.equal('TEST_KEY');
+      expect(definitions['dir/sub'].keys[1]).to.equal('TEST_KEY2');
+      expect(definitions['dir/sub/test'].keys).to.be.an('Array');
+      expect(definitions['dir/sub/test'].keys).to.have.length(0);
+
+    });
+
     it('Should read "" (default) parameters', () => {
 
       let params = definitions[''].params;
