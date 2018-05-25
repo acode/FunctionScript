@@ -1,6 +1,6 @@
 {
   "name": "faaslang",
-  "version": "0.3.9",
+  "version": "0.3.10",
   "description": "FaaSlang defines FaaS execution semantics and type-safety mechanisms",
   "author": "Keith Horwood <keithwhor@gmail.com>",
   "main": "index.js",
@@ -11,7 +11,6 @@
   "dependencies": {
     "babylon": "^6.16.1",
     "minimatch": "^3.0.4",
-    "npm": "^6.0.0",
     "uuid": "^3.0.1"
   },
   "devDependencies": {
