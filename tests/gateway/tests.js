@@ -1071,7 +1071,7 @@ module.exports = (expect) => {
       done();
 
     });
-  });
+  }).timeout(5000);
 
   after(() => FaaSGateway.close());
 
