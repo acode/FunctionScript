@@ -56,11 +56,12 @@ describe('LibDoc', () => {
 
     it('Should read all functions correctly', () => {
 
-      expect(Object.keys(definitions).length).to.equal(7);
+      expect(Object.keys(definitions).length).to.equal(8);
       expect(definitions).to.haveOwnProperty('');
       expect(definitions).to.haveOwnProperty('test');
       expect(definitions).to.haveOwnProperty('returns');
       expect(definitions).to.haveOwnProperty('default');
+      expect(definitions).to.haveOwnProperty('multiline_description');
       expect(definitions).to.haveOwnProperty('dir/test');
       expect(definitions).to.haveOwnProperty('dir/sub');
       expect(definitions).to.haveOwnProperty('dir/sub/test');
@@ -80,6 +81,7 @@ describe('LibDoc', () => {
       expect(definitions['test'].pathname).to.equal('test.js');
       expect(definitions['returns'].pathname).to.equal('returns.js');
       expect(definitions['default'].pathname).to.equal('default.js');
+      expect(definitions['multiline_description'].pathname).to.equal('multiline_description.js');
       expect(definitions['dir/test'].pathname).to.equal('dir/test.js');
       expect(definitions['dir/sub'].pathname).to.equal('dir/sub/__main__.js');
       expect(definitions['dir/sub/test'].pathname).to.equal('dir/sub/test.js');
@@ -92,6 +94,7 @@ describe('LibDoc', () => {
       expect(definitions['test'].description).to.equal('Test function');
       expect(definitions['returns'].description).to.equal('');
       expect(definitions['default'].description).to.equal('Test default parameters');
+      expect(definitions['multiline_description'].description).to.equal('Test multi line descriptions\nThis is a second line\nThis is a third line\n\nThis is a fourth line\n');
       expect(definitions['dir/test'].description).to.equal('');
       expect(definitions['dir/sub'].description).to.equal('Test function');
       expect(definitions['dir/sub/test'].description).to.equal('');
@@ -104,6 +107,7 @@ describe('LibDoc', () => {
       expect(definitions['test'].context).to.exist;
       expect(definitions['returns'].context).to.equal(null);
       expect(definitions['default'].context).to.exist;
+      expect(definitions['multiline_description'].context).to.equal(null);
       expect(definitions['dir/test'].context).to.exist;
       expect(definitions['dir/sub'].context).to.equal(null);
       expect(definitions['dir/sub/test'].context).to.exist;
@@ -140,6 +144,7 @@ describe('LibDoc', () => {
       expect(definitions['test'].charge).to.equal(0);
       expect(definitions['returns'].charge).to.equal(1);
       expect(definitions['default'].charge).to.equal(1);
+      expect(definitions['multiline_description'].charge).to.equal(1);
       expect(definitions['dir/test'].charge).to.equal(1);
       expect(definitions['dir/sub'].charge).to.equal(19);
       expect(definitions['dir/sub/test'].charge).to.equal(1);
@@ -156,6 +161,8 @@ describe('LibDoc', () => {
       expect(definitions['returns'].keys).to.have.length(0);
       expect(definitions['default'].keys).to.be.an('Array');
       expect(definitions['default'].keys).to.have.length(0);
+      expect(definitions['multiline_description'].keys).to.be.an('Array');
+      expect(definitions['multiline_description'].keys).to.have.length(0);
       expect(definitions['dir/test'].keys).to.be.an('Array');
       expect(definitions['dir/test'].keys).to.have.length(0);
       expect(definitions['dir/sub'].keys).to.be.an('Array');
