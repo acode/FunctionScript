@@ -56,7 +56,7 @@ describe('LibDoc', () => {
 
     it('Should read all functions correctly', () => {
 
-      expect(Object.keys(definitions).length).to.equal(8);
+      expect(Object.keys(definitions).length).to.equal(9);
       expect(definitions).to.haveOwnProperty('');
       expect(definitions).to.haveOwnProperty('test');
       expect(definitions).to.haveOwnProperty('returns');
@@ -65,6 +65,7 @@ describe('LibDoc', () => {
       expect(definitions).to.haveOwnProperty('dir/test');
       expect(definitions).to.haveOwnProperty('dir/sub');
       expect(definitions).to.haveOwnProperty('dir/sub/test');
+      expect(definitions).to.haveOwnProperty('schema/schema');
 
     });
 
@@ -85,6 +86,7 @@ describe('LibDoc', () => {
       expect(definitions['dir/test'].pathname).to.equal('dir/test.js');
       expect(definitions['dir/sub'].pathname).to.equal('dir/sub/__main__.js');
       expect(definitions['dir/sub/test'].pathname).to.equal('dir/sub/test.js');
+      expect(definitions['schema/schema'].pathname).to.equal('schema/schema.js');
 
     });
 
@@ -98,6 +100,7 @@ describe('LibDoc', () => {
       expect(definitions['dir/test'].description).to.equal('');
       expect(definitions['dir/sub'].description).to.equal('Test function');
       expect(definitions['dir/sub/test'].description).to.equal('');
+      expect(definitions['schema/schema'].description).to.equal('Test Schema Input');
 
     });
 
@@ -111,6 +114,7 @@ describe('LibDoc', () => {
       expect(definitions['dir/test'].context).to.exist;
       expect(definitions['dir/sub'].context).to.equal(null);
       expect(definitions['dir/sub/test'].context).to.exist;
+      expect(definitions['schema/schema'].context).to.equal(null);
 
     });
 
@@ -123,6 +127,7 @@ describe('LibDoc', () => {
       expect(definitions['dir/test'].returns.description).to.equal('');
       expect(definitions['dir/sub'].returns.description).to.equal('A return value!');
       expect(definitions['dir/sub/test'].returns.description).to.equal('');
+      expect(definitions['schema/schema'].returns.description).to.equal('');
 
     });
 
@@ -135,6 +140,7 @@ describe('LibDoc', () => {
       expect(definitions['dir/test'].returns.type).to.equal('any');
       expect(definitions['dir/sub'].returns.type).to.equal('boolean');
       expect(definitions['dir/sub/test'].returns.type).to.equal('any');
+      expect(definitions['schema/schema'].returns.type).to.equal('string');
 
     });
 
@@ -148,6 +154,7 @@ describe('LibDoc', () => {
       expect(definitions['dir/test'].charge).to.equal(1);
       expect(definitions['dir/sub'].charge).to.equal(19);
       expect(definitions['dir/sub/test'].charge).to.equal(1);
+      expect(definitions['schema/schema'].charge).to.equal(1);
 
     });
 
@@ -171,6 +178,8 @@ describe('LibDoc', () => {
       expect(definitions['dir/sub'].keys[1]).to.equal('TEST_KEY2');
       expect(definitions['dir/sub/test'].keys).to.be.an('Array');
       expect(definitions['dir/sub/test'].keys).to.have.length(0);
+      expect(definitions['schema/schema'].keys).to.be.an('Array');
+      expect(definitions['schema/schema'].keys).to.have.length(0);
 
     });
 
@@ -294,6 +303,35 @@ describe('LibDoc', () => {
 
       let params = definitions['dir/sub/test'].params;
       expect(params.length).to.equal(0);
+
+    });
+
+    it('Should read "schema/schema" parameters', () => {
+
+      let params = definitions['schema/schema'].params;
+      expect(params.length).to.equal(3);
+      expect(params[0].name).to.equal('before');
+      expect(params[0].type).to.equal('string');
+      expect(params[0].description).to.equal('');
+      expect(params[2].name).to.equal('after');
+      expect(params[2].type).to.equal('string');
+      expect(params[2].description).to.equal('');
+      expect(params[1].name).to.equal('obj');
+      expect(params[1].type).to.equal('object.schema');
+      expect(params[1].description).to.equal('');
+      expect(params[1].schema).to.exist;
+      expect(params[1].schema[0].name).to.equal('name');
+      expect(params[1].schema[0].type).to.equal('string');
+      expect(params[1].schema[1].name).to.equal('enabled');
+      expect(params[1].schema[1].type).to.equal('boolean');
+      expect(params[1].schema[2].name).to.equal('data');
+      expect(params[1].schema[2].type).to.equal('object.schema');
+      expect(params[1].schema[2].schema[0].name).to.equal('a');
+      expect(params[1].schema[2].schema[0].type).to.equal('string');
+      expect(params[1].schema[2].schema[1].name).to.equal('b');
+      expect(params[1].schema[2].schema[1].type).to.equal('string');
+      expect(params[1].schema[3].name).to.equal('timestamp');
+      expect(params[1].schema[3].type).to.equal('number');
 
     });
 
@@ -442,6 +480,90 @@ describe('LibDoc', () => {
 
       expect(types.validate('any', null)).to.equal(true);
       expect(types.validate('any', null, true)).to.equal(true);
+
+    });
+
+    it('should validate "object.schema"', () => {
+
+      expect(types.validate('object.schema', {})).to.equal(true);
+      expect(
+        types.validate(
+          'object.schema',
+          {},
+          false,
+          [
+            {name: 'hello', type: 'string'}
+          ]
+        )
+      ).to.equal(false);
+      expect(
+        types.validate(
+          'object.schema',
+          {
+            hello: 'what'
+          },
+          false,
+          [
+            {name: 'hello', type: 'string'}
+          ]
+        )
+      ).to.equal(true);
+
+      let testSchema = [
+        {name: 'hello', type: 'string'},
+        {name: 'data', type: 'object.schema', schema: [
+          {name: 'a', type: 'string'},
+          {name: 'b', type: 'string'}
+        ]},
+        {name: 'tf', type: 'boolean'}
+      ];
+
+      expect(
+        types.validate(
+          'object.schema',
+          {},
+          false,
+          testSchema
+        )
+      ).to.equal(false);
+      expect(
+        types.validate(
+          'object.schema',
+          {
+            hello: 'hey',
+          },
+          false,
+          testSchema
+        )
+      ).to.equal(false);
+      expect(
+        types.validate(
+          'object.schema',
+          {
+            hello: 'hey',
+            data: {a: 'a', b: 'b'},
+            tf: true
+          },
+          false,
+          testSchema
+        )
+      ).to.equal(true);
+      expect(
+        types.validate(
+          'object.schema',
+          {
+            hello: 'hey',
+            data: {a: 1, b: 'b'},
+            tf: true
+          },
+          false,
+          testSchema
+        )
+      ).to.equal(false);
+
+
+      expect(types.validate('object.schema', null)).to.equal(false);
+      expect(types.validate('object.schema', null, true)).to.equal(true);
 
     });
 

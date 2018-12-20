@@ -969,9 +969,7 @@ module.exports = (expect) => {
       expect(response.statusCode).to.equal(200);
 
       let body = [];
-      response.on('readable', function() {
-          body.push(response.read());
-      });
+      response.on('readable', function() { body.push(response.read()); });
 
       response.on('end', function() {
         let results = JSON.parse(body);
@@ -1057,6 +1055,57 @@ module.exports = (expect) => {
       })
 
     })
+  });
+
+  it('Should reject an object that doesn\'t map to Schema', done => {
+    request('POST', {}, '/schema_rejection/', {
+      obj: {
+        name: 'hello',
+        enabled: true,
+        data: 'xxx',
+        timestamp: 1337
+      }
+    },
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('ParameterError');
+      expect(result.error.details).to.exist;
+      expect(result.error.details.obj).to.exist;
+      expect(result.error.details.obj.expected).to.exist;
+      expect(result.error.details.obj.expected.type).to.equal('object.schema');
+      expect(result.error.details.obj.actual).to.exist;
+      expect(result.error.details.obj.actual.type).to.equal('object');
+      done();
+
+    });
+  });
+
+  it('Should accept an object that correctly maps to Schema', done => {
+    request('POST', {}, '/schema_rejection/', {
+      obj: {
+        name: 'hello',
+        enabled: true,
+        data: {a: 'alpha', b: 'beta'},
+        timestamp: 1337
+      }
+    },
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.equal('hello');
+      done();
+
+    });
   });
 
   it('Should handle large buffer parameters', done => {
