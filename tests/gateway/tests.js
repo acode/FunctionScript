@@ -1079,8 +1079,30 @@ module.exports = (expect) => {
       expect(result.error.details.obj).to.exist;
       expect(result.error.details.obj.expected).to.exist;
       expect(result.error.details.obj.expected.type).to.equal('object.schema');
+      expect(result.error.details.obj.expected.schema).to.exist;
+      expect(result.error.details.obj.expected.schema).to.have.length(4);
+      expect(result.error.details.obj.expected.schema[0].name).to.equal('name');
+      expect(result.error.details.obj.expected.schema[0].type).to.equal('string');
+      expect(result.error.details.obj.expected.schema[1].name).to.equal('enabled');
+      expect(result.error.details.obj.expected.schema[1].type).to.equal('boolean');
+      expect(result.error.details.obj.expected.schema[2].name).to.equal('data');
+      expect(result.error.details.obj.expected.schema[2].type).to.equal('object.schema');
+      expect(result.error.details.obj.expected.schema[2].schema).to.exist;
+      expect(result.error.details.obj.expected.schema[2].schema).to.have.length(2);
+      expect(result.error.details.obj.expected.schema[2].schema[0].name).to.equal('a');
+      expect(result.error.details.obj.expected.schema[2].schema[0].type).to.equal('string');
+      expect(result.error.details.obj.expected.schema[2].schema[1].name).to.equal('b');
+      expect(result.error.details.obj.expected.schema[2].schema[1].type).to.equal('string');
+      expect(result.error.details.obj.expected.schema[3].name).to.equal('timestamp');
+      expect(result.error.details.obj.expected.schema[3].type).to.equal('number');
       expect(result.error.details.obj.actual).to.exist;
       expect(result.error.details.obj.actual.type).to.equal('object');
+      expect(result.error.details.obj.actual.value).to.deep.equal({
+        name: 'hello',
+        enabled: true,
+        data: 'xxx',
+        timestamp: 1337
+      });
       done();
 
     });
