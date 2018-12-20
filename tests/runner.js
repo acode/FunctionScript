@@ -317,7 +317,7 @@ describe('LibDoc', () => {
       expect(params[2].type).to.equal('string');
       expect(params[2].description).to.equal('');
       expect(params[1].name).to.equal('obj');
-      expect(params[1].type).to.equal('object.schema');
+      expect(params[1].type).to.equal('object');
       expect(params[1].description).to.equal('');
       expect(params[1].schema).to.exist;
       expect(params[1].schema[0].name).to.equal('name');
@@ -325,7 +325,7 @@ describe('LibDoc', () => {
       expect(params[1].schema[1].name).to.equal('enabled');
       expect(params[1].schema[1].type).to.equal('boolean');
       expect(params[1].schema[2].name).to.equal('data');
-      expect(params[1].schema[2].type).to.equal('object.schema');
+      expect(params[1].schema[2].type).to.equal('object');
       expect(params[1].schema[2].schema[0].name).to.equal('a');
       expect(params[1].schema[2].schema[0].type).to.equal('string');
       expect(params[1].schema[2].schema[1].name).to.equal('b');
@@ -483,12 +483,12 @@ describe('LibDoc', () => {
 
     });
 
-    it('should validate "object.schema"', () => {
+    it('should validate "object" with schema', () => {
 
-      expect(types.validate('object.schema', {})).to.equal(true);
+      expect(types.validate('object', {})).to.equal(true);
       expect(
         types.validate(
-          'object.schema',
+          'object',
           {},
           false,
           [
@@ -498,7 +498,7 @@ describe('LibDoc', () => {
       ).to.equal(false);
       expect(
         types.validate(
-          'object.schema',
+          'object',
           {
             hello: 'what'
           },
@@ -511,7 +511,7 @@ describe('LibDoc', () => {
 
       let testSchema = [
         {name: 'hello', type: 'string'},
-        {name: 'data', type: 'object.schema', schema: [
+        {name: 'data', type: 'object', schema: [
           {name: 'a', type: 'string'},
           {name: 'b', type: 'string'}
         ]},
@@ -520,7 +520,7 @@ describe('LibDoc', () => {
 
       expect(
         types.validate(
-          'object.schema',
+          'object',
           {},
           false,
           testSchema
@@ -528,7 +528,7 @@ describe('LibDoc', () => {
       ).to.equal(false);
       expect(
         types.validate(
-          'object.schema',
+          'object',
           {
             hello: 'hey',
           },
@@ -538,7 +538,7 @@ describe('LibDoc', () => {
       ).to.equal(false);
       expect(
         types.validate(
-          'object.schema',
+          'object',
           {
             hello: 'hey',
             data: {a: 'a', b: 'b'},
@@ -550,7 +550,7 @@ describe('LibDoc', () => {
       ).to.equal(true);
       expect(
         types.validate(
-          'object.schema',
+          'object',
           {
             hello: 'hey',
             data: {a: 1, b: 'b'},
@@ -562,8 +562,8 @@ describe('LibDoc', () => {
       ).to.equal(false);
 
 
-      expect(types.validate('object.schema', null)).to.equal(false);
-      expect(types.validate('object.schema', null, true)).to.equal(true);
+      expect(types.validate('object', null)).to.equal(false);
+      expect(types.validate('object', null, true)).to.equal(true);
 
     });
 

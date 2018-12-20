@@ -1078,7 +1078,7 @@ module.exports = (expect) => {
       expect(result.error.details).to.exist;
       expect(result.error.details.obj).to.exist;
       expect(result.error.details.obj.expected).to.exist;
-      expect(result.error.details.obj.expected.type).to.equal('object.schema');
+      expect(result.error.details.obj.expected.type).to.equal('object');
       expect(result.error.details.obj.expected.schema).to.exist;
       expect(result.error.details.obj.expected.schema).to.have.length(4);
       expect(result.error.details.obj.expected.schema[0].name).to.equal('name');
@@ -1086,7 +1086,7 @@ module.exports = (expect) => {
       expect(result.error.details.obj.expected.schema[1].name).to.equal('enabled');
       expect(result.error.details.obj.expected.schema[1].type).to.equal('boolean');
       expect(result.error.details.obj.expected.schema[2].name).to.equal('data');
-      expect(result.error.details.obj.expected.schema[2].type).to.equal('object.schema');
+      expect(result.error.details.obj.expected.schema[2].type).to.equal('object');
       expect(result.error.details.obj.expected.schema[2].schema).to.exist;
       expect(result.error.details.obj.expected.schema[2].schema).to.have.length(2);
       expect(result.error.details.obj.expected.schema[2].schema[0].name).to.equal('a');

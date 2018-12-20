@@ -1,9 +1,9 @@
 /**
 * Test Schema Input
-* @param {object.schema} obj
+* @param {object} obj
 * @ {string} name
 * @ {boolean} enabled
-* @ {object.schema} data
+* @ {object} data
 * @   {string} a
 * @   {string} b
 * @ {number} timestamp
