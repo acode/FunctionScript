@@ -1130,6 +1130,67 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should reject an array that doesn\'t map to Schema', done => {
+    request('POST', {}, '/schema_rejection_array/', {
+      users: ['alpha', 'beta']
+    },
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('ParameterError');
+      expect(result.error.details).to.exist;
+      expect(result.error.details.users).to.exist;
+      expect(result.error.details.users.expected).to.exist;
+      expect(result.error.details.users.expected.type).to.equal('array');
+      expect(result.error.details.users.expected.schema).to.exist;
+      expect(result.error.details.users.expected.schema).to.have.length(1);
+      expect(result.error.details.users.expected.schema[0].name).to.equal('user');
+      expect(result.error.details.users.expected.schema[0].type).to.equal('object');
+      expect(result.error.details.users.expected.schema[0].schema).to.exist;
+      expect(result.error.details.users.expected.schema[0].schema).to.have.length(2);
+      expect(result.error.details.users.expected.schema[0].schema[0].name).to.equal('username');
+      expect(result.error.details.users.expected.schema[0].schema[0].type).to.equal('string');
+      expect(result.error.details.users.expected.schema[0].schema[1].name).to.equal('age');
+      expect(result.error.details.users.expected.schema[0].schema[1].type).to.equal('number');
+      expect(result.error.details.users.actual).to.exist;
+      expect(result.error.details.users.actual.type).to.equal('array');
+      expect(result.error.details.users.actual.value).to.deep.equal(['alpha', 'beta']);
+      done();
+
+    });
+  });
+
+  it('Should accept an array that correctly maps to Schema', done => {
+    request('POST', {}, '/schema_rejection_array/', {
+      users: [
+        {
+          username: 'alpha',
+          age: 1
+        },
+        {
+          username: 'beta',
+          age: 2
+        }
+      ]
+    },
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.equal('hello');
+      done();
+
+    });
+  });
+
   it('Should handle large buffer parameters', done => {
     request('POST', {'x-convert-strings': true}, '/runtime/largebuffer/', {
       file: `{"_base64": "${'a'.repeat(50000000)}"}`
