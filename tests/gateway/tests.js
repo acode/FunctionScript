@@ -1205,6 +1205,182 @@ module.exports = (expect) => {
     });
   }).timeout(5000);
 
+  it('Should accept a request with the optional param', done => {
+    request('POST', {}, '/optional_params/', {name: 'steve'},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.equal('steve');
+      done();
+
+    });
+  });
+
+  it('Should accept a request without the optional param', done => {
+    request('POST', {}, '/optional_params/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.equal('hello');
+      done();
+
+    });
+  });
+
+  it('Should accept a request without the optional param', done => {
+    request('POST', {}, '/optional_schema_params/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.equal(null);
+      done();
+
+    });
+  });
+
+  it('Should accept a request without the optional param field', done => {
+    request('POST', {}, '/optional_schema_params/', {obj: {name: 'steve'}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.deep.equal({name: 'steve'});
+      done();
+
+    });
+  });
+
+  it('Should accept a request with the optional param field set to null', done => {
+    request('POST', {}, '/optional_schema_params/', {obj: {name: 'steve', enabled: null}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.deep.equal({name: 'steve', enabled: null});
+      done();
+
+    });
+  });
+
+  it('Should accept a request with the optional param field', done => {
+    request('POST', {}, '/optional_schema_params/', {obj: {name: 'steve', enabled: true}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.deep.equal({name: 'steve', enabled: true});
+      done();
+
+    });
+  });
+
+  it('Should accept a request without the optional param (nested schema)', done => {
+    request('POST', {}, '/optional_nested_schema_params/', {obj: {name: 'steve' }},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.deep.equal({name: 'steve'});
+      done();
+
+    });
+  });
+
+  it('Should reject a request without the required param within the optional object (nested schema)', done => {
+    request('POST', {}, '/optional_nested_schema_params/', {obj: {name: 'steve', options: {}}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(result).to.exist;
+      expect(result.error).to.exist;
+      expect(res.statusCode).to.equal(400);
+      done();
+
+    });
+  });
+
+
+  it('Should accept a request with the optional object (nested schema)', done => {
+    request('POST', {}, '/optional_nested_schema_params/', {obj: {name: 'steve', options: {istest: true}}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result).to.deep.equal({name: 'steve', options: { istest: true}});
+      done();
+
+    });
+  });
+
+  it('Should accept a request with the optional object and optional field (nested schema)', done => {
+    request('POST', {}, '/optional_nested_schema_params/', {obj: {name: 'steve', options: {istest: true, threads: 4}}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result).to.deep.equal({name: 'steve', options: { istest: true, threads: 4}});
+      done();
+
+    });
+  });
+
+  it('Should successfully return a request without the optional value', done => {
+    request('POST', {}, '/optional_nested_schema_params/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.equal(null);
+      done();
+
+    });
+  });
+
+
+  it('Should successfully return a request without the optional values', done => {
+    request('POST', {}, '/optional_nested_schema_params/', {obj: {name: 'steve'}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result).to.deep.equal({name: 'steve'});
+      done();
+
+    });
+  });
+
+  it('Should successfully return a request with the optional values', done => {
+    request('POST', {}, '/optional_nested_schema_params/', {obj: {name: 'steve', options: {istest: true}}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result).to.deep.equal({name: 'steve', options: {istest: true}});
+      done();
+
+    });
+  });
+
+  it('Should successfully return a request with the optional values and fields', done => {
+    request('POST', {}, '/optional_nested_schema_params/', {obj: {name: 'steve', options: {istest: true, threads: 4}}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result).to.deep.equal({name: 'steve', options: {istest: true, threads: 4}});
+      done();
+
+    });
+  });
+
   after(() => FaaSGateway.close());
 
 };

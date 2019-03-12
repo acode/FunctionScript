@@ -56,7 +56,7 @@ describe('LibDoc', () => {
 
     it('Should read all functions correctly', () => {
 
-      expect(Object.keys(definitions).length).to.equal(9);
+      expect(Object.keys(definitions).length).to.equal(10);
       expect(definitions).to.haveOwnProperty('');
       expect(definitions).to.haveOwnProperty('test');
       expect(definitions).to.haveOwnProperty('returns');
@@ -66,6 +66,7 @@ describe('LibDoc', () => {
       expect(definitions).to.haveOwnProperty('dir/sub');
       expect(definitions).to.haveOwnProperty('dir/sub/test');
       expect(definitions).to.haveOwnProperty('schema/schema');
+      expect(definitions).to.haveOwnProperty('schema/schema_optional');
 
     });
 
@@ -87,6 +88,7 @@ describe('LibDoc', () => {
       expect(definitions['dir/sub'].pathname).to.equal('dir/sub/__main__.js');
       expect(definitions['dir/sub/test'].pathname).to.equal('dir/sub/test.js');
       expect(definitions['schema/schema'].pathname).to.equal('schema/schema.js');
+      expect(definitions['schema/schema_optional'].pathname).to.equal('schema/schema_optional.js');
 
     });
 
@@ -101,6 +103,7 @@ describe('LibDoc', () => {
       expect(definitions['dir/sub'].description).to.equal('Test function');
       expect(definitions['dir/sub/test'].description).to.equal('');
       expect(definitions['schema/schema'].description).to.equal('Test Schema Input');
+      expect(definitions['schema/schema_optional'].description).to.equal('Test Optional Schema Input');
 
     });
 
@@ -115,6 +118,7 @@ describe('LibDoc', () => {
       expect(definitions['dir/sub'].context).to.equal(null);
       expect(definitions['dir/sub/test'].context).to.exist;
       expect(definitions['schema/schema'].context).to.equal(null);
+      expect(definitions['schema/schema_optional'].context).to.equal(null);
 
     });
 
@@ -128,6 +132,7 @@ describe('LibDoc', () => {
       expect(definitions['dir/sub'].returns.description).to.equal('A return value!');
       expect(definitions['dir/sub/test'].returns.description).to.equal('');
       expect(definitions['schema/schema'].returns.description).to.equal('');
+      expect(definitions['schema/schema_optional'].returns.description).to.equal('');
 
     });
 
@@ -141,6 +146,7 @@ describe('LibDoc', () => {
       expect(definitions['dir/sub'].returns.type).to.equal('boolean');
       expect(definitions['dir/sub/test'].returns.type).to.equal('any');
       expect(definitions['schema/schema'].returns.type).to.equal('string');
+      expect(definitions['schema/schema_optional'].returns.type).to.equal('string');
 
     });
 
@@ -155,6 +161,7 @@ describe('LibDoc', () => {
       expect(definitions['dir/sub'].charge).to.equal(19);
       expect(definitions['dir/sub/test'].charge).to.equal(1);
       expect(definitions['schema/schema'].charge).to.equal(1);
+      expect(definitions['schema/schema_optional'].charge).to.equal(1);
 
     });
 
@@ -327,6 +334,39 @@ describe('LibDoc', () => {
       expect(params[1].schema[2].name).to.equal('data');
       expect(params[1].schema[2].type).to.equal('object');
       expect(params[1].schema[2].schema[0].name).to.equal('a');
+      expect(params[1].schema[2].schema[0].type).to.equal('string');
+      expect(params[1].schema[2].schema[1].name).to.equal('b');
+      expect(params[1].schema[2].schema[1].type).to.equal('string');
+      expect(params[1].schema[3].name).to.equal('timestamp');
+      expect(params[1].schema[3].type).to.equal('number');
+
+    });
+
+    it('Should read "schema/schema_optional" parameters', () => {
+
+      let params = definitions['schema/schema_optional'].params;
+      expect(params.length).to.equal(3);
+      expect(params[0].name).to.equal('before');
+      expect(params[0].defaultValue).to.equal(null);
+      expect(params[0].type).to.equal('string');
+      expect(params[0].description).to.equal('');
+      expect(params[2].name).to.equal('after');
+      expect(params[2].type).to.equal('string');
+      expect(params[2].description).to.equal('');
+      expect(params[1].name).to.equal('obj');
+      expect(params[1].type).to.equal('object');
+      expect(params[1].description).to.equal('');
+      expect(params[1].schema).to.exist;
+      expect(params[1].schema[0].name).to.equal('name');
+      expect(params[1].schema[0].defaultValue).to.equal(null);
+      expect(params[1].schema[0].type).to.equal('string');
+      expect(params[1].schema[1].name).to.equal('enabled');
+      expect(params[1].schema[1].defaultValue).to.equal(null);
+      expect(params[1].schema[1].type).to.equal('boolean');
+      expect(params[1].schema[2].name).to.equal('data');
+      expect(params[1].schema[2].type).to.equal('object');
+      expect(params[1].schema[2].schema[0].name).to.equal('a');
+      expect(params[1].schema[2].schema[0].defaultValue).to.equal(null);
       expect(params[1].schema[2].schema[0].type).to.equal('string');
       expect(params[1].schema[2].schema[1].name).to.equal('b');
       expect(params[1].schema[2].schema[1].type).to.equal('string');
