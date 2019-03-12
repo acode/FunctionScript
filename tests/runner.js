@@ -603,7 +603,7 @@ describe('LibDoc', () => {
 
       expect(types.introspect(null)).to.deep.equal({
         type: 'any',
-        nullable: true
+        defaultValue: null
       });
       expect(types.introspect(4)).to.deep.equal({
         type: 'number'
@@ -627,7 +627,7 @@ describe('LibDoc', () => {
         }, {
           name: 'c',
           type: 'any',
-          nullable: true
+          defaultValue: null
         }, {
           name: 'd',
           type: 'number',
@@ -751,28 +751,28 @@ describe('LibDoc', () => {
         type: 'array',
         schema: [{
           type: 'number',
-          nullable: true
+          defaultValue: null
         }]
       });
       expect(types.introspect([null, null, 1, null, 2, 3])).to.deep.equal({
         type: 'array',
         schema: [{
           type: 'number',
-          nullable: true
+          defaultValue: null
         }]
       });
       expect(types.introspect([null])).to.deep.equal({
         type: 'array',
         schema: [{
           type: 'any',
-          nullable: true
+          defaultValue: null
         }]
       });
       expect(types.introspect([1, 'two', null, 4])).to.deep.equal({
         type: 'array',
         schema: [{
           type: 'any',
-          nullable: true
+          defaultValue: null
         }]
       });
       expect(types.introspect({
@@ -802,7 +802,7 @@ describe('LibDoc', () => {
           name: 'nested',
           schema: [{
             type: 'any',
-            nullable: true
+            defaultValue: null
           }]
         }, {
           type: 'array',
@@ -812,17 +812,17 @@ describe('LibDoc', () => {
             schema: [{
               name: 'one',
               type: 'any',
-              nullable: true,
+              defaultValue: null,
               sampleValue: 'one'
             }, {
               name: 'two',
               type: 'any',
-              nullable: true,
+              defaultValue: null,
               sampleValue: 2
             }, {
               name: 'three',
               type: 'any',
-              nullable: true,
+              defaultValue: null,
               sampleValue: 3
             },
             {
