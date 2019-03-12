@@ -56,7 +56,7 @@ describe('LibDoc', () => {
 
     it('Should read all functions correctly', () => {
 
-      expect(Object.keys(definitions).length).to.equal(10);
+      expect(Object.keys(definitions).length).to.equal(11);
       expect(definitions).to.haveOwnProperty('');
       expect(definitions).to.haveOwnProperty('test');
       expect(definitions).to.haveOwnProperty('returns');
@@ -129,7 +129,7 @@ describe('LibDoc', () => {
       expect(definitions['returns'].returns.description).to.equal('hello');
       expect(definitions['default'].returns.description).to.equal('');
       expect(definitions['dir/test'].returns.description).to.equal('');
-      expect(definitions['dir/sub'].returns.description).to.equal('A return value!');
+      expect(definitions['dir/sub'].returns.description).to.equal('A return description!');
       expect(definitions['dir/sub/test'].returns.description).to.equal('');
       expect(definitions['schema/schema'].returns.description).to.equal('');
       expect(definitions['schema/schema_optional'].returns.description).to.equal('');
@@ -372,6 +372,14 @@ describe('LibDoc', () => {
       expect(params[1].schema[2].schema[1].type).to.equal('string');
       expect(params[1].schema[3].name).to.equal('timestamp');
       expect(params[1].schema[3].type).to.equal('number');
+
+    });
+
+    it('Should had a named return value and description', () => {
+
+      let definition = definitions['named_return'];
+      expect(definition.returns.name).to.equal('returnName');
+      expect(definition.returns.description).to.equal('And a return description');
 
     });
 
