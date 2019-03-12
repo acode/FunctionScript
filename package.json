@@ -1,6 +1,6 @@
 {
   "name": "faaslang",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "FaaSlang defines FaaS execution semantics and type-safety mechanisms",
   "author": "Keith Horwood <keithwhor@gmail.com>",
   "main": "index.js",

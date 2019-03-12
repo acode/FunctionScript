@@ -8,7 +8,7 @@
 * @param {Any} d delta
 * @param {Array} e epsilon
 * @param {Object} f zeta
-* @returns {Boolean} A return value!
+* @returns {Boolean} returnName A return description!
 */
 module.exports = async function(
   a = true,
