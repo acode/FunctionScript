@@ -602,7 +602,8 @@ describe('LibDoc', () => {
     it('should introspect basic types', () => {
 
       expect(types.introspect(null)).to.deep.equal({
-        type: 'any'
+        type: 'any',
+        nullable: true
       });
       expect(types.introspect(4)).to.deep.equal({
         type: 'number'
@@ -613,16 +614,24 @@ describe('LibDoc', () => {
       expect(types.introspect(new Buffer(99))).to.deep.equal({
         type: 'buffer'
       });
-      expect(types.introspect({a: 'b', b: 'c'})).to.deep.equal({
+      expect(types.introspect({a: 'a', b: 'b', c: null, d: 4})).to.deep.equal({
         type: 'object', 
         schema: [{
           name: 'a',
           type: 'string',
-          sampleValue: 'b'
+          sampleValue: 'a'
         }, {
           name: 'b',
           type: 'string',
-          sampleValue: 'c'
+          sampleValue: 'b'
+        }, {
+          name: 'c',
+          type: 'any',
+          nullable: true
+        }, {
+          name: 'd',
+          type: 'number',
+          sampleValue: 4
         }]
       });
       expect(types.introspect([1, 2, 3])).to.deep.equal({
@@ -708,7 +717,7 @@ describe('LibDoc', () => {
 
     });
 
-    it('Should introspect non-homogenous arrays', () => {
+    it('Should introspect heterogenous arrays', () => {
 
       expect(types.introspect(['one', 2, 3, 4])).to.deep.equal({
         type: 'array',
@@ -731,6 +740,97 @@ describe('LibDoc', () => {
           type: 'buffer',
           name: 'a',
           sampleValue: new Buffer(0)
+        }]
+      });
+
+    });
+
+    it('Should introspect more complex nullable values properly', () => {
+
+      expect(types.introspect([1, 2, null, 4])).to.deep.equal({
+        type: 'array',
+        schema: [{
+          type: 'number',
+          nullable: true
+        }]
+      });
+      expect(types.introspect([null, null, 1, null, 2, 3])).to.deep.equal({
+        type: 'array',
+        schema: [{
+          type: 'number',
+          nullable: true
+        }]
+      });
+      expect(types.introspect([null])).to.deep.equal({
+        type: 'array',
+        schema: [{
+          type: 'any',
+          nullable: true
+        }]
+      });
+      expect(types.introspect([1, 'two', null, 4])).to.deep.equal({
+        type: 'array',
+        schema: [{
+          type: 'any',
+          nullable: true
+        }]
+      });
+      expect(types.introspect({
+        nested: ['one', 2, 3, null],
+        nestedObjects: [{
+          one: 'one',
+          two: 2,
+          three: 3,
+          four: 4,
+          five: 'five'
+        }, {
+          one: null,
+          two: null,
+          three: null,
+          four: 44,
+          five: '5ive'
+        }, {
+          one: 'uno',
+          two: 2,
+          three: 'three',
+          four: 444
+        }]
+      })).to.deep.equal({
+        type: 'object',
+        schema: [{
+          type: 'array',
+          name: 'nested',
+          schema: [{
+            type: 'any',
+            nullable: true
+          }]
+        }, {
+          type: 'array',
+          name: 'nestedObjects',
+          schema: [{
+            type: 'object',
+            schema: [{
+              name: 'one',
+              type: 'any',
+              nullable: true,
+              sampleValue: 'one'
+            }, {
+              name: 'two',
+              type: 'any',
+              nullable: true,
+              sampleValue: 2
+            }, {
+              name: 'three',
+              type: 'any',
+              nullable: true,
+              sampleValue: 3
+            },
+            {
+              name: 'four',
+              type: 'number',
+              sampleValue: 4
+            }]
+          }]
         }]
       });
 
