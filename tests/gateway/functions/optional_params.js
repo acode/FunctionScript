@@ -1,5 +1,5 @@
 /**
-* Test Schema Input - Array
+* Test Optional Params
 * @param {?string} name
 * @returns {string}
 */

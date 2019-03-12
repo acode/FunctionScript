@@ -1381,6 +1381,19 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should successfully return a default value with an optional field', done => {
+    request('POST', {}, '/optional_param_not_null/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result).to.equal('default');
+      done();
+
+    });
+  });
+
   after(() => FaaSGateway.close());
 
 };
