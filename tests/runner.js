@@ -599,6 +599,143 @@ describe('LibDoc', () => {
 
     });
 
+    it('should introspect basic types', () => {
+
+      expect(types.introspect(null)).to.deep.equal({
+        type: 'any'
+      });
+      expect(types.introspect(4)).to.deep.equal({
+        type: 'number'
+      });
+      expect(types.introspect('hello')).to.deep.equal({
+        type: 'string'
+      });
+      expect(types.introspect(new Buffer(99))).to.deep.equal({
+        type: 'buffer'
+      });
+      expect(types.introspect({a: 'b', b: 'c'})).to.deep.equal({
+        type: 'object', 
+        schema: [{
+          name: 'a',
+          type: 'string',
+          sampleValue: 'b'
+        }, {
+          name: 'b',
+          type: 'string',
+          sampleValue: 'c'
+        }]
+      });
+      expect(types.introspect([1, 2, 3])).to.deep.equal({
+        type: 'array',
+        schema: [{
+          type: 'number'
+        }]
+      });
+      expect(types.introspect([['one', 'two', 'three'], ['four'], ['five', 'six']])).to.deep.equal({
+        type: 'array',
+        schema: [{
+          type: 'array',
+          schema: [{
+            type: 'string'
+          }]
+        }]
+      });
+
+    });
+
+    it('Should introspect a nested object', () => {
+
+      expect(
+        types.introspect({
+          hello: 'hey',
+          data: {a: 'a', b: 'b'},
+          nestedArray: [{c: 'c', d: 'd'}, {c: 'c', e: 'e'}],
+          deeplyNestedArray: [
+            [{f: 'f', g: 'g'}, {f: 'f', g: 'g'}, {g: 'g', h: 'h'}],
+            [{f: 'f', g: 'g'}, {g: 'g', h: 'h'}, {g: 'g', h: 'h'}]
+          ],
+          tf: true
+        })
+      ).to.deep.equal({
+        type: 'object', 
+        schema: [{
+          name: 'hello',
+          type: 'string',
+          sampleValue: 'hey'
+        }, {
+          name: 'data',
+          type: 'object',
+          schema: [{
+            name: 'a',
+            type: 'string',
+            sampleValue: 'a'
+          }, {
+            name: 'b',
+            type: 'string',
+            sampleValue: 'b'
+          }]
+        }, {
+          name: 'nestedArray',
+          type: 'array',
+          schema: [{
+            type: 'object',
+            schema: [{
+              type: 'string',
+              name: 'c',
+              sampleValue: 'c'
+            }]
+          }]
+        }, {
+          name: 'deeplyNestedArray',
+          type: 'array',
+          schema: [{
+            type: 'array',
+            schema: [{
+              type: 'object',
+              schema: [{
+                type: 'string',
+                name: 'g',
+                sampleValue: 'g'
+              }]
+            }]
+          }]
+        }, {
+          name: 'tf',
+          type: 'boolean',
+          sampleValue: true
+        }]
+      });
+
+    });
+
+    it('Should introspect non-homogenous arrays', () => {
+
+      expect(types.introspect(['one', 2, 3, 4])).to.deep.equal({
+        type: 'array',
+        schema: [{
+          type: 'any'
+        }]
+      });
+      expect(types.introspect({
+        nested: ['one', 2, 3, 4],
+        a: new Buffer(0)
+      })).to.deep.equal({
+        type: 'object',
+        schema: [{
+          type: 'array',
+          name: 'nested',
+          schema: [{
+            type: 'any'
+          }]
+        }, {
+          type: 'buffer',
+          name: 'a',
+          sampleValue: new Buffer(0)
+        }]
+      });
+
+    });
+
   });
 
   describe('Gateway', () => {
