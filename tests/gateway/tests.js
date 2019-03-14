@@ -1451,6 +1451,18 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should successfully return a schema with an array', done => {
+    request('POST', {}, '/giphy/', {query: 'q'},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      done();
+
+    });
+  });
+
   after(() => FaaSGateway.close());
 
 };
