@@ -56,7 +56,7 @@ describe('LibDoc', () => {
 
     it('Should read all functions correctly', () => {
 
-      expect(Object.keys(definitions).length).to.equal(11);
+      expect(Object.keys(definitions).length).to.equal(13);
       expect(definitions).to.haveOwnProperty('');
       expect(definitions).to.haveOwnProperty('test');
       expect(definitions).to.haveOwnProperty('returns');
@@ -65,8 +65,10 @@ describe('LibDoc', () => {
       expect(definitions).to.haveOwnProperty('dir/test');
       expect(definitions).to.haveOwnProperty('dir/sub');
       expect(definitions).to.haveOwnProperty('dir/sub/test');
-      expect(definitions).to.haveOwnProperty('schema/schema');
-      expect(definitions).to.haveOwnProperty('schema/schema_optional');
+      expect(definitions).to.haveOwnProperty('schema/basic');
+      expect(definitions).to.haveOwnProperty('schema/optional');
+      expect(definitions).to.haveOwnProperty('schema/nested');
+      expect(definitions).to.haveOwnProperty('schema/array');
 
     });
 
@@ -87,8 +89,10 @@ describe('LibDoc', () => {
       expect(definitions['dir/test'].pathname).to.equal('dir/test.js');
       expect(definitions['dir/sub'].pathname).to.equal('dir/sub/__main__.js');
       expect(definitions['dir/sub/test'].pathname).to.equal('dir/sub/test.js');
-      expect(definitions['schema/schema'].pathname).to.equal('schema/schema.js');
-      expect(definitions['schema/schema_optional'].pathname).to.equal('schema/schema_optional.js');
+      expect(definitions['schema/basic'].pathname).to.equal('schema/basic.js');
+      expect(definitions['schema/optional'].pathname).to.equal('schema/optional.js');
+      expect(definitions['schema/nested'].pathname).to.equal('schema/nested.js');
+      expect(definitions['schema/array'].pathname).to.equal('schema/array.js');
 
     });
 
@@ -102,8 +106,10 @@ describe('LibDoc', () => {
       expect(definitions['dir/test'].description).to.equal('');
       expect(definitions['dir/sub'].description).to.equal('Test function');
       expect(definitions['dir/sub/test'].description).to.equal('');
-      expect(definitions['schema/schema'].description).to.equal('Test Schema Input');
-      expect(definitions['schema/schema_optional'].description).to.equal('Test Optional Schema Input');
+      expect(definitions['schema/basic'].description).to.equal('Test Schema Input');
+      expect(definitions['schema/optional'].description).to.equal('Test Optional Schema Input');
+      expect(definitions['schema/nested'].description).to.equal('Test Nested Schema Input');
+      expect(definitions['schema/array'].description).to.equal('Test Array Schema Input');
 
     });
 
@@ -117,8 +123,10 @@ describe('LibDoc', () => {
       expect(definitions['dir/test'].context).to.exist;
       expect(definitions['dir/sub'].context).to.equal(null);
       expect(definitions['dir/sub/test'].context).to.exist;
-      expect(definitions['schema/schema'].context).to.equal(null);
-      expect(definitions['schema/schema_optional'].context).to.equal(null);
+      expect(definitions['schema/basic'].context).to.equal(null);
+      expect(definitions['schema/optional'].context).to.equal(null);
+      expect(definitions['schema/nested'].context).to.equal(null);
+      expect(definitions['schema/array'].context).to.equal(null);
 
     });
 
@@ -131,8 +139,10 @@ describe('LibDoc', () => {
       expect(definitions['dir/test'].returns.description).to.equal('');
       expect(definitions['dir/sub'].returns.description).to.equal('A return description!');
       expect(definitions['dir/sub/test'].returns.description).to.equal('');
-      expect(definitions['schema/schema'].returns.description).to.equal('');
-      expect(definitions['schema/schema_optional'].returns.description).to.equal('');
+      expect(definitions['schema/basic'].returns.description).to.equal('');
+      expect(definitions['schema/optional'].returns.description).to.equal('');
+      expect(definitions['schema/nested'].returns.description).to.equal('');
+      expect(definitions['schema/array'].returns.description).to.equal('');
 
     });
 
@@ -145,8 +155,10 @@ describe('LibDoc', () => {
       expect(definitions['dir/test'].returns.type).to.equal('any');
       expect(definitions['dir/sub'].returns.type).to.equal('boolean');
       expect(definitions['dir/sub/test'].returns.type).to.equal('any');
-      expect(definitions['schema/schema'].returns.type).to.equal('string');
-      expect(definitions['schema/schema_optional'].returns.type).to.equal('string');
+      expect(definitions['schema/basic'].returns.type).to.equal('string');
+      expect(definitions['schema/optional'].returns.type).to.equal('string');
+      expect(definitions['schema/nested'].returns.type).to.equal('string');
+      expect(definitions['schema/array'].returns.type).to.equal('string');
 
     });
 
@@ -160,8 +172,10 @@ describe('LibDoc', () => {
       expect(definitions['dir/test'].charge).to.equal(1);
       expect(definitions['dir/sub'].charge).to.equal(19);
       expect(definitions['dir/sub/test'].charge).to.equal(1);
-      expect(definitions['schema/schema'].charge).to.equal(1);
-      expect(definitions['schema/schema_optional'].charge).to.equal(1);
+      expect(definitions['schema/basic'].charge).to.equal(1);
+      expect(definitions['schema/optional'].charge).to.equal(1);
+      expect(definitions['schema/nested'].charge).to.equal(1);
+      expect(definitions['schema/array'].charge).to.equal(1);
 
     });
 
@@ -185,8 +199,14 @@ describe('LibDoc', () => {
       expect(definitions['dir/sub'].keys[1]).to.equal('TEST_KEY2');
       expect(definitions['dir/sub/test'].keys).to.be.an('Array');
       expect(definitions['dir/sub/test'].keys).to.have.length(0);
-      expect(definitions['schema/schema'].keys).to.be.an('Array');
-      expect(definitions['schema/schema'].keys).to.have.length(0);
+      expect(definitions['schema/basic'].keys).to.be.an('Array');
+      expect(definitions['schema/basic'].keys).to.have.length(0);
+      expect(definitions['schema/optional'].keys).to.be.an('Array');
+      expect(definitions['schema/optional'].keys).to.have.length(0);
+      expect(definitions['schema/nested'].keys).to.be.an('Array');
+      expect(definitions['schema/nested'].keys).to.have.length(0);
+      expect(definitions['schema/array'].keys).to.be.an('Array');
+      expect(definitions['schema/array'].keys).to.have.length(0);
 
     });
 
@@ -313,9 +333,9 @@ describe('LibDoc', () => {
 
     });
 
-    it('Should read "schema/schema" parameters', () => {
+    it('Should read "schema/basic" parameters', () => {
 
-      let params = definitions['schema/schema'].params;
+      let params = definitions['schema/basic'].params;
       expect(params.length).to.equal(3);
       expect(params[0].name).to.equal('before');
       expect(params[0].type).to.equal('string');
@@ -342,17 +362,16 @@ describe('LibDoc', () => {
 
     });
 
-    it('Should read "schema/schema_optional" parameters', () => {
+    it('Should read "schema/optional" parameters', () => {
 
-      let params = definitions['schema/schema_optional'].params;
+      let params = definitions['schema/optional'].params;
       expect(params.length).to.equal(3);
+
       expect(params[0].name).to.equal('before');
       expect(params[0].defaultValue).to.equal(null);
       expect(params[0].type).to.equal('string');
       expect(params[0].description).to.equal('');
-      expect(params[2].name).to.equal('after');
-      expect(params[2].type).to.equal('string');
-      expect(params[2].description).to.equal('');
+
       expect(params[1].name).to.equal('obj');
       expect(params[1].type).to.equal('object');
       expect(params[1].description).to.equal('');
@@ -372,6 +391,128 @@ describe('LibDoc', () => {
       expect(params[1].schema[2].schema[1].type).to.equal('string');
       expect(params[1].schema[3].name).to.equal('timestamp');
       expect(params[1].schema[3].type).to.equal('number');
+
+      expect(params[2].name).to.equal('after');
+      expect(params[2].type).to.equal('string');
+      expect(params[2].description).to.equal('');
+
+    });
+
+    it('Should read "schema/nested" parameters', () => {
+
+      let params = definitions['schema/nested'].params;
+
+      expect(params).to.deep.equal([
+        {
+          name: 'before',
+          type: 'string',
+          description: ''
+        },
+        {
+          name: 'obj',
+          type: 'object',
+          description: '',
+          schema: [
+            {
+              name: 'str',
+              type: 'string',
+              description: ''
+            },
+            {
+              name: 'bool',
+              type: 'boolean',
+              description: ''
+            },
+            {
+              name: 'obj',
+              type: 'object',
+              description: '',
+              schema: [
+                {
+                  name: 'str',
+                  type: 'string',
+                  description: ''
+                },
+                {
+                  name: 'obj',
+                  type: 'object',
+                  description: '',
+                  schema: [
+                    {
+                      name: 'str',
+                      type: 'string',
+                      description: ''
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              name: 'num',
+              type: 'number',
+              description: ''
+            }
+          ]
+        },
+        {
+          name: 'after',
+          type: 'string',
+          description: ''
+        }
+      ]);
+
+    });
+
+    it('Should read "schema/array" parameters', () => {
+
+      let params = definitions['schema/array'].params;
+
+      expect(params).to.deep.equal([
+        {
+          name: 'arr1',
+          type: 'array',
+          description: '',
+          schema: [
+            {
+              name: 'str',
+              type: 'string',
+              description: ''
+            }
+          ]
+        },
+        {
+          name: 'arr2',
+          type: 'array',
+          description: '',
+          schema: [
+            {
+              name: 'obj',
+              type: 'object',
+              description: '',
+              schema: [
+                {
+                  name: 'str',
+                  type: 'string',
+                  description: ''
+                },
+                {
+                  name: 'obj',
+                  type: 'object',
+                  description: '',
+                  schema: [
+                    {
+                      name: 'str',
+                      type: 'string',
+                      description: ''
+                    },
+
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]);
 
     });
 
@@ -663,7 +804,7 @@ describe('LibDoc', () => {
         type: 'buffer'
       });
       expect(types.introspect({a: 'a', b: 'b', c: null, d: 4})).to.deep.equal({
-        type: 'object', 
+        type: 'object',
         schema: [{
           name: 'a',
           type: 'string',
@@ -714,7 +855,7 @@ describe('LibDoc', () => {
           tf: true
         })
       ).to.deep.equal({
-        type: 'object', 
+        type: 'object',
         schema: [{
           name: 'hello',
           type: 'string',
