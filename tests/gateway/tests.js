@@ -1191,6 +1191,114 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should reject an nested array that doesn\'t map to Schema', done => {
+    request('POST', {}, '/schema_rejection_nested_array/', {
+      users: [
+        { username: 'steve', posts: [{ title: 't', body: 'b' }] },
+        { posts: [{ title: 't', body: 'b' }] }
+      ]
+    },
+      (err, res, result) => {
+
+        expect(err).to.not.exist;
+        expect(res.statusCode).to.equal(400);
+        expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+        expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+        expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+        expect(result.error).to.exist;
+        expect(result.error.type).to.equal('ParameterError');
+        expect(result.error.details).to.exist;
+        expect(result.error.details.users).to.exist;
+        expect(result.error.details.users.expected).to.exist;
+        expect(result.error.details.users.expected.type).to.equal('array');
+        expect(result.error.details.users.expected.schema).to.deep.equal([
+          {
+            name: 'user',
+            type: 'object',
+            description: 'a user',
+            schema: [
+              {
+                name: 'username',
+                type: 'string',
+                description: ''
+              },
+              {
+                name: 'posts',
+                type: 'array',
+                description: '',
+                schema: [
+                  {
+                    name: 'post',
+                    type: 'object',
+                    description: '',
+                    schema: [
+                      {
+                        name: 'title',
+                        type: 'string',
+                        description: ''
+                      },
+                      {
+                        name: 'body',
+                        type: 'string',
+                        description: ''
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]);
+        expect(result.error.details.users.actual).to.deep.equal({
+          type: 'array',
+          value: [
+            {
+              posts: [
+                {
+                  body: 'b',
+                  title: 't'
+                }
+              ],
+              username: 'steve'
+            },
+            {
+              posts: [
+                {
+                  body: 'b',
+                  title: 't'
+                }
+              ]
+            }
+          ]
+        });
+        done();
+
+      });
+  });
+
+  it('Should accept a nested array that correctly maps to Schema', done => {
+    request('POST', {}, '/schema_rejection_nested_array/', {
+      users: [
+        { username: 'steve', posts: [{ title: 't', body: 'b' }] },
+        { username: 'steve2', posts: [{ title: 't', body: 'b' }] }
+      ]
+    },
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.deep.equal( [
+        { username: 'steve', posts: [{ title: 't', body: 'b' }] },
+        { username: 'steve2', posts: [{ title: 't', body: 'b' }] }
+      ]);
+      done();
+
+    });
+  });
+
   it('Should reject an array that doesn\'t map to a Schema for an array of numbers', done => {
     request('POST', {}, '/schema_rejection_number_array/', {
       userIds: ['alpha', 'beta']
@@ -1275,7 +1383,7 @@ module.exports = (expect) => {
   });
 
   it('Should accept a request without the optional param', done => {
-    request('POST', {}, '/optional_schema_params/', {},
+    request('POST', {}, '/schema_optional_params/', {},
     (err, res, result) => {
 
       expect(err).to.not.exist;
@@ -1287,7 +1395,7 @@ module.exports = (expect) => {
   });
 
   it('Should accept a request without the optional param field', done => {
-    request('POST', {}, '/optional_schema_params/', {obj: {name: 'steve'}},
+    request('POST', {}, '/schema_optional_params/', {obj: {name: 'steve'}},
     (err, res, result) => {
 
       expect(err).to.not.exist;
@@ -1299,7 +1407,7 @@ module.exports = (expect) => {
   });
 
   it('Should accept a request with the optional param field set to null', done => {
-    request('POST', {}, '/optional_schema_params/', {obj: {name: 'steve', enabled: null}},
+    request('POST', {}, '/schema_optional_params/', {obj: {name: 'steve', enabled: null}},
     (err, res, result) => {
 
       expect(err).to.not.exist;
@@ -1311,7 +1419,7 @@ module.exports = (expect) => {
   });
 
   it('Should accept a request with the optional param field', done => {
-    request('POST', {}, '/optional_schema_params/', {obj: {name: 'steve', enabled: true}},
+    request('POST', {}, '/schema_optional_params/', {obj: {name: 'steve', enabled: true}},
     (err, res, result) => {
 
       expect(err).to.not.exist;
@@ -1441,6 +1549,18 @@ module.exports = (expect) => {
 
   it('Should successfully return a schema with a default set to 0', done => {
     request('POST', {}, '/stripe/', {id: '0'},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      done();
+
+    });
+  });
+
+  it('Should successfully return a schema with an array', done => {
+    request('POST', {}, '/giphy/', {query: 'q'},
     (err, res, result) => {
 
       expect(err).to.not.exist;
