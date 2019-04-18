@@ -1571,6 +1571,30 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should successfully return a default parameter after passing in null', done => {
+    request('POST', {}, '/null_default_param/', {name: null},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.equal('default');
+      done();
+
+    });
+  });
+
+  it('Should successfully return a default parameter after passing in undefined', done => {
+    request('POST', {}, '/null_default_param/', {name: undefined},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.equal('default');
+      done();
+
+    });
+  });
+
   after(() => FaaSGateway.close());
 
 };
