@@ -56,7 +56,7 @@ describe('LibDoc', () => {
 
     it('Should read all functions correctly', () => {
 
-      expect(Object.keys(definitions).length).to.equal(13);
+      expect(Object.keys(definitions).length).to.equal(16);
       expect(definitions).to.haveOwnProperty('');
       expect(definitions).to.haveOwnProperty('test');
       expect(definitions).to.haveOwnProperty('returns');
@@ -69,6 +69,8 @@ describe('LibDoc', () => {
       expect(definitions).to.haveOwnProperty('schema/optional');
       expect(definitions).to.haveOwnProperty('schema/nested');
       expect(definitions).to.haveOwnProperty('schema/array');
+      expect(definitions).to.haveOwnProperty('enum');
+      expect(definitions).to.haveOwnProperty('enum_return');
 
     });
 
@@ -79,7 +81,7 @@ describe('LibDoc', () => {
 
     });
 
-    it('Should have correct filenames', () => {
+    it.only('Should have correct filenames', () => {
 
       expect(definitions[''].pathname).to.equal('__main__.js');
       expect(definitions['test'].pathname).to.equal('test.js');
@@ -93,6 +95,8 @@ describe('LibDoc', () => {
       expect(definitions['schema/optional'].pathname).to.equal('schema/optional.js');
       expect(definitions['schema/nested'].pathname).to.equal('schema/nested.js');
       expect(definitions['schema/array'].pathname).to.equal('schema/array.js');
+      expect(definitions['enum'].pathname).to.equal('enum.js');
+      expect(definitions['enum_return'].pathname).to.equal('enum_return.js');
 
     });
 
@@ -110,6 +114,8 @@ describe('LibDoc', () => {
       expect(definitions['schema/optional'].description).to.equal('Test Optional Schema Input');
       expect(definitions['schema/nested'].description).to.equal('Test Nested Schema Input');
       expect(definitions['schema/array'].description).to.equal('Test Array Schema Input');
+      expect(definitions['enum'].description).to.equal('Test Enum');
+      expect(definitions['enum_return'].description).to.equal('Test Enum Returns');
 
     });
 
@@ -127,6 +133,8 @@ describe('LibDoc', () => {
       expect(definitions['schema/optional'].context).to.equal(null);
       expect(definitions['schema/nested'].context).to.equal(null);
       expect(definitions['schema/array'].context).to.equal(null);
+      expect(definitions['enum'].context).to.equal(null);
+      expect(definitions['enum_return'].context).to.exist;
 
     });
 
@@ -143,6 +151,8 @@ describe('LibDoc', () => {
       expect(definitions['schema/optional'].returns.description).to.equal('');
       expect(definitions['schema/nested'].returns.description).to.equal('');
       expect(definitions['schema/array'].returns.description).to.equal('');
+      expect(definitions['enum'].returns.description).to.equal('');
+      expect(definitions['enum_return'].returns.description).to.equal('a or b');
 
     });
 
@@ -159,6 +169,8 @@ describe('LibDoc', () => {
       expect(definitions['schema/optional'].returns.type).to.equal('string');
       expect(definitions['schema/nested'].returns.type).to.equal('string');
       expect(definitions['schema/array'].returns.type).to.equal('string');
+      expect(definitions['enum'].returns.type).to.equal('any');
+      expect(definitions['enum_return'].returns.type).to.equal('enum');
 
     });
 
@@ -176,6 +188,8 @@ describe('LibDoc', () => {
       expect(definitions['schema/optional'].charge).to.equal(1);
       expect(definitions['schema/nested'].charge).to.equal(1);
       expect(definitions['schema/array'].charge).to.equal(1);
+      expect(definitions['enum'].charge).to.equal(1);
+      expect(definitions['enum_return'].charge).to.equal(1);
 
     });
 
@@ -207,6 +221,10 @@ describe('LibDoc', () => {
       expect(definitions['schema/nested'].keys).to.have.length(0);
       expect(definitions['schema/array'].keys).to.be.an('Array');
       expect(definitions['schema/array'].keys).to.have.length(0);
+      expect(definitions['enum'].keys).to.be.an('Array');
+      expect(definitions['enum'].keys).to.have.length(0);
+      expect(definitions['enum_return'].keys).to.be.an('Array');
+      expect(definitions['enum_return'].keys).to.have.length(0);
 
     });
 
@@ -524,6 +542,33 @@ describe('LibDoc', () => {
 
     });
 
+    it('Should read "enum" parameters', () => {
+
+      let params = definitions['enum'].params;
+
+      expect(params).to.deep.equal([
+        {
+          name: 'before',
+          type: 'any',
+          defaultValue: null,
+          description: ''
+        },
+        {
+          name: 'basic',
+          type: 'enum',
+          description: 'some basic types',
+          members: [['num', 0], ['double', '1'], ['float', 1.2], ['numstr', '123']]
+        },
+        {
+          name: 'after',
+          type: 'any',
+          defaultValue: null,
+          description: ''
+        }
+      ]);
+
+    });
+
   });
 
   describe('Types', () => {
@@ -669,6 +714,43 @@ describe('LibDoc', () => {
 
       expect(types.validate('any', null)).to.equal(true);
       expect(types.validate('any', null, true)).to.equal(true);
+
+    });
+
+    it('should validate "enum"', () => {
+
+      let members = [
+        ['sunday', 0],
+        ['1', 1],
+        ['1.1', 2],
+        ['1e300', 3],
+        ['true', 4],
+        ['{}', 5],
+        ['[]', 6],
+        ['new Buffer(0)', 7],
+        ['null', 8]
+      ];
+
+      expect(types.validate('enum', 'sunday', false, members)).to.equal(true);
+      expect(types.validate('enum', '1', false, members)).to.equal(true);
+      expect(types.validate('enum', '1.1', false, members)).to.equal(true);
+      expect(types.validate('enum', '1e300', false, members)).to.equal(true);
+      expect(types.validate('enum', 'true', false, members)).to.equal(true);
+      expect(types.validate('enum', '{}', false, members)).to.equal(true);
+      expect(types.validate('enum', '[]', false, members)).to.equal(true);
+      expect(types.validate('enum', 'new Buffer(0)', false, members)).to.equal(true);
+      expect(types.validate('enum', 'null', false, members)).to.equal(true);
+      expect(types.validate('enum', null, true, members)).to.equal(true);
+
+      expect(types.validate('enum', 'abc', false, members)).to.equal(false);
+      expect(types.validate('enum', 1, false, members)).to.equal(false);
+      expect(types.validate('enum', 1.1, false, members)).to.equal(false);
+      expect(types.validate('enum', 1e300, false, members)).to.equal(false);
+      expect(types.validate('enum', true, false, members)).to.equal(false);
+      expect(types.validate('enum', {}, false, members)).to.equal(false);
+      expect(types.validate('enum', [], false, members)).to.equal(false);
+      expect(types.validate('enum', new Buffer(0), false, members)).to.equal(false);
+      expect(types.validate('enum', null, false, members)).to.equal(false);
 
     });
 

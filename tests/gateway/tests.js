@@ -1571,6 +1571,187 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should reject a request without an proper enum member', done => {
+    request('POST', {}, '/enum/', { day: 'funday' }, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      expect(result).to.exist;
+      expect(result.error).to.exist;
+      expect(result.error.type).to.exist;
+      expect(result.error.type).to.equal('ParameterError');
+      expect(result.error.details).to.exist;
+      expect(result.error.details).to.deep.equal({
+        day: {
+          message: 'invalid value: "funday" (string), expected (enum)',
+          invalid: true,
+          expected: {
+            type: 'enum',
+            members: [
+              ['sunday', 0],
+              ['monday', '0'],
+              ['tuesday', { a: 1, b: 2 }],
+              ['wednesday', 3],
+              ['thursday', [1, 2, 3]],
+              ['friday', 5.4321],
+              ['saturday', 6]
+            ]
+          },
+          actual: {
+            value: 'funday',
+            type: 'string'
+          }
+        }
+      });
+      done();
+
+    });
+  });
+
+  it('Should successfully return an enum varient (number)', done => {
+    request('POST', {}, '/enum/', { day: 'sunday' },
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result).to.equal(0);
+      done();
+
+    });
+  });
+
+  it('Should successfully return an enum varient (string)', done => {
+    request('POST', {}, '/enum/', { day: 'monday' },
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result).to.equal("0");
+      done();
+
+    });
+  });
+
+  it('Should successfully return an enum varient (object)', done => {
+    request('POST', {}, '/enum/', { day: 'tuesday' },
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result).to.deep.equal({a: 1, b: 2});
+      done();
+
+    });
+  });
+
+
+  it('Should successfully return an enum varient (array)', done => {
+    request('POST', {}, '/enum/', { day: 'thursday' },
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result).to.deep.equal([1, 2, 3]);
+      done();
+
+    });
+  });
+
+  it('Should successfully return an enum varient (float)', done => {
+    request('POST', {}, '/enum/', { day: 'friday' },
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result).to.equal(5.4321);
+      done();
+
+    });
+  });
+
+  it('Should return a default enum varient', done => {
+    request('POST', {}, '/enum_default/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result).to.equal(0);
+      done();
+
+    });
+  });
+
+  it('Should return an enum using the context param', done => {
+    request('POST', {}, '/enum_context/', { thingA: 'a', thingB: 'c' },
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result).to.deep.equal({
+        a: 0,
+        b: {
+          c: 1,
+          d: [1, 2, 3]
+        },
+        c: '4',
+        d: 5.4321
+      });
+      done();
+
+    });
+  });
+
+  it('Should return an enum varient when the return type is enum', done => {
+    request('POST', {}, '/enum_return/', { a: 'a' },
+    (err, res, result) => {
+      console.log(result);
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result).to.equal(0);
+      done();
+
+    });
+  });
+
+  it('Should reject returning an invalid enum varient  when the return type is enum', done => {
+    request('POST', {}, '/enum_return/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(502);
+      expect(result).to.exist;
+      expect(result.error).to.deep.equal({
+        type: 'ValueError',
+        message: 'The value returned by the function did not match the specified type',
+        details: {
+          returns: {
+            message: 'invalid return value: "not correct" (string), expected (enum)',
+            invalid: true,
+            expected: {
+              type: 'enum',
+              members: [['a', 0], ['b', [1, 2, 3]]]
+            },
+            actual: {
+              value: 'not correct',
+              type: 'string'
+            }
+          }
+        }
+      });
+      done();
+
+    });
+  });
+
   after(() => FaaSGateway.close());
 
 };
