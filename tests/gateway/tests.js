@@ -1711,7 +1711,6 @@ module.exports = (expect) => {
   it('Should return an enum varient when the return type is enum', done => {
     request('POST', {}, '/enum_return/', { a: 'a' },
     (err, res, result) => {
-      console.log(result);
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -1747,6 +1746,30 @@ module.exports = (expect) => {
           }
         }
       });
+      done();
+
+    });
+  });
+
+  it('Should return null from a function with a nullable return value', done => {
+    request('POST', {}, '/nullable_return/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.equal(null);;
+      done();
+
+    });
+  });
+
+  it('Should return a value from a function with a nullable return value', done => {
+    request('POST', {}, '/nullable_return/', {a: 'hello'},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.equal('hello');;
       done();
 
     });
