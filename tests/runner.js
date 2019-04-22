@@ -764,6 +764,78 @@ describe('LibDoc', () => {
 
     });
 
+    it('Should validate an "object" with a schema that has a "enum" member', () => {
+
+      expect(
+        types.validate('object', { offset: '0 minutes' }, false, [
+          {
+            name: 'offset',
+            type: 'enum',
+            description: `How many minutes past the start of each hour you would like your API to execute`,
+            members: [
+              ['0 minutes', 0],
+              ['15 minutes', 60 * 15],
+              ['30 minutes', 60 * 30],
+              ['45 minutes', 60 * 45]
+            ]
+          }
+        ])
+      ).to.equal(true);
+
+      expect(
+        types.validate('object', { offset: '0 min' }, false, [
+          {
+            name: 'offset',
+            type: 'enum',
+            description: `How many minutes past the start of each hour you would like your API to execute`,
+            members: [
+              ['0 minutes', 0],
+              ['15 minutes', 60 * 15],
+              ['30 minutes', 60 * 30],
+              ['45 minutes', 60 * 45]
+            ]
+          }
+        ])
+      ).to.equal(false);
+
+    });
+
+    it.only('Should validate an "array" with a schema that has a "enum" member', () => {
+
+      expect(
+        types.validate('array', ['0 minutes'], false, [
+          {
+            name: 'offset',
+            type: 'enum',
+            description: `How many minutes past the start of each hour you would like your API to execute`,
+            members: [
+              ['0 minutes', 0],
+              ['15 minutes', 60 * 15],
+              ['30 minutes', 60 * 30],
+              ['45 minutes', 60 * 45]
+            ]
+          }
+        ])
+      ).to.equal(true);
+
+      expect(
+        types.validate('array', ['0 min'], false, [
+          {
+            name: 'offset',
+            type: 'enum',
+            description: `How many minutes past the start of each hour you would like your API to execute`,
+            members: [
+              ['0 minutes', 0],
+              ['15 minutes', 60 * 15],
+              ['30 minutes', 60 * 30],
+              ['45 minutes', 60 * 45]
+            ]
+          }
+        ])
+      ).to.equal(false);
+
+    });
+
     it('should validate "object" with schema', () => {
 
       expect(types.validate('object', {})).to.equal(true);
