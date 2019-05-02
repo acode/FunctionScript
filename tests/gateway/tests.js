@@ -1814,6 +1814,36 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should successfully return an object with a schema that has an enum varient', done => {
+    request(
+      'POST',
+      {},
+      '/enum_schema/',
+      {
+        before: 'before',
+        valueRange: {
+          range: 'a range',
+          majorDimension: 'ROWS',
+          values: []
+        },
+        after: 'after',
+      },
+      (err, res, result) => {
+
+        expect(err).to.not.exist;
+        expect(res.statusCode).to.equal(200);
+        expect(result).to.exist;
+        expect(result).to.deep.equal({
+          range: 'a range',
+          majorDimension: 'ROWS',
+          values: []
+        });
+        done();
+
+      }
+    );
+  });
+
   after(() => FaaSGateway.close());
 
 };
