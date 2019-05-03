@@ -56,7 +56,7 @@ describe('LibDoc', () => {
 
     it('Should read all functions correctly', () => {
 
-      expect(Object.keys(definitions).length).to.equal(17);
+      expect(Object.keys(definitions).length).to.equal(18);
       expect(definitions).to.haveOwnProperty('');
       expect(definitions).to.haveOwnProperty('test');
       expect(definitions).to.haveOwnProperty('returns');
@@ -534,6 +534,51 @@ describe('LibDoc', () => {
 
     });
 
+    it('Should read "enum_schema" parameters', () => {
+
+      let params = definitions['enum_schema'].params;
+
+      expect(params).to.deep.equal([
+        {
+          name: 'before',
+          type: 'string',
+          description: 'a param'
+        },
+        {
+          name: 'valueRange',
+          type: 'object',
+          description: 'The data to be inserted',
+          schema: [
+            {
+              type: 'string',
+              name: 'range',
+              description: ''
+            },
+            {
+              type: 'enum',
+              name: 'majorDimension',
+              description: '',
+              members: [
+                ['ROWS', "ROWS"],
+                ['COLUMNS', "COLUMNS"]
+              ]
+            },
+            {
+              type: 'array',
+              name: 'values',
+              description: 'An array of arrays, the outer array representing all the data and each inner array representing a major dimension. Each item in the inner array corresponds with one cell'
+            }
+          ]
+        },
+        {
+          name: 'after',
+          type: 'string',
+          description: 'a param'
+        }
+      ]);
+
+    });
+
     it('Should had a named return value and description', () => {
 
       let definition = definitions['named_return'];
@@ -800,7 +845,7 @@ describe('LibDoc', () => {
 
     });
 
-    it.only('Should validate an "array" with a schema that has a "enum" member', () => {
+    it('Should validate an "array" with a schema that has a "enum" member', () => {
 
       expect(
         types.validate('array', ['0 minutes'], false, [
