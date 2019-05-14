@@ -1844,6 +1844,19 @@ module.exports = (expect) => {
     );
   });
 
+  it('Should return a default enum varient set to null', done => {
+    request('POST', {}, '/enum_null/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.equal(null);
+      done();
+
+    });
+  });
+
+
   after(() => FaaSGateway.close());
 
 };
