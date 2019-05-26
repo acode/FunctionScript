@@ -1,7 +1,7 @@
 {
-  "name": "faaslang",
+  "name": "functionscript",
   "version": "0.5.3",
-  "description": "FaaSlang defines FaaS execution semantics and type-safety mechanisms",
+  "description": "A language and specification for turning JavaScript functions into typed HTTP APIs",
   "author": "Keith Horwood <keithwhor@gmail.com>",
   "main": "index.js",
   "scripts": {
