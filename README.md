@@ -2,8 +2,8 @@
 
 ![FaaSlang Logo](/images/faaslang-logo-small.png)
 
-![travis-ci build](https://travis-ci.org/faaslang/faaslang.svg?branch=master)
-![npm version](https://badge.fury.io/js/faaslang.svg)
+![travis-ci build](https://travis-ci.org/FunctionScript/FunctionScript.svg?branch=master)
+![npm version](https://badge.fury.io/js/functionscript.svg)
 
 ## Function as a Service Language
 
