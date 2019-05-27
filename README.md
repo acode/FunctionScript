@@ -24,9 +24,14 @@ These requests are made primarily over HTTP: Hypertext Transfer Protocol. Howeve
 little to no "hypertext" is actually sent or received, these use cases have emerged
 in an *ad hoc* fashion as a testament to the power of the internet.
 
-FunctionScript allows teams to be able to rapidly deliver Stripe-quality APIs
-in a fraction of the time without requiring any additional tooling.
-It has been developed by the team at Polybit Inc., responsible for [Standard Library](https://stdlib.com).
+By creating API development standards as part of a **language specification**
+instead of a framework, FunctionScript truly treats APIs as a base primitive of
+software development instead of an afterthought. This allows teams to be able to
+be able to rapidly deliver high-quality APIs in a fraction of the time without
+requiring any additional tooling.
+
+FunctionScript has been developed by the team at Polybit Inc., responsible for
+[Standard Library](https://stdlib.com).
 Ongoing development is, in part, funded by both [Stripe](https://stripe.com),
 [Slack](https://slack.com) as venture investments in the parent organization.
 
