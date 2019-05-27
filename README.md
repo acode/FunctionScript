@@ -45,7 +45,7 @@ requiring any additional tooling.
 
 FunctionScript has been developed by the team at Polybit Inc., responsible for
 [Standard Library](https://stdlib.com).
-Ongoing development is, in part, funded by both [Stripe](https://stripe.com),
+Ongoing development is, in part, funded by both [Stripe](https://stripe.com) and
 [Slack](https://slack.com) as venture investments in the parent organization.
 
 # Table of Contents
