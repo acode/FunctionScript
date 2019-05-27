@@ -16,9 +16,13 @@ like and how it behaves - including type-safety mechanisms.
 
 You can start building with FunctionScript **immediately** using
 [Code on Standard Library](https://code.stdlib.com/?sample=t&filename=functions/__main__.js), right in
-your web browser (note that in order to use this tool you must have a registered account on [stdlib.com](https://stdlib.com)):
+your web browser. You can see a demo of testing the generated API below.
 
 https://code.stdlib.com/?sample=t&filename=functions/__main__.js
+
+![Demo](/images/demo-api.gif)
+
+**Note:** *In order to use this tool you must have a registered account on [stdlib.com](https://stdlib.com).*
 
 ### Background
 
@@ -551,9 +555,11 @@ the following companies have invested countless hours in and provided financial
 support which has enabled the R&D that has made this project possible.
 
 [Stripe](https://stripe.com), the global leader in online payments
+
 [![Stripe Logo](/images/stripe-logo-300.png)](https://stripe.com)
 
 [Slack](https://slack.com), the online platform for work and communication
+
 [![Slack Logo](/images/slack-logo-300.png)](https://slack.com)
 
 ## Special Thanks
@@ -580,5 +586,5 @@ and FunctionScript would not be possible without any of them.
 # Notes
 
 The software contained within this repository has been developed and is
-copyrighted by the [Standard Library](https://stdlib.com) Team at Polybit Inc. and is
-MIT licensed.
+copyrighted by the [Standard Library](https://stdlib.com) Team at Polybit Inc.
+and is MIT licensed.
