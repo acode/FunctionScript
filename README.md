@@ -109,7 +109,6 @@ Ongoing development is, in part, funded by both [Stripe](https://stripe.com) and
 # Table of Contents
 
 1. [Introduction](#introduction)
-1. [What is FunctionScript?](#what-is-functionscript)
 1. [Why FunctionScript?](#why-functionscript)
 1. [Specification](#specification)
    1. [FunctionScript Resource Definition](#functionscript-resource-definition)
