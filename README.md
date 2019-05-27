@@ -1,50 +1,49 @@
-# FaaSlang
+# FunctionScript
 
-![FaaSlang Logo](/images/faaslang-logo-small.png)
+![FunctionScript Logo](/images/fs-wordmark.png)
 
 ![travis-ci build](https://travis-ci.org/FunctionScript/FunctionScript.svg?branch=master)
 ![npm version](https://badge.fury.io/js/functionscript.svg)
 
-## Function as a Service Language
+## Turn JavaScript Functions into Typed HTTP APIs
 
-The following is a working draft of the latest FaaSlang specification, version
-**0.3.x**, dated **February 12th, 2018**.
+FunctionScript is a language and specification for turning JavaScript
+functions into typed HTTP APIs. **It is not replacement for JavaScript** in the
+same way [TypeScript](https://github.com/microsoft/TypeScript) is,
+it simply allows JavaScript (Node.js) functions to be
+seamlessly exported as HTTP APIs and defines what the HTTP interface will look
+like and how it behaves - including type-safety mechanisms.
 
-FaaSlang is a simple **open specification** intended to define semantics and
-implementation details around FaaS ("serverless") functions, gateways and
-client interfaces (requests from any language / SDK). It has been designed with
-the goal of decreasing organizational complexity around FaaS microservices by
-encouraging simple conventions for how we document and interface with them,
-**including type safety mechanisms**. In the same way GraphQL is intended to
-provide opinions and a specification for the way developers interface with
-nested relational (graph) data, FaaSlang does the same for FaaS resources.
+The impetus for creating FunctionScript is simple: it stems from the initial
+vision of [Standard Library](https://stdlib.com). We believe the internet is
+missing a base primitive - the API. Daily, computer systems and developers around
+the planet make trillions of requests to perform specific tasks: process
+credit card payments with [Stripe](https://stripe.com), send team messages via
+[Slack](https://slack.com), create SMS messages with [Twilio](https://twilio.com).
+These requests are made primarily over HTTP: Hypertext Transfer Protocol. However,
+little to no "hypertext" is actually sent or received, these use cases have emerged
+in an *ad hoc* fashion as a testament to the power of the internet.
 
-If you use a FaaSlang-compliant deployment and API gateway (for example, as
-  used by https://stdlib.com) you get the following benefits over traditional
-  gateways for serverless functions:
-
-- Standard Calling Conventions (HTTP)
-- Type Safety
-- Enforced Documentation
-- Background Execution (immediately return response, run logic as a worker)
-
-And that's just the beginning. All of the goodies you're looking for like
-rate limiting, authentication, etc. are not part of the FaaSlang specification
-but can easily be added to the example provided in this repository.
+FunctionScript allows teams to be able to rapidly deliver Stripe-quality APIs
+in a fraction of the time without requiring any additional tooling.
+It has been developed by the team at Polybit Inc., responsible for [Standard Library](https://stdlib.com).
+Ongoing development is, in part, funded by both [Stripe](https://stripe.com),
+[Slack](https://slack.com) as venture investments in the parent organization.
 
 # Table of Contents
 
 1. [Introduction](#introduction)
-1. [Why FaaSlang?](#why-faaslang)
+1. [What is FunctionScript?](#what-is-functionscript)
+1. [Why FunctionScript?](#why-functionscript)
 1. [Specification](#specification)
-   1. [FaaSlang Resource Definition](#faaslang-resource-definition)
+   1. [FunctionScript Resource Definition](#functionscript-resource-definition)
    1. [Context Definition](#context-definition)
    1. [Parameters](#parameters)
       1. [Constraints](#constraints)
       1. [Types](#types)
       1. [Type Conversion](#type-conversion)
       1. [Nullability](#nullability)
-   1. [FaaSlang Resource Requests](#faaslang-resource-requests)
+   1. [FunctionScript Resource Requests](#functionscript-resource-requests)
       1. [Context](#context)
       1. [Errors](#errors)
          1. [ClientError](#clienterror)
@@ -54,13 +53,17 @@ but can easily be added to the example provided in this repository.
          1. [FatalError](#fatalerror)
          1. [RuntimeError](#runtimeerror)
          1. [ValueError](#valueerror)
-1. [FaaSlang Server and Gateway: Implementation](#faaslang-server-and-gateway-implementation)
+1. [FunctionScript Server and Gateway: Implementation](#functionscript-server-and-gateway-implementation)
 1. [Acknowledgements](#acknowledgements)
 
-# What is FaaSlang?
+# What is FunctionScript?
 
-To put it simply, FaaSlang defines semantics and rules for a "serverless"
-function deployment and execution (API) gateway to turn this:
+To put it simply, FunctionScript defines semantics and rules for turning exported
+JavaScript (Node.js) functions into strongly-typed, HTTP-accessible web APIs.
+In order to use FunctionScript, you'd set up your own [FunctionScript Gateway](#functionscript-server-and-gateway-implementation) or you would use an existing FunctionScript-compliant service
+like [Standard Library](https://stdlib.com/).
+
+FunctionScript allows you to turn something like this...
 
 ```javascript
 // hello_world.js
@@ -68,18 +71,17 @@ function deployment and execution (API) gateway to turn this:
 /**
 * My hello world function!
 */
-module.exports = function (name = 'world', callback) {
+module.exports = (name = 'world') => {
 
-  callback(null, `hello ${name}`);
+  return `hello ${name}`;
 
 };
 ```
 
-Into an infinitely scalable web API (using "serverless" providers) that can
-be called over HTTP like this (GET):
+Into a web API that can be called over HTTP like this (GET):
 
 ```
-https://myhost.com/username/servicename/hello_world?name=joe
+https://$user.api.stdlib.com/service@dev/hello_world?name=joe
 ```
 
 Or like this (POST):
@@ -107,81 +109,52 @@ Or, when a type mismatch occurs (like `{"name":10}`):
 }
 ```
 
-# Why FaaSlang?
+## Why FunctionScript?
 
-The "serverless" space is growing rapidly, and as it grows, so do the toolchains
-required to keep up. Each infrastructure provider imposes its own
-standard and way of doing things around FaaS to the point we're relying on
-individual developers to pick and choose the best framework for deployment.
+You can break down the reason for the development of FunctionScript into a few
+key points:
 
-FaaSlang takes a different approach, and offers a specification for an API
-Gateway (and a reasonably robust, non-vendor-specific Node.js implementation of
-such) that acts as a way to "lock in" the way you and your team members
-deploy to and execute your "serverless" functions.
+- No true standards around APIs have ever been built or enforced in a rigorous
+  manner across the industry. We've built opinions around SOAP, REST and GraphQL
+  into frameworks and tools instead of language specifications.
 
-Take a current example of an AWS Lambda function **(A)**;
+- Companies like Stripe and Twilio which have built and enforced their own API
+  development paradigms internally have unlocked massive developer audiences in
+  short timeframes.
 
-```javascript
-exports.handler = (event, context, callback) => {
-  let myVar = event.myVar;
-  let requiredVar = event.requiredVar;
-  myVar = myVar === undefined ? 1 : myVar;
-  callback(null, 'Hello from Lambda!');
-};
-```
+- [Serverless computing](https://en.wikipedia.org/wiki/Serverless_computing),
+  specifically the Function-as-a-Service model of web-based computation has made
+  API development significantly more accessible.
 
-Or a Microsoft Azure function **(B)**;
+- JavaScript, specifically Node.js, is an ideal target for API development
+  standardization due to its accessibility (front-end and back-end), growth
+  trajectory, and flexibility.
 
-```javascript
-module.exports = function (context, req) {
-  let myVar = req.query.myVar || req.body && req.body.myVar;
-  let requiredVar = req.query.requiredVar || req.body && req.body.requiredVar;
-  myVar = myVar === undefined ? 1 : myVar;
-  context.res = {body: 'Hello from Microsoft Azure!'};
-  context.done();
-}
-```
+- As opposed to something like [TypeScript](https://github.com/microsoft/TypeScript),
+  FunctionScript *extends* JavaScript (specifically Node.js) in a non-breaking manner
+  to add Types around *only the HTTP interface*, strengthening the "weakest"
+  and least predictable link in the development chain: user input.
 
-FaaSlang instead defines the Node.js function footprint;
+With FunctionScript, it's our goal to develop a language specification for
+building APIs that automatically provides a number of necessary features without
+additional tooling:
 
-```javascript
-/**
-* @param {Number} myVar A number
-* @param {String} requiredVar must be a string!
-* @returns {String}
-*/
-module.exports = (myVar = 1, requiredVar, context, callback) => {
-  callback(null, 'Hello from FaaSlang-compliant service vendor.');
-};
-```
-
-Where **comments are used as part of the semantic definition** for type-safety
-(if they can't be inferred from defaults), expected parameters can be
-specifically defined, and you still have an optional `context` object for
-more robust execution (argument overloading, etc.)
-
-Here's what the current FaaS workflow looks like:
-
-![Current FaaS Workflow](/images/current-faas-workflow.jpg)
-
-And this is what a FaaSlang-enabled workflow looks like.
-
-![FaaSlang Workflow](/images/faaslang-workflow.jpg)
-
-FaaSlang is the result of tens of thousands of FaaS deployments, by thousands of
-developers, spread across a number of cloud service providers and the need to
-standardize our ability to organize and communicate with these functions.
+- Standardized API Calling Conventions (HTTP)
+- Type-Safety Mechanisms at the HTTP -> Code Interface
+- Automatically Generated API Documentation
 
 # Specification
 
-## FaaSlang Resource Definition
+## FunctionScript Resource Definition
 
-A FaaSlang definition is a `definition.json` file that respects the following
+A FunctionScript definition is a `definition.json` file that respects the following
 format.
 
 Given a function like this (filename `my_function.js`):
 
 ```javascript
+// my_function.js
+
 /**
 * This is my function, it likes the greek alphabet
 * @param {String} alpha Some letters, I guess
@@ -189,7 +162,7 @@ Given a function like this (filename `my_function.js`):
 * @param {Boolean} gamma True or false?
 * @returns {Object} some value
 */
-module.exports = async function my_function (alpha, beta = 2, gamma, context) {
+module.exports = async (alpha, beta = 2, gamma, context) => {
   /* your code */
 };
 ```
@@ -208,7 +181,6 @@ You would provide a function definition that looks like this:
     "mode": "info",
     "value": ""
   },
-  "charge": 1,
   "context": null,
   "params": [
     {
@@ -246,7 +218,6 @@ A definition must implement the following fields;
 | format | An object requiring a `language` field, along with any implementation details |
 | description | A brief description of what the function does, can be empty (`""`) |
 | bg | An object containing "mode" and "value" parameters specifying the behavior of function responses when executed in the background |
-| charge | An integer between 0 and 100 defining the cost (arbitrary units) to run this function, charged to authenticated users |
 | params | An array of `NamedParameter`s, representing function arguments
 | returns | A `Parameter` without a `defaultValue` representing function return value |
 
@@ -268,16 +239,16 @@ Parameters have the following format;
 | Field | Required | Definition |
 | ----- | -------- | ---------- |
 | name | NamedParameter Only | The name of the Parameter, must match `/[A-Z][A-Z0-9_]*/i` |
-| type | yes | A string representing a valid FaaSlang type |
+| type | yes | A string representing a valid FunctionScript type |
 | description | yes | A short description of the parameter, can be empty string (`""`) |
 | defaultValue | no | Must match the specified type, **if not provided this parameter is required** |
 
 ### Types
 
-As FaaSlang is intended to be polyglot, functions defined with it must have
+As FunctionScript is intended to be polyglot, functions defined with it must have
 a strongly typed signature. Not all types are guaranteed to be consumable in
 the same way in every language, and we will continue to define specifications
-for how each language should interface with FaaSlang types. At present,
+for how each language should interface with FunctionScript types. At present,
 the types are a limited superset of JSON values.
 
 | Type | Definition | Example Input Values (JSON) |
@@ -302,7 +273,7 @@ Otherwise, parameters provided to a function are expected to match their
 defined types. Requests made over HTTP via query parameters or POST data
 with type `application/x-www-form-urlencoded` will be automatically
 converted from strings to their respective expected types, when possible
-(see [FaaSlang Resource Requests](#faaslang-resource-requests) below):
+(see [FunctionScript Resource Requests](#functionscript-resource-requests) below):
 
 | Type | Conversion Rule |
 | ---- | --------------- |
@@ -325,14 +296,19 @@ if a default value is provided, the type is no longer nullable.
 
 ### Setting HTTP headers
 
-The FaaSlang specification is not intended to be solely used over HTTP, though
+The FunctionScript specification is not intended to be solely used over HTTP, though
 if used over HTTP with a provided callback method, **the third parameter passed
 to callback should be an Object representing HTTP Header key-value pairs**.
 
 For example, to return an image that's of type `image/png`...
 
 ```javascript
-module.exports = (imageName, callback) => {
+/**
+* Retrieves an image
+* @param {string} imageName The name of the image
+* @returns {object.http} image The result
+*/
+module.exports = (imageName) => {
 
   // fetch image, returns a buffer
   let png = imageName === 'cat' ?
@@ -341,7 +317,10 @@ module.exports = (imageName, callback) => {
 
   // Forces image/png over HTTP requests, default
   //  for buffer would otherwise be application/octet-stream
-  return callback(null, png, {'Content-Type': 'image/png'});
+  return {
+    headers: {'Content-Type': 'image/png'},
+    body: png
+  };
 
 };
 ```
@@ -350,9 +329,9 @@ You can use the third parameter **only when a callback ends the function**,
 i.e. *not for use with async functions*. This can be used to serve any type
 of content via HTTP, set cache details (E-Tag header), etc.
 
-## FaaSlang Resource Requests
+## FunctionScript Resource Requests
 
-FaaSlang-compliant requests *must* complete the following steps;
+FunctionScript-compliant requests *must* complete the following steps;
 
 1. Ensure the **Resource Definition** is valid and compliant, either on storage
     or accession.
@@ -393,10 +372,10 @@ FaaSlang-compliant requests *must* complete the following steps;
 
 ### Context
 
-Every function intended to be consumed via FaaSlang has the option to specify
+Every function intended to be consumed via FunctionScript has the option to specify
 an *optional* magic `context` parameter that receives vendor-specific
 information about the function execution context - for example, if consumed over
-HTTP, header details. FaaSlang definitions must specify whether or not they
+HTTP, header details. FunctionScript definitions must specify whether or not they
 consume a `context` object. Context objects are extensible but **MUST** contain
 the following fields;
 
@@ -408,7 +387,7 @@ the following fields;
 
 ### Errors
 
-Errors returned by FaaSlang-compliant services must follow the following JSON
+Errors returned by FunctionScript-compliant services must follow the following JSON
 format:
 
 ```json
@@ -503,7 +482,7 @@ two classifications of a ParameterError for a parameter; *required* and
 #### ValueError
 
 `ValueError`s are a result of your function returning an unexpected value
-  based on FaaSlang type-safety mechanisms. These **must** return status code
+  based on FunctionScript type-safety mechanisms. These **must** return status code
   `502` if over HTTP.
 
 `ValueError` looks like an *invalid* ParameterError, where the `details`
@@ -532,21 +511,21 @@ due to implementation issues on the part of the function developer.
 }
 ```
 
-# FaaSlang Server and Gateway: Implementation
+# FunctionScript Server and Gateway: Implementation
 
-A fully-compliant FaaSlang gateway (that just uses local function resources)
+A fully-compliant FunctionScript gateway (that just uses local function resources)
 is available with this package, simply clone it and run `npm test` or look
 at the `/tests` folder for more information.
 
-The current FaaSlang specification is used in production by the FaaS
-provider [StdLib](https://stdlib.com), and is available for local use with the
-[StdLib CLI Package](https://github.com/stdlib/lib) which relies on this
+The current FunctionScript specification is used in production by the FaaS
+provider [Standard Library](https://stdlib.com), and is available for local use with the
+[Standard Library CLI Package](https://github.com/stdlib/lib) which relies on this
 repository as a dependency.
 
 # Acknowledgements
 
 The software contained within this repository has been developed and is
-copyrighted by the [StdLib](https://stdlib.com) Team at Polybit Inc. and is
+copyrighted by the [Standard Library](https://stdlib.com) Team at Polybit Inc. and is
 MIT licensed. The specification itself is not intended to be owned by a
 specific corporate entity, and has been developed in conjunction with other
 developers and organizations.
