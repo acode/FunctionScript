@@ -8,11 +8,13 @@
 ## Turn JavaScript Functions into Typed HTTP APIs
 
 FunctionScript is a language and specification for turning JavaScript
-functions into typed HTTP APIs. **It is not replacement for JavaScript** in the
+functions into typed HTTP APIs. **It is not substitute for JavaScript** in the
 same way [TypeScript](https://github.com/microsoft/TypeScript) is,
 it simply allows JavaScript (Node.js) functions to be
 seamlessly exported as HTTP APIs and defines what the HTTP interface will look
-like and how it behaves - including type-safety mechanisms.
+like and how it behaves - including type-safety mechanisms. FunctionScript
+APIs look like and can be executed as if they were normal JavaScript functions,
+though you will not get the type-safety mechanisms you would over HTTP.
 
 You can start building with FunctionScript **immediately** using
 [Code on Standard Library](https://code.stdlib.com/?sample=t&filename=functions/__main__.js), right in
@@ -23,6 +25,62 @@ your web browser. You can see a demo of testing the generated API below.
 https://code.stdlib.com/?sample=t&filename=functions/__main__.js
 
 ![Demo](/images/demo-api.gif)
+
+### Quick Example of a FunctionScript API
+
+The following is a real-world excerpt of an API interface that can be used
+to query a Spreadsheet like a Database. The underlying implementation has been
+hidden, but the parameters for the API can be seen.
+
+It generates an API which accepts (and type checks against, following schemas):
+
+- **`spreadsheetId`** A `string`
+- **`range`** A `string`
+- **`bounds`** An `enum`, can be either `"FIRST_EMPTY_ROW"` or `"FULL_RANGE"`
+- **`where`** An `object`
+- **`limit`** An `object` that must contain:
+   - `limit.offset`, a `number`
+   - `limit.count`, a `number`
+
+It will return an `object`:
+
+- **`selectQueryResult`**
+   - `selectQueryResult.spreadsheetId` must be a `string`
+   - `selectQueryResult.range` must be a `string`
+   - `selectQueryResult.rows` must be an `array`
+
+```javascript
+/**
+* Select Rows from a Spreadsheet by querying it like a Database
+* @param {string} spreadsheetId The id of the Spreadsheet.
+* @param {string} range The A1 notation of the values to use as a table.
+* @param {enum} bounds Specify the ending bounds of the table.
+*   ["FIRST_EMPTY_ROW", "FIRST_EMPTY_ROW"]
+*   ["FULL_RANGE", "FULL_RANGE"]
+* @param {object} where A list of column values to filter by.
+* @param {object} limit A limit representing the number of results to return
+* @ {number} offset The offset of records to begin at
+* @ {number} count The number of records to return, 0 will return all
+* @returns {object} selectQueryResult
+* @ {string} spreadsheetId
+* @ {string} range
+* @ {array} rows An array of objects corresponding to row values
+*/
+module.exports = async (
+  spreadsheetId = null,
+  range,
+  bounds = 'FIRST_EMPTY_ROW',
+  where = {},
+  limit = {offset: 0, count: 0},
+  context
+) => {
+
+  /* implementation-specific JavaScript */
+
+  return {/* some data */};
+
+};
+```
 
 ### Background
 
@@ -285,6 +343,7 @@ the types are a limited superset of JSON values.
 | array | Any JSON-serializable Array | `[]`, `[1, 2, 3]`, `[{"a":true}, null, 5]` |
 | buffer | Raw binary octet (byte) data representing a file | `{"_bytes": [8, 255]}` or `{"_base64": "d2h5IGRpZCB5b3UgcGFyc2UgdGhpcz8/"}` |
 | any | Any value mentioned above | `5`, `"hello"`, `[]` |
+| enum | An enumeration that maps input strings to values of your choosing | `"STRING_OF_YOUR_CHOICE"` |
 
 ### Type Conversion
 
@@ -309,6 +368,7 @@ converted from strings to their respective expected types, when possible
 | array | Parse as JSON, if invalid **do not convert**, object may fail type check (object, buffer) |
 | buffer | Parse as JSON, if invalid **do not convert**, object may fail type check (object, array) |
 | any | No conversion |
+| enum | Read input as string |
 
 ### Nullability
 

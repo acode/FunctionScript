@@ -619,12 +619,12 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should NOT overwrite x-faaslang', done => {
-    request('POST', {}, '/sanitize/http_object/', {body: '<b>hello</b>', headers: {'x-faaslang': '$'}}, (err, res, result) => {
+  it('Should NOT overwrite x-functionscript', done => {
+    request('POST', {}, '/sanitize/http_object/', {body: '<b>hello</b>', headers: {'x-functionscript': '$'}}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
-      expect(res.headers['x-faaslang']).to.not.equal('$');
+      expect(res.headers['x-functionscript']).to.not.equal('$');
       expect(result.toString()).to.equal('<b>hello</b>');
       done();
 
