@@ -12,9 +12,7 @@ functions into typed HTTP APIs. **It is not substitute for JavaScript** in the
 same way [TypeScript](https://github.com/microsoft/TypeScript) is,
 it simply allows JavaScript (Node.js) functions to be
 seamlessly exported as HTTP APIs and defines what the HTTP interface will look
-like and how it behaves - including type-safety mechanisms. FunctionScript
-APIs look like and can be executed as if they were normal JavaScript functions,
-though you will not get the type-safety mechanisms you would over HTTP.
+like and how it behaves - including type-safety mechanisms.
 
 You can start building with FunctionScript **immediately** using
 [Code on Standard Library](https://code.stdlib.com/?sample=t&filename=functions/__main__.js), right in
@@ -31,23 +29,6 @@ https://code.stdlib.com/?sample=t&filename=functions/__main__.js
 The following is a real-world excerpt of an API interface that can be used
 to query a Spreadsheet like a Database. The underlying implementation has been
 hidden, but the parameters for the API can be seen.
-
-It generates an API which accepts (and type checks against, following schemas):
-
-- **`spreadsheetId`** A `string`
-- **`range`** A `string`
-- **`bounds`** An `enum`, can be either `"FIRST_EMPTY_ROW"` or `"FULL_RANGE"`
-- **`where`** An `object`
-- **`limit`** An `object` that must contain:
-   - `limit.offset`, a `number`
-   - `limit.count`, a `number`
-
-It will return an `object`:
-
-- **`selectQueryResult`**
-   - `selectQueryResult.spreadsheetId` must be a `string`
-   - `selectQueryResult.range` must be a `string`
-   - `selectQueryResult.rows` must be an `array`
 
 ```javascript
 /**
@@ -82,7 +63,24 @@ module.exports = async (
 };
 ```
 
-### Background
+It generates an API which accepts (and type checks against, following schemas):
+
+- **`spreadsheetId`** A `string`
+- **`range`** A `string`
+- **`bounds`** An `enum`, can be either `"FIRST_EMPTY_ROW"` or `"FULL_RANGE"`
+- **`where`** An `object`
+- **`limit`** An `object` that must contain:
+   - `limit.offset`, a `number`
+   - `limit.count`, a `number`
+
+It will return an `object`:
+
+- **`selectQueryResult`**
+   - `selectQueryResult.spreadsheetId` must be a `string`
+   - `selectQueryResult.range` must be a `string`
+   - `selectQueryResult.rows` must be an `array`
+
+## Background
 
 The impetus for creating FunctionScript is simple: it stems from the initial
 vision of [Standard Library](https://stdlib.com). We believe the internet is
@@ -134,7 +132,7 @@ Ongoing development is, in part, funded by both [Stripe](https://stripe.com) and
 1. [FunctionScript Server and Gateway: Implementation](#functionscript-server-and-gateway-implementation)
 1. [Acknowledgements](#acknowledgements)
 
-# What is FunctionScript?
+# Introduction
 
 To put it simply, FunctionScript defines semantics and rules for turning exported
 JavaScript (Node.js) functions into strongly-typed, HTTP-accessible web APIs.
@@ -189,6 +187,14 @@ Or, when a type mismatch occurs (like `{"name":10}`):
 
 ## Why FunctionScript?
 
+FunctionScript is intended primarily to provide a scaffold to build and deliver
+APIs easily. It works best in conjunction with the [Standard Library](https://stdlib.com/)
+platform which consumes the FunctionScript API definitions, hosts the code,
+generates documentation from the definitions, and automatically handles versioning and
+environment management. The reason we've open sourced the language specification
+is so that developers have an easier time developing against the highly modular API
+ecosystem we've created and can contribute their thoughts and requests.
+
 You can break down the reason for the development of FunctionScript into a few
 key points:
 
@@ -209,7 +215,7 @@ key points:
   trajectory, and flexibility.
 
 - As opposed to something like [TypeScript](https://github.com/microsoft/TypeScript),
-  FunctionScript extends JavaScript (specifically Node.js) with very little overhead
+  FunctionScript extends JavaScript with very little overhead
   to add Types around *only the HTTP interface*, leaving the majority of the
   language footprint untouched but strengthening the "weakest" and least predictable
   link in the development chain: user input.
