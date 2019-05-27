@@ -34,14 +34,16 @@ credit card payments with [Stripe](https://stripe.com), send team messages via
 [Slack](https://slack.com), create SMS messages with [Twilio](https://twilio.com).
 These requests are made primarily over HTTP: Hypertext Transfer Protocol. However,
 little to no "hypertext" is actually sent or received, these use cases have emerged
-in an *ad hoc* fashion as a testament to the power of the internet.
+in an *ad hoc* fashion as a testament to the power of the internet. Oftentimes,
+API standardization attempts have been presented as band-aids instead of solutions:
+requiring developers to jury rig a language, framework, markup language and
+hosting provider together just to get a simple "hello world" out the door.
 
 By creating API development standards as part of a **language specification**
-instead of a framework, FunctionScript truly treats APIs as a base primitive of
+instead of a framework, FunctionScript truly treats the API as a base primitive of
 software development instead of an afterthought. This allows teams to be able to
-be able to rapidly deliver high-quality APIs with the same fidelity as teams
-at organizations like Stripe in a fraction of the time without
-requiring any additional tooling.
+deliver high-quality APIs with the same fidelity as organizations like
+Stripe in a fraction of the time without requiring any additional tooling.
 
 FunctionScript has been developed by the team at Polybit Inc., responsible for
 [Standard Library](https://stdlib.com).
