@@ -18,11 +18,11 @@ You can start building with FunctionScript **immediately** using
 [Code on Standard Library](https://code.stdlib.com/?sample=t&filename=functions/__main__.js), right in
 your web browser. You can see a demo of testing the generated API below.
 
+**Note:** *In order to use this tool you must have a registered account on [stdlib.com](https://stdlib.com).*
+
 https://code.stdlib.com/?sample=t&filename=functions/__main__.js
 
 ![Demo](/images/demo-api.gif)
-
-**Note:** *In order to use this tool you must have a registered account on [stdlib.com](https://stdlib.com).*
 
 ### Background
 
