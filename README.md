@@ -14,6 +14,14 @@ it simply allows JavaScript (Node.js) functions to be
 seamlessly exported as HTTP APIs and defines what the HTTP interface will look
 like and how it behaves - including type-safety mechanisms.
 
+You can start building with FunctionScript **immediately** using
+[Code on Standard Library](https://code.stdlib.com/?sample=t&filename=functions/__main__.js), right in
+your web browser (note that in order to use this tool you must have a registered account on [stdlib.com](https://stdlib.com)):
+
+https://code.stdlib.com/?sample=t&filename=functions/__main__.js
+
+### Background
+
 The impetus for creating FunctionScript is simple: it stems from the initial
 vision of [Standard Library](https://stdlib.com). We believe the internet is
 missing a base primitive - the API. Daily, computer systems and developers around
@@ -27,7 +35,8 @@ in an *ad hoc* fashion as a testament to the power of the internet.
 By creating API development standards as part of a **language specification**
 instead of a framework, FunctionScript truly treats APIs as a base primitive of
 software development instead of an afterthought. This allows teams to be able to
-be able to rapidly deliver high-quality APIs in a fraction of the time without
+be able to rapidly deliver high-quality APIs with the same fidelity as teams
+at organizations like Stripe in a fraction of the time without
 requiring any additional tooling.
 
 FunctionScript has been developed by the team at Polybit Inc., responsible for
@@ -120,8 +129,8 @@ You can break down the reason for the development of FunctionScript into a few
 key points:
 
 - No true standards around APIs have ever been built or enforced in a rigorous
-  manner across the industry. We've built opinions around SOAP, REST and GraphQL
-  into frameworks and tools instead of language specifications.
+  manner across the industry. Primarily, opinions around SOAP, REST and GraphQL
+  requests have been built into **frameworks and tools** instead of a **language specification**.
 
 - Companies like Stripe and Twilio which have built and enforced their own API
   development paradigms internally have unlocked massive developer audiences in
@@ -136,9 +145,10 @@ key points:
   trajectory, and flexibility.
 
 - As opposed to something like [TypeScript](https://github.com/microsoft/TypeScript),
-  FunctionScript *extends* JavaScript (specifically Node.js) in a non-breaking manner
-  to add Types around *only the HTTP interface*, strengthening the "weakest"
-  and least predictable link in the development chain: user input.
+  FunctionScript extends JavaScript (specifically Node.js) with very little overhead
+  to add Types around *only the HTTP interface*, leaving the majority of the
+  language footprint untouched but strengthening the "weakest" and least predictable
+  link in the development chain: user input.
 
 With FunctionScript, it's our goal to develop a language specification for
 building APIs that automatically provides a number of necessary features without
@@ -152,8 +162,9 @@ additional tooling:
 
 ## FunctionScript Resource Definition
 
-A FunctionScript definition is a `definition.json` file that respects the following
-format.
+A FunctionScript definition is a JSON output, traditionally saved as a
+`definition.json` file, generated from a JavaScript file,
+that respects the following format.
 
 Given a function like this (filename `my_function.js`):
 
@@ -529,8 +540,45 @@ repository as a dependency.
 
 # Acknowledgements
 
+FunctionScript is the result of years of concerted effort working to make API
+development easier. It would not be possible without the personal and financial
+investments of some very amazing people and companies.
+
+## Corporate Interests
+
+Via investments in Polybit Inc., parent of [Standard Library](https://stdlib.com),
+the following companies have invested countless hours in and provided financial
+support which has enabled the R&D that has made this project possible.
+
+[Stripe](https://stripe.com), the global leader in online payments
+[![Stripe Logo](/images/stripe-logo-300.png)](https://stripe.com)
+
+[Slack](https://slack.com), the online platform for work and communication
+[![Slack Logo](/images/slack-logo-300.png)](https://slack.com)
+
+## Special Thanks
+
+There have been a number of helpful supporters and contributors along the way,
+and FunctionScript would not be possible without any of them.
+
+### Core Contributors
+
+- [**Keith Horwood**](https://twitter.com/keithwhor)
+- [**Jacob Lee**](https://twitter.com/hacubu)
+- [**Steve Meyer**](https://twitter.com/notoriaga)
+
+### Friends and Supporters
+
+- [**Chad Fowler**](https://twitter.com/chadfowler)
+- [**Bear Douglas**](https://twitter.com/beardigsit)
+- [**Romain Huet**](https://twitter.com/romainhuet)
+- [**Will Gaybrick**](https://twitter.com/gaybrick)
+- [**Patrick Collison**](https://twitter.com/patrickc)
+- [**Patrick McKenzie**](https://twitter.com/patio11)
+- [**David Singleton**](https://twitter.com/dps)
+
+# Notes
+
 The software contained within this repository has been developed and is
 copyrighted by the [Standard Library](https://stdlib.com) Team at Polybit Inc. and is
-MIT licensed. The specification itself is not intended to be owned by a
-specific corporate entity, and has been developed in conjunction with other
-developers and organizations.
+MIT licensed.
