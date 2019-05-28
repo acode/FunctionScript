@@ -28,7 +28,7 @@ https://code.stdlib.com/?sample=t&filename=functions/__main__.js
 
 ### Quick Example of a FunctionScript API
 
-The following is a real-world excerpt of an API interface that can be used
+The following is a real-world excerpt of an API that can be used
 to query a Spreadsheet like a Database. The underlying implementation has been
 hidden, but the parameters for the API can be seen.
 
