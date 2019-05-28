@@ -16,8 +16,7 @@ FunctionScript arose out of a need to introduce developers with little
 programming experience, but familiarity with JavaScript, to full-stack API
 development and best practices around defining and connecting HTTP application
 interfaces. For this reason, the goals of the language are significantly different than
-[TypeScript](https://github.com/microsoft/TypeScript). Please be respectful of
-this fact while engaging with the growing community.
+[TypeScript](https://github.com/microsoft/TypeScript).
 
 FunctionScript is the primary specification underpinning the [Standard Library](https://stdlib.com)
 API development and integration platform. You can start building with FunctionScript **immediately** using
