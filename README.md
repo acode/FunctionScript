@@ -24,7 +24,7 @@ your web browser. An animated example has been provided below.
 
 https://code.stdlib.com/?sample=t&filename=functions/__main__.js
 
-![Demo](/images/demo-api.gif)
+[![Demo](/images/demo-api.gif)](https://code.stdlib.com/?sample=t&filename=functions/__main__.js)
 
 ### Quick Example of a FunctionScript API
 
