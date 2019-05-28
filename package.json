@@ -1,6 +1,6 @@
 {
   "name": "functionscript",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "A language and specification for turning JavaScript functions into typed HTTP APIs",
   "author": "Keith Horwood <keithwhor@gmail.com>",
   "main": "index.js",

@@ -211,8 +211,8 @@ key points:
 - No true standards around APIs have ever been built or enforced in a rigorous
   manner across the industry. Primarily, opinions around SOAP, REST and GraphQL
   requests have been built into **frameworks and tools** instead of a
-  **language specification**, increasing the cognitive overhead required to ship
-  functional web-based software.
+  **language specification**, which has artificially inflated the cognitive
+  overhead required to ship functional web-based software.
 
 - Companies like Stripe and Twilio which have built and enforced their own API
   development paradigms internally have unlocked massive developer audiences in
