@@ -202,27 +202,37 @@ ecosystem we've created and can contribute their thoughts and requests.
 You can break down the reason for the development of FunctionScript into a few
 key points:
 
+- Modern developers and people being introduced to software development for the
+  first time are often trying to build web-native scripts. It is *exceedingly*
+  difficult to go from "zero to API" in less than a few hours, writing code is
+  just the first step of many. We'd like it to be the first and only step.
+
 - No true standards around APIs have ever been built or enforced in a rigorous
   manner across the industry. Primarily, opinions around SOAP, REST and GraphQL
-  requests have been built into **frameworks and tools** instead of a **language specification**.
+  requests have been built into **frameworks and tools** instead of a
+  **language specification**, increasing the cognitive overhead required to ship
+  functional web-based software.
 
 - Companies like Stripe and Twilio which have built and enforced their own API
   development paradigms internally have unlocked massive developer audiences in
-  short timeframes.
+  short timeframes, indicating the power of treating web APIs as a first-class
+  citizen of development.
 
 - [Serverless computing](https://en.wikipedia.org/wiki/Serverless_computing),
-  specifically the Function-as-a-Service model of web-based computation has made
-  API development significantly more accessible.
+  specifically the Function-as-a-Service model of web-based computation, has made
+  API development significantly more accessible but has not brought us over the
+  "last-mile" hump.
 
 - JavaScript, specifically Node.js, is an ideal target for API development
   standardization due to its accessibility (front-end and back-end), growth
-  trajectory, and flexibility.
+  trajectory, and flexibility. Most new developers are introduced to JavaScript
+  out of necessity.
 
 - As opposed to something like [TypeScript](https://github.com/microsoft/TypeScript),
-  FunctionScript extends JavaScript with very little overhead
-  to add Types around *only the HTTP interface*, leaving the majority of the
-  language footprint untouched but strengthening the "weakest" and least predictable
-  link in the development chain: user input.
+  FunctionScript helps newer entrants to software development by extending
+  JavaScript with very little overhead to add Types around *only the HTTP interface*,
+  leaving the majority of the language footprint untouched but strengthening the
+  "weakest" and least predictable link in the development chain: user input.
 
 With FunctionScript, it's our goal to develop a language specification for
 building APIs that automatically provides a number of necessary features without
