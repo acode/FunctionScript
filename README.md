@@ -254,7 +254,8 @@ module.exports = async (alpha, beta = 2, gamma, context) => {
 };
 ```
 
-You would provide a function definition that looks like this:
+The FunctionScript parser will generate a `definition.json` file that looks
+like the following:
 
 ```json
 {
@@ -294,9 +295,6 @@ You would provide a function definition that looks like this:
 }
 ```
 
-This definition is *extensible*, meaning you can add additional fields to it,
-but it **must** obey this schema.
-
 A definition must implement the following fields;
 
 | Field | Definition |
@@ -332,11 +330,9 @@ Parameters have the following format;
 
 ### Types
 
-As FunctionScript is intended to be polyglot, functions defined with it must have
-a strongly typed signature. Not all types are guaranteed to be consumable in
-the same way in every language, and we will continue to define specifications
-for how each language should interface with FunctionScript types. At present,
-the types are a limited superset of JSON values.
+As FunctionScript interfaces with "userland" (user input),
+a strongly typed signature is enforced for all inbound parameters. The following
+is a list of supported FunctionScript types.
 
 | Type | Definition | Example Input Values (JSON) |
 | ---- | ---------- | -------------- |
@@ -379,15 +375,40 @@ converted from strings to their respective expected types, when possible
 
 ### Nullability
 
-All types are nullable, but **nullability can only be specified** by setting
-`"defaultValue": null` in the `NamedParameter` definition. That is to say,
-if a default value is provided, the type is no longer nullable.
+All types are potentially nullable, an nullability can be defined in two ways:
+
+**(1)** by setting `"defaultValue": null` in the `NamedParameter` definition.
+
+```
+/**
+* @param {string} nullableString
+*/
+module.exports = (nullableString = null) => {
+  return `Test ${nullableString}`;
+}
+```
+
+**(2)** By prepending a `?` before the type name in the comment definition, i.e.:
+
+```
+/**
+* @param {?string} nullableString
+*/
+module.exports = (nullableString) => {
+  return `Test ${nullableString}`;
+}
+```
+
+**NOTE:** That the difference between this two behaviors is that the latter
+will mean `nullableString` is both `required` AND `nullable`, whereas the former
+means `nullableString` has a `defaultValue` (is optional).
 
 ### Setting HTTP headers
 
-The FunctionScript specification is not intended to be solely used over HTTP, though
-if used over HTTP with a provided callback method, **the third parameter passed
-to callback should be an Object representing HTTP Header key-value pairs**.
+The `object.http` type should be used to generate HTTP responses that are intended
+to return more complex data than simple JSON responses.
+
+You can provide `headers`, `statusCode` and `body` in an `object.http` response.
 
 For example, to return an image that's of type `image/png`...
 
@@ -408,19 +429,16 @@ module.exports = (imageName) => {
   //  for buffer would otherwise be application/octet-stream
   return {
     headers: {'Content-Type': 'image/png'},
+    statusCode: 200,
     body: png
   };
 
 };
 ```
 
-You can use the third parameter **only when a callback ends the function**,
-i.e. *not for use with async functions*. This can be used to serve any type
-of content via HTTP, set cache details (E-Tag header), etc.
-
 ## FunctionScript Resource Requests
 
-FunctionScript-compliant requests *must* complete the following steps;
+FunctionScript requests *must* complete the following steps;
 
 1. Ensure the **Resource Definition** is valid and compliant, either on storage
     or accession.
@@ -606,8 +624,8 @@ A fully-compliant FunctionScript gateway (that just uses local function resource
 is available with this package, simply clone it and run `npm test` or look
 at the `/tests` folder for more information.
 
-The current FunctionScript specification is used in production by the FaaS
-provider [Standard Library](https://stdlib.com), and is available for local use with the
+The FunctionScript specification is used as the platform specification
+for [Standard Library](https://stdlib.com), and is available for local use with the
 [Standard Library CLI Package](https://github.com/stdlib/lib) which relies on this
 repository as a dependency.
 
@@ -615,7 +633,7 @@ repository as a dependency.
 
 FunctionScript is the result of years of concerted effort working to make API
 development easier. It would not be possible without the personal and financial
-investments of some very amazing people and companies.
+commitments of some very amazing people and companies.
 
 ## Corporate Interests
 
