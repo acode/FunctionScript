@@ -15,12 +15,12 @@ like and how it behaves** - including type-safety mechanisms.
 FunctionScript arose out of a need to introduce developers with little
 programming experience, but familiarity with JavaScript, to full-stack API
 development and best practices around defining and connecting HTTP application
-interfaces. As such, the goals of the language are significantly different than
+interfaces. For this reason, the goals of the language are significantly different than
 [TypeScript](https://github.com/microsoft/TypeScript). Please be respectful of
 this fact while engaging with the growing community.
 
 FunctionScript is the primary specification underpinning the [Standard Library](https://stdlib.com)
-API development and integration platform. As such, you can start building with FunctionScript **immediately** using
+API development and integration platform. You can start building with FunctionScript **immediately** using
 [Code on Standard Library](https://code.stdlib.com/?sample=t&filename=functions/__main__.js), right in
 your web browser. An animated example has been provided below.
 
