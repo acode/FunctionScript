@@ -639,7 +639,7 @@ commitments of some very amazing people and companies.
 
 Via investments in Polybit Inc., parent of [Standard Library](https://stdlib.com),
 the following companies have invested countless hours in and provided financial
-support which has enabled the R&D that has made this project possible.
+support for our team, which has made this project possible.
 
 [Stripe](https://stripe.com), the global leader in online payments
 
