@@ -24,7 +24,7 @@ API development and integration platform. You can start building with FunctionSc
 [Code on Standard Library](https://code.stdlib.com/?sample=t&filename=functions/__main__.js), right in
 your web browser. An animated example has been provided below.
 
-**Note:** *In order to use Code on Standard Library you must have a registered account on [stdlib.com](https://stdlib.com), which are available for free.*
+**Note:** *In order to use Code on Standard Library you must have a registered account on [stdlib.com](https://stdlib.com), available for free.*
 
 https://code.stdlib.com/?sample=t&filename=functions/__main__.js
 
