@@ -14,11 +14,13 @@ it simply allows JavaScript (Node.js) functions to be
 seamlessly exported as HTTP APIs and defines what the HTTP interface will look
 like and how it behaves - including type-safety mechanisms.
 
-You can start building with FunctionScript **immediately** using
+FunctionScript is the primary specification underpinning the [Standard Library](https://stdlib.com)
+API development and integration platform.
+As such, you can start building with FunctionScript **immediately** using
 [Code on Standard Library](https://code.stdlib.com/?sample=t&filename=functions/__main__.js), right in
-your web browser. You can see a demo of testing the generated API below.
+your web browser. An animated example has been provided below.
 
-**Note:** *In order to use this tool you must have a registered account on [stdlib.com](https://stdlib.com).*
+**Note:** *In order to use this tool you must have a registered account on [stdlib.com](https://stdlib.com), which are available for free.*
 
 https://code.stdlib.com/?sample=t&filename=functions/__main__.js
 
