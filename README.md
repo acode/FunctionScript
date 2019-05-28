@@ -231,7 +231,7 @@ key points:
 
 - As opposed to something like [TypeScript](https://github.com/microsoft/TypeScript),
   FunctionScript helps newer entrants to software development by extending
-  JavaScript with very little overhead to add Types around *only the HTTP interface*,
+  JavaScript with very little overhead. It adds types around *only the HTTP interface*,
   leaving the majority of the language footprint untouched but strengthening the
   "weakest" and least predictable link in the development chain: user input.
 
