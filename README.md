@@ -340,7 +340,7 @@ Parameters have the following format;
 | name | NamedParameter Only | The name of the Parameter, must match `/[A-Z][A-Z0-9_]*/i` |
 | type | yes | A string representing a valid FunctionScript type |
 | description | yes | A short description of the parameter, can be empty string (`""`) |
-| defaultValue | no | Must match the specified type, **if not provided this parameter is required** |
+| defaultValue | no | Must match the specified type. **If type is not provided, this parameter is required** |
 
 ### Types
 
