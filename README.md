@@ -10,7 +10,7 @@
 FunctionScript is a language and specification for turning JavaScript
 functions into typed HTTP APIs. It allows JavaScript (Node.js) functions to be
 seamlessly exported as HTTP APIs by **defining what the HTTP interface will look
-like and how it behaves** - including type-safety mechanisms.
+like and how it behaves in the preceding comment block** - including type-safety mechanisms.
 
 FunctionScript arose out of a need to introduce developers with little
 programming experience, but familiarity with JavaScript, to full-stack API
