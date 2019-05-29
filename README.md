@@ -116,6 +116,8 @@ Ongoing development is, in part, funded by both [Stripe](https://stripe.com) and
 
 1. [Introduction](#introduction)
 1. [Why FunctionScript?](#why-functionscript)
+1. [FunctionScript Examples](#functionscript-examples)
+   1. [All Available Types](#all-available-types)
 1. [Specification](#specification)
    1. [FunctionScript Resource Definition](#functionscript-resource-definition)
    1. [Context Definition](#context-definition)
@@ -242,6 +244,54 @@ additional tooling:
 - Standardized API Calling Conventions (HTTP)
 - Type-Safety Mechanisms at the HTTP -> Code Interface
 - Automatically Generated API Documentation
+
+# FunctionScript Examples
+
+We'll be updating this section with examples for you to play with and modify
+on your own.
+
+## All Available Types
+
+Here's an example of a hypothetical `createUser.js` function that can be used
+to create a user resource. It includes all available type definitions.
+
+```javascript
+/**
+* @param {integer} id ID of the User
+* @param {string} username Name of the user
+* @param {number} age Age of the user
+* @param {float} communityScore Community score (between 0.00 and 100.00)
+* @param {object} metadata Key-value pairs corresponding to additional user data
+* @ {string} createdAt Created at ISO-8601 String. Required as part of metadata.
+* @ {?string} notes Additional notes. Nullable (not required) as part of object
+* @param {array} friendIds List of friend ids
+* @ {integer} friendId ID of a user (forces array to have all integer entries)
+* @param {buffer} profilePhoto Base64-encoded filedata, read into Node as a Buffer
+* @param {enum} userGroup The user group. Can be "USER" (read as 0) or "ADMIN" (read as 9)
+*   ["USER", 0]
+*   ["ADMIN", 9]
+* @param {boolean} overwrite Overwrite current user data, if username matching
+* @returns {object.http} successPage API Returns an HTTP object (webpage)
+*/
+module.exports = async (id = null, username, age, communityScore, metadata, friendsIds = [], profilePhoto, userGroup, overwrite = false) => {
+
+  // NOTE: id, friendIds and overwrite will be OPTIONAL as they have each been
+  //       provided a defaultValue
+
+  // Implementation-specific code here
+
+  // API Output
+  // NOTE: Note that because "object.http" was specified, this MUST follow the
+  //       object.http schema: headers, statusCode, body
+
+  return {
+    headers: {'Content-Type': 'text/html'},
+    statusCode: 200,
+    body: Buffer.from('Here is a success message!')
+  };
+
+};
+```
 
 # Specification
 
