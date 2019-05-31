@@ -186,7 +186,7 @@ Or, when a type mismatch occurs (like `{"name":10}`):
 ```json
 {
   "error": {
-    "type":"ParameterError"
+    "type": "ParameterError"
     ...
   }
 }
@@ -349,7 +349,7 @@ like the following:
     {
       "name": "gamma",
       "type": "boolean",
-      "description": "True or false?"
+      "description": "true or false?"
     }
   ],
   "returns": {
@@ -443,7 +443,7 @@ All types are potentially nullable, an nullability can be defined in two ways:
 
 **(1)** by setting `"defaultValue": null` in the `NamedParameter` definition.
 
-```
+```javascript
 /**
 * @param {string} nullableString
 */
@@ -454,7 +454,7 @@ module.exports = (nullableString = null) => {
 
 **(2)** By prepending a `?` before the type name in the comment definition, i.e.:
 
-```
+```javascript
 /**
 * @param {?string} nullableString
 */
