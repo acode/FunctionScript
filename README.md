@@ -686,7 +686,7 @@ due to implementation issues on the part of the function developer.
 
 A fully-compliant FunctionScript gateway (that just uses local function resources)
 is available with this package, simply clone it and run `npm test` or look
-at the `/tests` folder for more information.
+at the `/tests` folder for more information. And a simple demo in the [example](./example) directory.
 
 The FunctionScript specification is used as the platform specification
 for [Standard Library](https://stdlib.com), and is available for local use with the
