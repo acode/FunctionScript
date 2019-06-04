@@ -1856,6 +1856,31 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should accept keyql params', done => {
+    request('POST', {}, '/keyql/', { query: { name: 'steve' }, limit: { count: 0, offset: 0 } },
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.equal('hello');
+      done();
+
+    });
+  });
+
+  it('Should reject invalid keyql limit', done => {
+    request('POST', {}, '/keyql/', { query: { name: 'steve' }, limit: { count: 0, wrong: 0 } },
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      expect(result.error).to.exist;
+      expect(result.error.details).to.exist;
+      expect(result.error.details.limit).to.exist;
+      done();
+
+    });
+  });
 
   after(() => FaaSGateway.close());
 

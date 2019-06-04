@@ -965,6 +965,63 @@ describe('LibDoc', () => {
 
     });
 
+    it('should validate "object.keyql.query"', () => {
+
+      expect(
+        types.validate('object.keyql.query', {
+          first_name: 'Dolores',
+          eye_color__in: ['blue', 'green']
+        })
+      ).to.equal(true);
+
+    });
+
+    it('should validate "object.keyql.limit"', () => {
+
+      expect(
+        types.validate('object.keyql.limit', {
+          offset: 0,
+          limit: 0
+        })
+      ).to.equal(true);
+
+    });
+
+    it('should sanitize "object.keyql.query"', () => {
+
+      try {
+        types.sanitize('object.keyql.query', {
+          first_name: 'Dolores',
+          eye_color__in: ['blue', 'green']
+        });
+      } catch (err) {
+        expect(err).to.not.exist;
+      }
+
+    });
+
+    it('should sanitize "object.keyql.limit"', () => {
+
+      try {
+        types.sanitize('object.keyql.limit', {
+          first_name: 'Dolores',
+          eye_color__in: ['blue', 'green']
+        });
+      } catch (err) {
+        expect(err).to.exist;
+      }
+
+      try {
+        types.sanitize('object.keyql.limit', {
+          count: 0,
+          offset: 0
+        });
+      } catch (err) {
+        expect(err).to.not.exist;
+      }
+
+    });
+
     it('should convert types from strings', () => {
 
       expect(types.convert('number', '1e300')).to.equal(1e300);
