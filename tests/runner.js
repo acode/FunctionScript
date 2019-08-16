@@ -23,6 +23,7 @@ describe('LibDoc', () => {
 
   const FunctionParser = require('../index.js').FunctionParser;
   const parser = new FunctionParser();
+  const NodeJsFunctionParser = new FunctionParser.parsers['nodejs']();
   const types = require('../index.js').types;
 
   describe('Function Validation', () => {
@@ -1288,6 +1289,30 @@ describe('LibDoc', () => {
           }]
         }]
       });
+
+    });
+
+    it('Should parse valid Node.js variable names', () => {
+
+      expect(NodeJsFunctionParser.validateFunctionParamName('test')).to.equal(true);
+      expect(NodeJsFunctionParser.validateFunctionParamName('$pécial_character$$')).to.equal(true);
+
+    });
+
+    it('Should fail to parse invalid Node.js variable names', () => {
+
+      expect(NodeJsFunctionParser.validateFunctionParamName('with spaces')).to.equal(false);
+      expect(NodeJsFunctionParser.validateFunctionParamName('2*2')).to.equal(false);
+      expect(NodeJsFunctionParser.validateFunctionParamName('2')).to.equal(false);
+      expect(NodeJsFunctionParser.validateFunctionParamName('[]')).to.equal(false);
+      expect(NodeJsFunctionParser.validateFunctionParamName('{}')).to.equal(false);
+      expect(NodeJsFunctionParser.validateFunctionParamName('{object: literal}')).to.equal(false);
+      expect(NodeJsFunctionParser.validateFunctionParamName({})).to.equal(false);
+      expect(NodeJsFunctionParser.validateFunctionParamName(2)).to.equal(false);
+      expect(NodeJsFunctionParser.validateFunctionParamName('2+2')).to.equal(false);
+      expect(NodeJsFunctionParser.validateFunctionParamName('let')).to.equal(false);
+      expect(NodeJsFunctionParser.validateFunctionParamName('const')).to.equal(false);
+      expect(NodeJsFunctionParser.validateFunctionParamName('delete')).to.equal(false);
 
     });
 
