@@ -1,6 +1,7 @@
 // Cause a fatal error
-let x = {};
-x.doAThing();
+let error = new Error('stack removed');
+delete error.stack;
+throw error;
 
 /**
 * @returns {any}
