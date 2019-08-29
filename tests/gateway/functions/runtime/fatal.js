@@ -1,3 +1,4 @@
+// Cause a fatal error
 let x = {};
 x.doAThing();
 
@@ -6,7 +7,6 @@ x.doAThing();
 */
 module.exports = (callback) => {
 
-  throw new Error('crap');
-  callback(new Error('error'));
+  callback(null, 'fatal error should occur due to code above');
 
 };
