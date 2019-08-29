@@ -813,6 +813,23 @@ module.exports = (expect) => {
       expect(result.error).to.exist;
       expect(result.error).to.be.an('object');
       expect(result.error.type).to.equal('FatalError');
+      expect(result.error.stack).to.exist;
+      done();
+
+    });
+  });
+
+  it('Should register a fatal error with no stack properly', done => {
+    request('POST', {}, '/runtime/fatal_no_stack/', {}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(500);
+      expect(result).to.exist;
+      expect(result).to.be.an('object');
+      expect(result.error).to.exist;
+      expect(result.error).to.be.an('object');
+      expect(result.error.type).to.equal('FatalError');
+      expect(result.error.stack).to.not.exist;
       done();
 
     });
