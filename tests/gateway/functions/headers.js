@@ -3,6 +3,6 @@
 */
 module.exports = (callback) => {
 
-  return callback(null, new Buffer('abcdef'), {'Content-Type': 'text/html'});
+  return callback(null, Buffer.from('abcdef'), {'Content-Type': 'text/html'});
 
 };

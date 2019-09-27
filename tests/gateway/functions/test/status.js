@@ -3,6 +3,6 @@
 */
 module.exports = (callback) => {
 
-  callback(null, new Buffer('not found'), {status: 404});
+  callback(null, Buffer.from('not found'), {status: 404});
 
 };

@@ -638,7 +638,7 @@ describe('LibDoc', () => {
       expect(types.validate('string', true)).to.equal(false);
       expect(types.validate('string', {})).to.equal(false);
       expect(types.validate('string', [])).to.equal(false);
-      expect(types.validate('string', new Buffer(0))).to.equal(false);
+      expect(types.validate('string', Buffer.from([]))).to.equal(false);
 
       expect(types.validate('string', null)).to.equal(false);
       expect(types.validate('string', null, true)).to.equal(true);
@@ -654,7 +654,7 @@ describe('LibDoc', () => {
       expect(types.validate('number', true)).to.equal(false);
       expect(types.validate('number', {})).to.equal(false);
       expect(types.validate('number', [])).to.equal(false);
-      expect(types.validate('number', new Buffer(0))).to.equal(false);
+      expect(types.validate('number', Buffer.from([]))).to.equal(false);
 
       expect(types.validate('number', null)).to.equal(false);
       expect(types.validate('number', null, true)).to.equal(true);
@@ -670,7 +670,7 @@ describe('LibDoc', () => {
       expect(types.validate('float', true)).to.equal(false);
       expect(types.validate('float', {})).to.equal(false);
       expect(types.validate('float', [])).to.equal(false);
-      expect(types.validate('float', new Buffer(0))).to.equal(false);
+      expect(types.validate('float', Buffer.from([]))).to.equal(false);
 
       expect(types.validate('float', null)).to.equal(false);
       expect(types.validate('float', null, true)).to.equal(true);
@@ -686,7 +686,7 @@ describe('LibDoc', () => {
       expect(types.validate('integer', true)).to.equal(false);
       expect(types.validate('integer', {})).to.equal(false);
       expect(types.validate('integer', [])).to.equal(false);
-      expect(types.validate('integer', new Buffer(0))).to.equal(false);
+      expect(types.validate('integer', Buffer.from([]))).to.equal(false);
 
       expect(types.validate('integer', null)).to.equal(false);
       expect(types.validate('integer', null, true)).to.equal(true);
@@ -702,7 +702,7 @@ describe('LibDoc', () => {
       expect(types.validate('boolean', true)).to.equal(true);
       expect(types.validate('boolean', {})).to.equal(false);
       expect(types.validate('boolean', [])).to.equal(false);
-      expect(types.validate('boolean', new Buffer(0))).to.equal(false);
+      expect(types.validate('boolean', Buffer.from([]))).to.equal(false);
 
       expect(types.validate('boolean', null)).to.equal(false);
       expect(types.validate('boolean', null, true)).to.equal(true);
@@ -718,7 +718,7 @@ describe('LibDoc', () => {
       expect(types.validate('object', true)).to.equal(false);
       expect(types.validate('object', {})).to.equal(true);
       expect(types.validate('object', [])).to.equal(false);
-      expect(types.validate('object', new Buffer(0))).to.equal(false);
+      expect(types.validate('object', Buffer.from([]))).to.equal(false);
 
       expect(types.validate('object', null)).to.equal(false);
       expect(types.validate('object', null, true)).to.equal(true);
@@ -734,7 +734,7 @@ describe('LibDoc', () => {
       expect(types.validate('array', true)).to.equal(false);
       expect(types.validate('array', {})).to.equal(false);
       expect(types.validate('array', [])).to.equal(true);
-      expect(types.validate('array', new Buffer(0))).to.equal(false);
+      expect(types.validate('array', Buffer.from([]))).to.equal(false);
 
       expect(types.validate('array', null)).to.equal(false);
       expect(types.validate('array', null, true)).to.equal(true);
@@ -750,7 +750,7 @@ describe('LibDoc', () => {
       expect(types.validate('buffer', true)).to.equal(false);
       expect(types.validate('buffer', {})).to.equal(false);
       expect(types.validate('buffer', [])).to.equal(false);
-      expect(types.validate('buffer', new Buffer(0))).to.equal(true);
+      expect(types.validate('buffer', Buffer.from([]))).to.equal(true);
 
       expect(types.validate('buffer', null)).to.equal(false);
       expect(types.validate('buffer', null, true)).to.equal(true);
@@ -766,7 +766,7 @@ describe('LibDoc', () => {
       expect(types.validate('any', true)).to.equal(true);
       expect(types.validate('any', {})).to.equal(true);
       expect(types.validate('any', [])).to.equal(true);
-      expect(types.validate('any', new Buffer(0))).to.equal(true);
+      expect(types.validate('any', Buffer.from([]))).to.equal(true);
 
       expect(types.validate('any', null)).to.equal(true);
       expect(types.validate('any', null, true)).to.equal(true);
@@ -783,7 +783,7 @@ describe('LibDoc', () => {
         ['true', 4],
         ['{}', 5],
         ['[]', 6],
-        ['new Buffer(0)', 7],
+        ['Buffer.from([])', 7],
         ['null', 8]
       ];
 
@@ -794,7 +794,7 @@ describe('LibDoc', () => {
       expect(types.validate('enum', 'true', false, members)).to.equal(true);
       expect(types.validate('enum', '{}', false, members)).to.equal(true);
       expect(types.validate('enum', '[]', false, members)).to.equal(true);
-      expect(types.validate('enum', 'new Buffer(0)', false, members)).to.equal(true);
+      expect(types.validate('enum', 'Buffer.from([])', false, members)).to.equal(true);
       expect(types.validate('enum', 'null', false, members)).to.equal(true);
       expect(types.validate('enum', null, true, members)).to.equal(true);
 
@@ -805,7 +805,7 @@ describe('LibDoc', () => {
       expect(types.validate('enum', true, false, members)).to.equal(false);
       expect(types.validate('enum', {}, false, members)).to.equal(false);
       expect(types.validate('enum', [], false, members)).to.equal(false);
-      expect(types.validate('enum', new Buffer(0), false, members)).to.equal(false);
+      expect(types.validate('enum', Buffer.from([]), false, members)).to.equal(false);
       expect(types.validate('enum', null, false, members)).to.equal(false);
 
     });
@@ -1051,7 +1051,7 @@ describe('LibDoc', () => {
       expect(types.check(false)).to.equal('boolean');
       expect(types.check({})).to.equal('object');
       expect(types.check([])).to.equal('array');
-      expect(types.check(new Buffer(0))).to.equal('buffer');
+      expect(types.check(Buffer.from([]))).to.equal('buffer');
 
     });
 
@@ -1067,7 +1067,7 @@ describe('LibDoc', () => {
       expect(types.introspect('hello')).to.deep.equal({
         type: 'string'
       });
-      expect(types.introspect(new Buffer(99))).to.deep.equal({
+      expect(types.introspect(Buffer.from(Array(99)))).to.deep.equal({
         type: 'buffer'
       });
       expect(types.introspect({a: 'a', b: 'b', c: null, d: 4})).to.deep.equal({
@@ -1183,7 +1183,7 @@ describe('LibDoc', () => {
       });
       expect(types.introspect({
         nested: ['one', 2, 3, 4],
-        a: new Buffer(0)
+        a: Buffer.from([])
       })).to.deep.equal({
         type: 'object',
         schema: [{
@@ -1195,7 +1195,7 @@ describe('LibDoc', () => {
         }, {
           type: 'buffer',
           name: 'a',
-          sampleValue: new Buffer(0)
+          sampleValue: Buffer.from([])
         }]
       });
 
