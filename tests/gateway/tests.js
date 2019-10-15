@@ -788,6 +788,75 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should register an error in the resolve step with type AccessPermissionError', done => {
+
+    let originalResolveFn = FaaSGateway.resolve;
+    FaaSGateway.resolve = (req, res, buffer, callback) => {
+      let error = new Error('You are not allowed to access this API.');
+      error.accessPermissionError = true;
+      return callback(error);
+    };
+
+    request('POST', {}, '/my_function/', {}, (err, res, result) => {
+
+      FaaSGateway.resolve = originalResolveFn;
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('AccessPermissionError');
+      done();
+
+    });
+
+  });
+
+  it('Should register an error in the resolve step with type AccessSourceError', done => {
+
+    let originalResolveFn = FaaSGateway.resolve;
+    FaaSGateway.resolve = (req, res, buffer, callback) => {
+      let error = new Error('You are not allowed to access this API.');
+      error.accessSourceError = true;
+      return callback(error);
+    };
+
+    request('POST', {}, '/my_function/', {}, (err, res, result) => {
+
+      FaaSGateway.resolve = originalResolveFn;
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('AccessSourceError');
+      done();
+
+    });
+
+  });
+
+  it('Should register an error in the resolve step with type AccessSourceError', done => {
+
+    let originalResolveFn = FaaSGateway.resolve;
+    FaaSGateway.resolve = (req, res, buffer, callback) => {
+      let error = new Error('You have called this API too many times.');
+      error.tooManyRequestsError = true;
+      return callback(error);
+    };
+
+    request('POST', {}, '/my_function/', {}, (err, res, result) => {
+
+      FaaSGateway.resolve = originalResolveFn;
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(429);
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('TooManyRequestsError');
+      done();
+
+    });
+
+  });
+
   it('Should register a runtime error properly', done => {
     request('POST', {}, '/runtime/', {}, (err, res, result) => {
 
