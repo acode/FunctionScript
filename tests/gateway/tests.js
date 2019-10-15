@@ -804,6 +804,7 @@ module.exports = (expect) => {
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(403);
       expect(result.error).to.exist;
+      expect(result.error.message).to.equal('You are not allowed to access this API.')
       expect(result.error.type).to.equal('AccessPermissionError');
       done();
 
@@ -827,6 +828,7 @@ module.exports = (expect) => {
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(403);
       expect(result.error).to.exist;
+      expect(result.error.message).to.equal('You are not allowed to access this API.')
       expect(result.error.type).to.equal('AccessSourceError');
       done();
 
@@ -850,6 +852,7 @@ module.exports = (expect) => {
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(429);
       expect(result.error).to.exist;
+      expect(result.error.message).to.equal('You have called this API too many times.')
       expect(result.error.type).to.equal('TooManyRequestsError');
       done();
 
