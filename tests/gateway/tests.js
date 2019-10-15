@@ -880,6 +880,29 @@ module.exports = (expect) => {
 
   });
 
+  it('Should register an error in the resolve step with type PaymentRequiredError', done => {
+
+    let originalResolveFn = FaaSGateway.resolve;
+    FaaSGateway.resolve = (req, res, buffer, callback) => {
+      let error = new Error('You are not allowed to access this API.');
+      error.paymentRequiredError = true;
+      return callback(error);
+    };
+
+    request('POST', {}, '/my_function/', {}, (err, res, result) => {
+
+      FaaSGateway.resolve = originalResolveFn;
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(402);
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('PaymentRequiredError');
+      done();
+
+    });
+
+  });
+
   it('Should register an error in the resolve step with type RateLimitError', done => {
 
     let originalResolveFn = FaaSGateway.resolve;
