@@ -802,9 +802,8 @@ module.exports = (expect) => {
       FaaSGateway.resolve = originalResolveFn;
 
       expect(err).to.not.exist;
-      expect(res.statusCode).to.equal(403);
+      expect(res.statusCode).to.equal(401);
       expect(result.error).to.exist;
-      expect(result.error.message).to.equal('You are not allowed to access this API.')
       expect(result.error.type).to.equal('AccessPermissionError');
       done();
 
@@ -826,9 +825,8 @@ module.exports = (expect) => {
       FaaSGateway.resolve = originalResolveFn;
 
       expect(err).to.not.exist;
-      expect(res.statusCode).to.equal(403);
+      expect(res.statusCode).to.equal(401);
       expect(result.error).to.exist;
-      expect(result.error.message).to.equal('You are not allowed to access this API.')
       expect(result.error.type).to.equal('AccessSourceError');
       done();
 
@@ -836,12 +834,62 @@ module.exports = (expect) => {
 
   });
 
-  it('Should register an error in the resolve step with type AccessSourceError', done => {
+  it('Should register an error in the resolve step with type AccessAuthError', done => {
+
+    let originalResolveFn = FaaSGateway.resolve;
+    FaaSGateway.resolve = (req, res, buffer, callback) => {
+      let error = new Error('You are not allowed to access this API.');
+      error.accessAuthError = true;
+      return callback(error);
+    };
+
+    request('POST', {}, '/my_function/', {}, (err, res, result) => {
+
+      FaaSGateway.resolve = originalResolveFn;
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(401);
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('AccessAuthError');
+      done();
+
+    });
+
+  });
+
+  it('Should register an error in the resolve step with type AccessSuspendedError', done => {
+
+    let originalResolveFn = FaaSGateway.resolve;
+    FaaSGateway.resolve = (req, res, buffer, callback) => {
+      let error = new Error('You are not allowed to access this API.');
+      error.accessSuspendedError = true;
+      return callback(error);
+    };
+
+    request('POST', {}, '/my_function/', {}, (err, res, result) => {
+
+      FaaSGateway.resolve = originalResolveFn;
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(401);
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('AccessSuspendedError');
+      done();
+
+    });
+
+  });
+
+  it('Should register an error in the resolve step with type RateLimitError', done => {
 
     let originalResolveFn = FaaSGateway.resolve;
     FaaSGateway.resolve = (req, res, buffer, callback) => {
       let error = new Error('You have called this API too many times.');
-      error.tooManyRequestsError = true;
+      error.rateLimitError = true;
+      error.rate = {
+        count: 1,
+        period: 3600
+      };
       return callback(error);
     };
 
@@ -852,8 +900,7 @@ module.exports = (expect) => {
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(429);
       expect(result.error).to.exist;
-      expect(result.error.message).to.equal('You have called this API too many times.')
-      expect(result.error.type).to.equal('TooManyRequestsError');
+      expect(result.error.type).to.equal('RateLimitError');
       done();
 
     });
