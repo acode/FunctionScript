@@ -924,7 +924,11 @@ module.exports = (expect) => {
       expect(res.statusCode).to.equal(429);
       expect(result.error).to.exist;
       expect(result.error.type).to.equal('RateLimitError');
-      expect(result.error.message).to.equal('Too many requests. The rate limit for this endpoint is 1 requests in 3600 seconds.')
+      expect(result.error.details).to.haveOwnProperty('rate');
+      expect(result.error.details.rate).to.haveOwnProperty('count');
+      expect(result.error.details.rate).to.haveOwnProperty('period');
+      expect(result.error.details.rate.count).to.equal(1);
+      expect(result.error.details.rate.period).to.equal(3600);
       done();
 
     });
