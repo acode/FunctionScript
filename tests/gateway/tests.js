@@ -788,6 +788,153 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should register an error in the resolve step with type AccessPermissionError', done => {
+
+    let originalResolveFn = FaaSGateway.resolve;
+    FaaSGateway.resolve = (req, res, buffer, callback) => {
+      let error = new Error('You are not allowed to access this API.');
+      error.accessPermissionError = true;
+      return callback(error);
+    };
+
+    request('POST', {}, '/my_function/', {}, (err, res, result) => {
+
+      FaaSGateway.resolve = originalResolveFn;
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(401);
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('AccessPermissionError');
+      done();
+
+    });
+
+  });
+
+  it('Should register an error in the resolve step with type AccessSourceError', done => {
+
+    let originalResolveFn = FaaSGateway.resolve;
+    FaaSGateway.resolve = (req, res, buffer, callback) => {
+      let error = new Error('You are not allowed to access this API.');
+      error.accessSourceError = true;
+      return callback(error);
+    };
+
+    request('POST', {}, '/my_function/', {}, (err, res, result) => {
+
+      FaaSGateway.resolve = originalResolveFn;
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(401);
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('AccessSourceError');
+      done();
+
+    });
+
+  });
+
+  it('Should register an error in the resolve step with type AccessAuthError', done => {
+
+    let originalResolveFn = FaaSGateway.resolve;
+    FaaSGateway.resolve = (req, res, buffer, callback) => {
+      let error = new Error('You are not allowed to access this API.');
+      error.accessAuthError = true;
+      return callback(error);
+    };
+
+    request('POST', {}, '/my_function/', {}, (err, res, result) => {
+
+      FaaSGateway.resolve = originalResolveFn;
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(401);
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('AccessAuthError');
+      done();
+
+    });
+
+  });
+
+  it('Should register an error in the resolve step with type AccessSuspendedError', done => {
+
+    let originalResolveFn = FaaSGateway.resolve;
+    FaaSGateway.resolve = (req, res, buffer, callback) => {
+      let error = new Error('You are not allowed to access this API.');
+      error.accessSuspendedError = true;
+      return callback(error);
+    };
+
+    request('POST', {}, '/my_function/', {}, (err, res, result) => {
+
+      FaaSGateway.resolve = originalResolveFn;
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(401);
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('AccessSuspendedError');
+      done();
+
+    });
+
+  });
+
+  it('Should register an error in the resolve step with type PaymentRequiredError', done => {
+
+    let originalResolveFn = FaaSGateway.resolve;
+    FaaSGateway.resolve = (req, res, buffer, callback) => {
+      let error = new Error('You are not allowed to access this API.');
+      error.paymentRequiredError = true;
+      return callback(error);
+    };
+
+    request('POST', {}, '/my_function/', {}, (err, res, result) => {
+
+      FaaSGateway.resolve = originalResolveFn;
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(402);
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('PaymentRequiredError');
+      done();
+
+    });
+
+  });
+
+  it('Should register an error in the resolve step with type RateLimitError', done => {
+
+    let originalResolveFn = FaaSGateway.resolve;
+    FaaSGateway.resolve = (req, res, buffer, callback) => {
+      let error = new Error('You have called this API too many times.');
+      error.rateLimitError = true;
+      error.rate = {
+        count: 1,
+        period: 3600
+      };
+      return callback(error);
+    };
+
+    request('POST', {}, '/my_function/', {}, (err, res, result) => {
+
+      FaaSGateway.resolve = originalResolveFn;
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(429);
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('RateLimitError');
+      expect(result.error.details).to.haveOwnProperty('rate');
+      expect(result.error.details.rate).to.haveOwnProperty('count');
+      expect(result.error.details.rate).to.haveOwnProperty('period');
+      expect(result.error.details.rate.count).to.equal(1);
+      expect(result.error.details.rate.period).to.equal(3600);
+      done();
+
+    });
+
+  });
+
   it('Should register a runtime error properly', done => {
     request('POST', {}, '/runtime/', {}, (err, res, result) => {
 
