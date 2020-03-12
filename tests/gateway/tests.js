@@ -2102,8 +2102,8 @@ module.exports = (expect) => {
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
       expect(result).to.exist;
-      expect(result).to.haveOwnProperty('_base64');
-      expect(Buffer.from(result._base64, 'base64').toString()).to.equal('lol');
+      expect(result).to.be.instanceof(Buffer);
+      expect(result.toString()).to.equal('lol');
       done();
 
     });
