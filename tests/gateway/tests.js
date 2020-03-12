@@ -1137,8 +1137,8 @@ module.exports = (expect) => {
 
       response.on('end', function() {
         let results = JSON.parse(body);
-        let stringBuffer = Buffer.from(results.my_string_buffer.data)
-        let fileBuffer = Buffer.from(results.my_file_buffer.data)
+        let stringBuffer = Buffer.from(results.my_string_buffer._base64, 'base64');
+        let fileBuffer = Buffer.from(results.my_file_buffer._base64, 'base64');
         expect(results.my_field).to.equal('my value');
         expect(stringBuffer).to.be.deep.equal(Buffer.from('123'))
         expect(fileBuffer).to.be.deep.equal(pkgJson)
@@ -2055,6 +2055,100 @@ module.exports = (expect) => {
       expect(result.error).to.exist;
       expect(result.error.details).to.exist;
       expect(result.error.details.limit).to.exist;
+      done();
+
+    });
+  });
+
+  it('Should return a buffer properly', done => {
+    request('POST', {}, '/buffer_return/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result).to.be.instanceof(Buffer);
+      expect(result.toString()).to.equal('lol');
+      done();
+
+    });
+  });
+
+  it('Should return a nested buffer properly', done => {
+    request('POST', {}, '/buffer_nested_return/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result).to.haveOwnProperty('body');
+      expect(result.body).to.haveOwnProperty('_base64');
+      expect(Buffer.from(result.body._base64, 'base64').toString()).to.equal('lol');
+      expect(result.test).to.exist;
+      expect(result.test.deep).to.exist;
+      expect(result.test.deep).to.be.an('array');
+      expect(result.test.deep.length).to.equal(3);
+      expect(result.test.deep[1]).to.haveOwnProperty('_base64');
+      expect(Buffer.from(result.test.deep[1]._base64, 'base64').toString()).to.equal('wat');
+      done();
+
+    });
+  });
+
+  it('Should return a mocked buffer as if it were a real one', done => {
+    request('POST', {}, '/buffer_mocked_return/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result).to.haveOwnProperty('_base64');
+      expect(Buffer.from(result._base64, 'base64').toString()).to.equal('lol');
+      done();
+
+    });
+  });
+
+  it('Should return a nested mocked buffer as if it were a real one', done => {
+    request('POST', {}, '/buffer_nested_mocked_return/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result).to.haveOwnProperty('body');
+      expect(result.body).to.haveOwnProperty('_base64');
+      expect(Buffer.from(result.body._base64, 'base64').toString()).to.equal('lol');
+      expect(result.test).to.exist;
+      expect(result.test.deep).to.exist;
+      expect(result.test.deep).to.be.an('array');
+      expect(result.test.deep.length).to.equal(3);
+      expect(result.test.deep[1]).to.haveOwnProperty('_base64');
+      expect(Buffer.from(result.test.deep[1]._base64, 'base64').toString()).to.equal('wat');
+      done();
+
+    });
+  });
+
+  it('Should throw an ValueError on an invalid Buffer type', done => {
+    request('POST', {}, '/value_error/buffer_invalid/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(502);
+      expect(result).to.exist;
+      done();
+
+    });
+  });
+
+  it('Should throw an ValueError on an invalid Number type', done => {
+    request('POST', {}, '/value_error/number_invalid/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(502);
+      expect(result).to.exist;
       done();
 
     });

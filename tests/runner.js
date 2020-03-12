@@ -57,7 +57,7 @@ describe('LibDoc', () => {
 
     it('Should read all functions correctly', () => {
 
-      expect(Object.keys(definitions).length).to.equal(18);
+      expect(Object.keys(definitions).length).to.equal(19);
       expect(definitions).to.haveOwnProperty('');
       expect(definitions).to.haveOwnProperty('test');
       expect(definitions).to.haveOwnProperty('returns');
@@ -580,7 +580,7 @@ describe('LibDoc', () => {
 
     });
 
-    it('Should had a named return value and description', () => {
+    it('Should have a named return value and description', () => {
 
       let definition = definitions['named_return'];
       expect(definition.returns.name).to.equal('returnName');
@@ -588,13 +588,22 @@ describe('LibDoc', () => {
 
     });
 
-    it('Should had a nullable return value', () => {
+    it('Should have a nullable return value', () => {
 
       let definition = definitions['nullable_return'];
       expect(definition.returns.description).to.equal('not sure');
       expect(definition.returns.type).to.equal('string');
       expect(definition.returns.name).to.equal('maybestring');
       expect(definition.returns.defaultValue).to.equal(null);
+
+    });
+
+    it('Should have a return value, description and type even with no name', () => {
+
+      let definition = definitions['noname_return'];
+      expect(definition.returns.name).to.equal('');
+      expect(definition.returns.description).to.equal('');
+      expect(definition.returns.type).to.equal('buffer');
 
     });
 

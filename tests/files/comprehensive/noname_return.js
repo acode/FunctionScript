@@ -1,8 +1,8 @@
 /**
-* @returns {number} name hello
+* @returns {buffer}
 */
 module.exports = (a = 2, b = 4, c = 6, callback) => {
 
-  return callback(null, 1);
+  return callback(null, new Buffer('hello'));
 
 };
