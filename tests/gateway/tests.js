@@ -2130,6 +2130,41 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should return a mocked buffer as if it were a real one, if type "any"', done => {
+    request('POST', {}, '/buffer_any_return/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result).to.be.instanceof(Buffer);
+      expect(result.toString()).to.equal('lol');
+      done();
+
+    });
+  });
+
+  it('Should return a nested mocked buffer as if it were a real one, if type "any"', done => {
+    request('POST', {}, '/buffer_nested_any_return/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result).to.haveOwnProperty('body');
+      expect(result.body).to.haveOwnProperty('_base64');
+      expect(Buffer.from(result.body._base64, 'base64').toString()).to.equal('lol');
+      expect(result.test).to.exist;
+      expect(result.test.deep).to.exist;
+      expect(result.test.deep).to.be.an('array');
+      expect(result.test.deep.length).to.equal(3);
+      expect(result.test.deep[1]).to.haveOwnProperty('_base64');
+      expect(Buffer.from(result.test.deep[1]._base64, 'base64').toString()).to.equal('wat');
+      done();
+
+    });
+  });
+
   it('Should throw an ValueError on an invalid Buffer type', done => {
     request('POST', {}, '/value_error/buffer_invalid/', {},
     (err, res, result) => {
