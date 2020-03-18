@@ -2189,6 +2189,55 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should not set "context.providers" with no "__providers" parameter provided', done => {
+    request('POST', {}, '/context/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result.providers).to.not.exist;
+      done();
+
+    });
+  });
+
+  it('Should not set "context.providers" if the "__providers" parameter is not an object', done => {
+    request('POST', {}, '/context/', {
+      __providers: 'stringvalue'
+    },
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result.providers).to.not.exist;
+      done();
+
+    });
+  });
+
+  it('Should set "context.providers" as the value of the "__providers" parameter if it is an object', done => {
+    request('POST', {}, '/context/', {
+      __providers: {
+        test: {
+          item: 'value'
+        }
+      }
+    },
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result.providers).to.exist;
+      expect(result.providers.test).to.exist;
+      expect(result.providers.test.item).to.equal('value');
+      done();
+
+    });
+  });
+
   after(() => FaaSGateway.close());
 
 };
