@@ -2238,6 +2238,18 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should not fail when passing in "__providers" as a URL encoded parameter', done => {
+    request('POST', {}, '/context/', '__providers={"test":{"item":"value"}}', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result.providers).to.not.exist;
+      done();
+
+    });
+  });
+
   after(() => FaaSGateway.close());
 
 };
