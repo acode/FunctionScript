@@ -2189,62 +2189,108 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should not set "context.providers" with no "__providers" parameter provided', done => {
+  it('Should not populate "context.keys" with no authorization keys header provided', done => {
+    request('POST', {}, '/keys/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result).to.deep.equal({
+        TEST_KEY: null,
+        ANOTHER_KEY: null,
+        A_THIRD_KEY: null
+      });
+      done();
+
+    });
+  });
+
+  it('Should not populate "context.keys" if the authorization keys header is not a serialized object', done => {
+    request('POST', {
+      'X-Authorization-Keys': 'stringvalue'
+    }, '/keys/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result).to.deep.equal({
+        TEST_KEY: null,
+        ANOTHER_KEY: null,
+        A_THIRD_KEY: null
+      });
+      done();
+
+    });
+  });
+
+  it('Should populate "context.keys" with only the proper keys', done => {
+    request('POST', {
+      'X-Authorization-Keys': JSON.stringify({
+        TEST_KEY: '123',
+        ANOTHER_KEY: 'abc',
+        UNSPECIFIED_KEY: '987'
+      })
+    }, '/keys/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.exist;
+      expect(result).to.deep.equal({
+        TEST_KEY: '123',
+        ANOTHER_KEY: 'abc',
+        A_THIRD_KEY: null
+      });
+      done();
+
+    });
+  });
+
+  it('Should not populate "context.providers" with no authorization providers header provided', done => {
     request('POST', {}, '/context/', {},
     (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
       expect(result).to.exist;
-      expect(result.providers).to.not.exist;
+      expect(result.providers).to.deep.equal({});
       done();
 
     });
   });
 
-  it('Should not set "context.providers" if the "__providers" parameter is not an object', done => {
-    request('POST', {}, '/context/', {
-      __providers: 'stringvalue'
-    },
+  it('Should not populate "context.providers" if the authorization providers header is not an serialized object', done => {
+    request('POST', {
+      'X-Authorization-Providers': 'stringvalue'
+    }, '/context/', {},
     (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
       expect(result).to.exist;
-      expect(result.providers).to.not.exist;
+      expect(result.providers).to.deep.equal({});
       done();
 
     });
   });
 
-  it('Should set "context.providers" as the value of the "__providers" parameter if it is an object', done => {
-    request('POST', {}, '/context/', {
-      __providers: {
-        test: {
-          item: 'value'
-        }
+  it('Should populate "context.providers" as the value of the authorization providers header if it is a serialized object', done => {
+    let headerValue = {
+      test: {
+        item: 'value'
       }
-    },
+    };
+    request('POST', {
+      'X-Authorization-Providers': JSON.stringify(headerValue)
+    }, '/context/', {},
     (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
       expect(result).to.exist;
-      expect(result.providers).to.exist;
-      expect(result.providers.test).to.exist;
-      expect(result.providers.test.item).to.equal('value');
-      done();
-
-    });
-  });
-
-  it('Should not fail when passing in "__providers" as a URL encoded parameter', done => {
-    request('POST', {}, '/context/', '__providers={"test":{"item":"value"}}', (err, res, result) => {
-
-      expect(err).to.not.exist;
-      expect(res.statusCode).to.equal(200);
-      expect(result).to.exist;
-      expect(result.providers).to.not.exist;
+      expect(result.providers).to.deep.equal(headerValue);
       done();
 
     });
