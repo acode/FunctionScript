@@ -2,5 +2,5 @@
 * @returns {buffer} mybuf
 */
 module.exports = async () => {
-  return new Buffer('lol');
+  return Buffer.from('lol');
 };

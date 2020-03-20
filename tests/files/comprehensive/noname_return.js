@@ -3,6 +3,6 @@
 */
 module.exports = (a = 2, b = 4, c = 6, callback) => {
 
-  return callback(null, new Buffer('hello'));
+  return callback(null, Buffer.from('hello'));
 
 };

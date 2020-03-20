@@ -57,7 +57,7 @@ describe('LibDoc', () => {
 
     it('Should read all functions correctly', () => {
 
-      expect(Object.keys(definitions).length).to.equal(19);
+      expect(Object.keys(definitions).length).to.equal(20);
       expect(definitions).to.haveOwnProperty('');
       expect(definitions).to.haveOwnProperty('test');
       expect(definitions).to.haveOwnProperty('returns');
@@ -72,6 +72,7 @@ describe('LibDoc', () => {
       expect(definitions).to.haveOwnProperty('schema/array');
       expect(definitions).to.haveOwnProperty('enum');
       expect(definitions).to.haveOwnProperty('enum_return');
+      expect(definitions).to.haveOwnProperty('enum_nested');
 
     });
 
@@ -98,6 +99,7 @@ describe('LibDoc', () => {
       expect(definitions['schema/array'].pathname).to.equal('schema/array.js');
       expect(definitions['enum'].pathname).to.equal('enum.js');
       expect(definitions['enum_return'].pathname).to.equal('enum_return.js');
+      expect(definitions['enum_nested'].pathname).to.equal('enum_nested.js');
 
     });
 
@@ -117,6 +119,7 @@ describe('LibDoc', () => {
       expect(definitions['schema/array'].description).to.equal('Test Array Schema Input');
       expect(definitions['enum'].description).to.equal('Test Enum');
       expect(definitions['enum_return'].description).to.equal('Test Enum Returns');
+      expect(definitions['enum_nested'].description).to.equal('Test Nested Enum');
 
     });
 
@@ -136,6 +139,7 @@ describe('LibDoc', () => {
       expect(definitions['schema/array'].context).to.equal(null);
       expect(definitions['enum'].context).to.equal(null);
       expect(definitions['enum_return'].context).to.exist;
+      expect(definitions['enum_nested'].context).to.exist;
 
     });
 
@@ -154,6 +158,7 @@ describe('LibDoc', () => {
       expect(definitions['schema/array'].returns.description).to.equal('');
       expect(definitions['enum'].returns.description).to.equal('');
       expect(definitions['enum_return'].returns.description).to.equal('a or b');
+      expect(definitions['enum_nested'].returns.description).to.equal('A boolean value');
 
     });
 
@@ -172,6 +177,7 @@ describe('LibDoc', () => {
       expect(definitions['schema/array'].returns.type).to.equal('string');
       expect(definitions['enum'].returns.type).to.equal('any');
       expect(definitions['enum_return'].returns.type).to.equal('enum');
+      expect(definitions['enum_nested'].returns.type).to.equal('boolean');
 
     });
 
@@ -191,6 +197,7 @@ describe('LibDoc', () => {
       expect(definitions['schema/array'].charge).to.equal(1);
       expect(definitions['enum'].charge).to.equal(1);
       expect(definitions['enum_return'].charge).to.equal(1);
+      expect(definitions['enum_nested'].charge).to.equal(1);
 
     });
 
@@ -226,6 +233,8 @@ describe('LibDoc', () => {
       expect(definitions['enum'].keys).to.have.length(0);
       expect(definitions['enum_return'].keys).to.be.an('Array');
       expect(definitions['enum_return'].keys).to.have.length(0);
+      expect(definitions['enum_nested'].keys).to.be.an('Array');
+      expect(definitions['enum_nested'].keys).to.have.length(0);
 
     });
 
@@ -629,6 +638,70 @@ describe('LibDoc', () => {
           type: 'any',
           defaultValue: null,
           description: ''
+        }
+      ]);
+
+    });
+
+    it('Should read "enum_nested" parameters', () => {
+
+      let params = definitions['enum_nested'].params;
+
+      expect(params).to.deep.equal([
+        {
+          name: 'obj',
+          type: 'object',
+          description: '',
+          schema: [
+            {
+              name: 'selector',
+              type: 'string',
+              description: 'The selector to query'
+            },
+            {
+              name: 'operator',
+              type: 'enum',
+              description: 'Which data to retrieve: can be "text", "html" or "attr"',
+              members: [['text', 'text'], ['html', 'html'], ['attr', 'attr']]
+            },
+            {
+              name: 'attr',
+              type: 'string',
+              defaultValue: null,
+              description: 'If method is "attr", which attribute to retrieve'
+            }
+          ]
+        },
+        {
+          name: 'arr',
+          type: 'array',
+          description: '',
+          schema: [
+            {
+              name: 'obj',
+              type: 'object',
+              description: '',
+              schema: [
+                {
+                  name: 'selector',
+                  type: 'string',
+                  description: 'The selector to query'
+                },
+                {
+                  name: 'operator',
+                  type: 'enum',
+                  description: 'Which data to retrieve: can be "text", "html" or "attr"',
+                  members: [['text', 'text'], ['html', 'html'], ['attr', 'attr']]
+                },
+                {
+                  name: 'attr',
+                  type: 'string',
+                  defaultValue: null,
+                  description: 'If method is "attr", which attribute to retrieve'
+                }
+              ]
+            }
+          ]
         }
       ]);
 

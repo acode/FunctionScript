@@ -5,11 +5,11 @@
 */
 module.exports = async () => {
   return {
-    body: new Buffer('lol'),
+    body: Buffer.from('lol'),
     test: {
       deep: [
         0,
-        new Buffer('wat'),
+        Buffer.from('wat'),
         2
       ]
     }

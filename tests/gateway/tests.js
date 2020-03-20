@@ -6,7 +6,7 @@ const PORT = 7357;
 const HOST = 'localhost'
 const ROOT = './tests/gateway';
 
-const FaaSGateway = new Gateway({debug: true, root: ROOT});
+const FaaSGateway = new Gateway({debug: false, root: ROOT});
 const parser = new FunctionParser();
 
 function request(method, headers, path, data, callback) {
