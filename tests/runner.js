@@ -57,7 +57,7 @@ describe('LibDoc', () => {
 
     it('Should read all functions correctly', () => {
 
-      expect(Object.keys(definitions).length).to.equal(20);
+      expect(Object.keys(definitions).length).to.equal(21);
       expect(definitions).to.haveOwnProperty('');
       expect(definitions).to.haveOwnProperty('test');
       expect(definitions).to.haveOwnProperty('returns');
@@ -73,6 +73,7 @@ describe('LibDoc', () => {
       expect(definitions).to.haveOwnProperty('enum');
       expect(definitions).to.haveOwnProperty('enum_return');
       expect(definitions).to.haveOwnProperty('enum_nested');
+      expect(definitions).to.haveOwnProperty('options');
 
     });
 
@@ -100,6 +101,7 @@ describe('LibDoc', () => {
       expect(definitions['enum'].pathname).to.equal('enum.js');
       expect(definitions['enum_return'].pathname).to.equal('enum_return.js');
       expect(definitions['enum_nested'].pathname).to.equal('enum_nested.js');
+      expect(definitions['options'].pathname).to.equal('options.js');
 
     });
 
@@ -120,6 +122,7 @@ describe('LibDoc', () => {
       expect(definitions['enum'].description).to.equal('Test Enum');
       expect(definitions['enum_return'].description).to.equal('Test Enum Returns');
       expect(definitions['enum_nested'].description).to.equal('Test Nested Enum');
+      expect(definitions['options'].description).to.equal('Populate options properly');
 
     });
 
@@ -140,6 +143,7 @@ describe('LibDoc', () => {
       expect(definitions['enum'].context).to.equal(null);
       expect(definitions['enum_return'].context).to.exist;
       expect(definitions['enum_nested'].context).to.exist;
+      expect(definitions['options'].context).to.equal(null);
 
     });
 
@@ -159,6 +163,7 @@ describe('LibDoc', () => {
       expect(definitions['enum'].returns.description).to.equal('');
       expect(definitions['enum_return'].returns.description).to.equal('a or b');
       expect(definitions['enum_nested'].returns.description).to.equal('A boolean value');
+      expect(definitions['options'].returns.description).to.equal('a Boolean?');
 
     });
 
@@ -178,6 +183,7 @@ describe('LibDoc', () => {
       expect(definitions['enum'].returns.type).to.equal('any');
       expect(definitions['enum_return'].returns.type).to.equal('enum');
       expect(definitions['enum_nested'].returns.type).to.equal('boolean');
+      expect(definitions['options'].returns.type).to.equal('boolean');
 
     });
 
@@ -198,6 +204,7 @@ describe('LibDoc', () => {
       expect(definitions['enum'].charge).to.equal(1);
       expect(definitions['enum_return'].charge).to.equal(1);
       expect(definitions['enum_nested'].charge).to.equal(1);
+      expect(definitions['options'].charge).to.equal(1);
 
     });
 
@@ -235,6 +242,8 @@ describe('LibDoc', () => {
       expect(definitions['enum_return'].keys).to.have.length(0);
       expect(definitions['enum_nested'].keys).to.be.an('Array');
       expect(definitions['enum_nested'].keys).to.have.length(0);
+      expect(definitions['options'].keys).to.be.an('Array');
+      expect(definitions['options'].keys).to.have.length(0);
 
     });
 
@@ -704,6 +713,34 @@ describe('LibDoc', () => {
           ]
         }
       ]);
+
+    });
+
+    it('Should read "options" parameters', () => {
+
+      let params = definitions['options'].params;
+      expect(params.length).to.equal(2);
+      expect(params[0].name).to.equal('database');
+      expect(params[0].type).to.equal('string');
+      expect(params[0].description).to.equal('A database');
+      expect(params[0].options).to.exist;
+      expect(Object.keys(params[0].options).length).to.equal(2);
+      expect(params[0].options.lib).to.equal('db.schema.databases.list');
+      expect(params[0].options.extract).to.exist;
+      expect(params[0].options.extract.labels).to.equal('$[].name');
+      expect(params[0].options.extract.values).to.equal('$[].id');
+      expect(params[1].name).to.equal('table');
+      expect(params[1].type).to.equal('string');
+      expect(params[1].description).to.equal('A table');
+      expect(Object.keys(params[1].options).length).to.equal(3);
+      expect(params[1].options.lib).to.equal('db.schema.databases.retrieve');
+      expect(params[1].options.map).to.exist;
+      expect(Object.keys(params[1].options.map).length).to.equal(1);
+      expect(params[1].options.map).to.haveOwnProperty('databaseId');
+      expect(params[1].options.map.databaseId).to.equal('database');
+      expect(params[1].options.extract).to.exist;
+      expect(params[1].options.extract.labels).to.equal('$[].name');
+      expect(params[1].options.extract.values).to.equal('$[].name');
 
     });
 
