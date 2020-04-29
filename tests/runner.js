@@ -723,6 +723,7 @@ describe('LibDoc', () => {
       expect(params[0].name).to.equal('database');
       expect(params[0].type).to.equal('string');
       expect(params[0].description).to.equal('A database');
+      expect(params[0].defaultMetafield).to.equal('databaseId');
       expect(params[0].options).to.exist;
       expect(Object.keys(params[0].options).length).to.equal(2);
       expect(params[0].options.lib).to.equal('db.schema.databases.list');
