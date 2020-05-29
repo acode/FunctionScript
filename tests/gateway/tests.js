@@ -2060,6 +2060,120 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should accept keyql with correct options', done => {
+    request('POST', {}, '/keyql_options/', {query: {alpha: 'hello'}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.equal('hello');
+      done();
+
+    });
+  });
+
+  it('Should accept keyql with correct options and an operator', done => {
+    request('POST', {}, '/keyql_options/', {query: {alpha__is: 'hello'}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.equal('hello');
+      done();
+
+    });
+  });
+
+  it('Should reject keyql with correct options with an incorrect operator', done => {
+    request('POST', {}, '/keyql_options/', {query: {alpha__isnt: 'hello'}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      done();
+
+    });
+  });
+
+  it('Should reject keyql with incorrect options', done => {
+    request('POST', {}, '/keyql_options/', {query: {gamma: 'hello'}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      done();
+
+    });
+  });
+
+  it('Should reject keyql with incorrect options with an operator', done => {
+    request('POST', {}, '/keyql_options/', {query: {gamma__is: 'hello'}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      done();
+
+    });
+  });
+
+  it('Should accept keyql array with correct options', done => {
+    request('POST', {}, '/keyql_options_array/', {query: [{alpha: 'hello'}]},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.equal('hello');
+      done();
+
+    });
+  });
+
+  it('Should accept keyql array with correct options and an operator', done => {
+    request('POST', {}, '/keyql_options_array/', {query: [{alpha__is: 'hello'}]},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.equal('hello');
+      done();
+
+    });
+  });
+
+  it('Should reject keyql array with correct options with an incorrect operator', done => {
+    request('POST', {}, '/keyql_options_array/', {query: [{alpha__isnt: 'hello'}]},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      done();
+
+    });
+  });
+
+  it('Should reject keyql array with incorrect options', done => {
+    request('POST', {}, '/keyql_options_array/', {query: [{gamma: 'hello'}]},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      done();
+
+    });
+  });
+
+  it('Should reject keyql array with incorrect options with an operator', done => {
+    request('POST', {}, '/keyql_options_array/', {query: [{gamma__is: 'hello'}]},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      done();
+
+    });
+  });
+
   it('Should return a buffer properly', done => {
     request('POST', {}, '/buffer_return/', {},
     (err, res, result) => {
