@@ -57,7 +57,7 @@ describe('LibDoc', () => {
 
     it('Should read all functions correctly', () => {
 
-      expect(Object.keys(definitions).length).to.equal(21);
+      expect(Object.keys(definitions).length).to.equal(22);
       expect(definitions).to.haveOwnProperty('');
       expect(definitions).to.haveOwnProperty('test');
       expect(definitions).to.haveOwnProperty('returns');
@@ -74,6 +74,7 @@ describe('LibDoc', () => {
       expect(definitions).to.haveOwnProperty('enum_return');
       expect(definitions).to.haveOwnProperty('enum_nested');
       expect(definitions).to.haveOwnProperty('options');
+      expect(definitions).to.haveOwnProperty('keyql_options');
 
     });
 
@@ -720,6 +721,7 @@ describe('LibDoc', () => {
 
       let params = definitions['options'].params;
       expect(params.length).to.equal(2);
+
       expect(params[0].name).to.equal('database');
       expect(params[0].type).to.equal('string');
       expect(params[0].description).to.equal('A database');
@@ -730,6 +732,7 @@ describe('LibDoc', () => {
       expect(params[0].options.extract).to.exist;
       expect(params[0].options.extract.labels).to.equal('$[].name');
       expect(params[0].options.extract.values).to.equal('$[].id');
+
       expect(params[1].name).to.equal('table');
       expect(params[1].type).to.equal('string');
       expect(params[1].description).to.equal('A table');
@@ -742,6 +745,34 @@ describe('LibDoc', () => {
       expect(params[1].options.extract).to.exist;
       expect(params[1].options.extract.labels).to.equal('$[].name');
       expect(params[1].options.extract.values).to.equal('$[].name');
+
+    });
+
+    it('Should read "options" parameters in keyql', () => {
+
+      let params = definitions['keyql_options'].params;
+      expect(params.length).to.equal(2);
+
+      expect(params[0].name).to.equal('query');
+      expect(params[0].type).to.equal('object.keyql.query');
+      expect(params[0].description).to.equal('Query API based on these parameters');
+      expect(params[0].options).to.exist;
+      expect(Object.keys(params[0].options).length).to.equal(1);
+      expect(params[0].options.values).to.be.an('array');
+      expect(params[0].options.values.length).to.equal(3);
+      expect(params[0].options.values[0]).to.equal('status');
+      expect(params[0].options.values[1]).to.equal('hello');
+      expect(params[0].options.values[2]).to.equal('goodbye');
+
+      expect(params[1].name).to.equal('query2');
+      expect(params[1].type).to.equal('object.keyql.query');
+      expect(params[1].description).to.equal('Query API based on these parameters');
+      expect(params[1].options).to.exist;
+      expect(Object.keys(params[1].options).length).to.equal(2);
+      expect(params[1].options.lib).to.equal('db.schema.database.fields');
+      expect(params[1].options.extract).to.exist;
+      expect(params[1].options.extract.labels).to.equal('$.fields[].name');
+      expect(params[1].options.extract.values).to.equal('$.fields[].id');
 
     });
 
