@@ -751,7 +751,7 @@ describe('LibDoc', () => {
     it('Should read "options" parameters in keyql', () => {
 
       let params = definitions['keyql_options'].params;
-      expect(params.length).to.equal(2);
+      expect(params.length).to.equal(3);
 
       expect(params[0].name).to.equal('query');
       expect(params[0].type).to.equal('object.keyql.query');
@@ -773,6 +773,21 @@ describe('LibDoc', () => {
       expect(params[1].options.extract).to.exist;
       expect(params[1].options.extract.labels).to.equal('$.fields[].name');
       expect(params[1].options.extract.values).to.equal('$.fields[].id');
+
+      expect(params[2].name).to.equal('keyqlquery');
+      expect(params[2].type).to.equal('array');
+      expect(params[2].schema).to.exist;
+      expect(params[2].schema.length).to.equal(1);
+      expect(params[2].schema[0].name).to.equal('queryobj');
+      expect(params[2].schema[0].type).to.equal('object.keyql.query');
+      expect(params[2].schema[0].description).to.equal('Query API based on these parameters');
+      expect(params[2].schema[0].options).to.exist;
+      expect(Object.keys(params[2].schema[0].options).length).to.equal(1);
+      expect(params[2].schema[0].options.values).to.be.an('array');
+      expect(params[2].schema[0].options.values.length).to.equal(3);
+      expect(params[2].schema[0].options.values[0]).to.equal('status');
+      expect(params[2].schema[0].options.values[1]).to.equal('hello');
+      expect(params[2].schema[0].options.values[2]).to.equal('goodbye');
 
     });
 
