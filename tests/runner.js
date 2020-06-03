@@ -57,7 +57,7 @@ describe('LibDoc', () => {
 
     it('Should read all functions correctly', () => {
 
-      expect(Object.keys(definitions).length).to.equal(22);
+      expect(Object.keys(definitions).length).to.equal(23);
       expect(definitions).to.haveOwnProperty('');
       expect(definitions).to.haveOwnProperty('test');
       expect(definitions).to.haveOwnProperty('returns');
@@ -73,6 +73,7 @@ describe('LibDoc', () => {
       expect(definitions).to.haveOwnProperty('enum');
       expect(definitions).to.haveOwnProperty('enum_return');
       expect(definitions).to.haveOwnProperty('enum_nested');
+      expect(definitions).to.haveOwnProperty('enum_nested_optional');
       expect(definitions).to.haveOwnProperty('options');
       expect(definitions).to.haveOwnProperty('keyql_options');
 
@@ -102,6 +103,7 @@ describe('LibDoc', () => {
       expect(definitions['enum'].pathname).to.equal('enum.js');
       expect(definitions['enum_return'].pathname).to.equal('enum_return.js');
       expect(definitions['enum_nested'].pathname).to.equal('enum_nested.js');
+      expect(definitions['enum_nested_optional'].pathname).to.equal('enum_nested_optional.js');
       expect(definitions['options'].pathname).to.equal('options.js');
 
     });
@@ -123,6 +125,7 @@ describe('LibDoc', () => {
       expect(definitions['enum'].description).to.equal('Test Enum');
       expect(definitions['enum_return'].description).to.equal('Test Enum Returns');
       expect(definitions['enum_nested'].description).to.equal('Test Nested Enum');
+      expect(definitions['enum_nested_optional'].description).to.equal('Test Optional Nested Enum');
       expect(definitions['options'].description).to.equal('Populate options properly');
 
     });
@@ -144,6 +147,7 @@ describe('LibDoc', () => {
       expect(definitions['enum'].context).to.equal(null);
       expect(definitions['enum_return'].context).to.exist;
       expect(definitions['enum_nested'].context).to.exist;
+      expect(definitions['enum_nested_optional'].context).to.exist;
       expect(definitions['options'].context).to.equal(null);
 
     });
@@ -164,6 +168,7 @@ describe('LibDoc', () => {
       expect(definitions['enum'].returns.description).to.equal('');
       expect(definitions['enum_return'].returns.description).to.equal('a or b');
       expect(definitions['enum_nested'].returns.description).to.equal('A boolean value');
+      expect(definitions['enum_nested_optional'].returns.description).to.equal('A boolean value');
       expect(definitions['options'].returns.description).to.equal('a Boolean?');
 
     });
@@ -183,6 +188,7 @@ describe('LibDoc', () => {
       expect(definitions['schema/array'].returns.type).to.equal('string');
       expect(definitions['enum'].returns.type).to.equal('any');
       expect(definitions['enum_return'].returns.type).to.equal('enum');
+      expect(definitions['enum_nested'].returns.type).to.equal('boolean');
       expect(definitions['enum_nested'].returns.type).to.equal('boolean');
       expect(definitions['options'].returns.type).to.equal('boolean');
 
@@ -205,6 +211,7 @@ describe('LibDoc', () => {
       expect(definitions['enum'].charge).to.equal(1);
       expect(definitions['enum_return'].charge).to.equal(1);
       expect(definitions['enum_nested'].charge).to.equal(1);
+      expect(definitions['enum_nested_optional'].charge).to.equal(1);
       expect(definitions['options'].charge).to.equal(1);
 
     });
@@ -243,6 +250,8 @@ describe('LibDoc', () => {
       expect(definitions['enum_return'].keys).to.have.length(0);
       expect(definitions['enum_nested'].keys).to.be.an('Array');
       expect(definitions['enum_nested'].keys).to.have.length(0);
+      expect(definitions['enum_nested_optional'].keys).to.have.an('Array');
+      expect(definitions['enum_nested_optional'].keys).to.have.length(0);
       expect(definitions['options'].keys).to.be.an('Array');
       expect(definitions['options'].keys).to.have.length(0);
 
@@ -708,6 +717,222 @@ describe('LibDoc', () => {
                   type: 'string',
                   defaultValue: null,
                   description: 'If method is "attr", which attribute to retrieve'
+                }
+              ]
+            }
+          ]
+        }
+      ]);
+
+    });
+
+    it('Should read "enum_nested_optional" parameters', () => {
+
+      let params = definitions['enum_nested_optional'].params;
+
+      expect(params).to.deep.equal([
+        {
+          name: 'descriptionHtml',
+          type: 'string',
+          defaultValue: null,
+          description: 'The description of the product, complete with HTML formatting.'
+        },
+        {
+          name: 'metafields',
+          type: 'array',
+          defaultValue: null,
+          description: 'The metafields to associate with this product.',
+          schema: [
+            {
+              name: 'MetafieldInput',
+              type: 'object',
+              description: 'Specifies the input fields for a metafield.',
+              schema: [
+                {
+                  name: 'value',
+                  type: 'string',
+                  description: 'The value of a metafield.',
+                  defaultValue: null
+                },
+                {
+                  name: 'valueType',
+                  type: 'enum',
+                  description: 'Metafield value types.',
+                  members: [['STRING', 'STRING'], ['INTEGER', 'INTEGER'], ['JSON_STRING', 'JSON_STRING']],
+                  defaultValue: null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          name: 'privateMetafields',
+          type: 'array',
+          description: 'The private metafields to associated with this product.',
+          defaultValue: null,
+          schema: [
+            {
+              name: 'PrivateMetafieldInput',
+              type: 'object',
+              description: 'Specifies the input fields for a PrivateMetafield.',
+              schema: [
+                {
+                  name: 'owner',
+                  type: 'any',
+                  description: 'The owning resource.',
+                  defaultValue: null
+                },
+                {
+                  name: 'valueInput',
+                  type: 'object',
+                  description: 'The value and value type of the metafield, wrapped in a ValueInput object.',
+                  schema: [
+                    {
+                      name: 'value',
+                      type: 'string',
+                      description: 'The value of a private metafield.'
+                    },
+                    {
+                      name: 'valueType',
+                      type: 'enum',
+                      description: 'Private Metafield value types.',
+                      members: [['STRING', 'STRING'], ['INTEGER', 'INTEGER'], ['JSON_STRING', 'JSON_STRING']]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          name: 'variants',
+          type: 'array',
+          description: 'A list of variants associated with the product.',
+          defaultValue: null,
+          schema: [
+            {
+              name: 'ProductVariantInput',
+              type: 'object',
+              description: 'Specifies a product variant to create or update.',
+              schema: [
+                {
+                  name: 'barcode',
+                  type: 'string',
+                  description: 'The value of the barcode associated with the product.',
+                  defaultValue: null
+                },
+                {
+                  name: 'inventoryPolicy',
+                  type: 'enum',
+                  description: 'The inventory policy for a product variant controls whether customers can continue to buy the variant when it is out of stock. When the value is `continue`, customers are able to buy the variant when it\'s out of stock. When the value is `deny`, customers can\'t buy the variant when it\'s out of stock.',
+                  members: [['DENY', 'DENY'], ['CONTINUE', 'CONTINUE']],
+                  defaultValue: null
+                },
+                {
+                  name: 'metafields',
+                  type: 'array',
+                  description: 'Additional customizable information about the product variant.',
+                  defaultValue: null,
+                  schema: [
+                    {
+                      name: 'MetafieldInput',
+                      type: 'object',
+                      description: 'Specifies the input fields for a metafield.',
+                      schema: [
+                        {
+                          name: 'description',
+                          type: 'string',
+                          description: 'The description of the metafield .',
+                          defaultValue: null
+                        },
+                        {
+                          name: 'valueType',
+                          type: 'enum',
+                          description: 'Metafield value types.',
+                          members: [['STRING', 'STRING'], ['INTEGER', 'INTEGER'], ['JSON_STRING', 'JSON_STRING']],
+                          defaultValue: null
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  name: 'privateMetafields',
+                  type: 'array',
+                  description: 'The private metafields to associated with this product.',
+                  defaultValue: null,
+                  schema: [
+                    {
+                      name: 'PrivateMetafieldInput',
+                      type: 'object',
+                      description: 'Specifies the input fields for a PrivateMetafield.',
+                      schema: [
+                        {
+                          name: 'owner',
+                          type: 'any',
+                          description: 'The owning resource.',
+                          defaultValue: null
+                        },
+                        {
+                          name: 'valueInput',
+                          type: 'object',
+                          description: 'The value and value type of the metafield, wrapped in a ValueInput object.',
+                          schema: [
+                            {
+                              name: 'value',
+                              type: 'string',
+                              description: 'The value of a private metafield.'
+                            },
+                            {
+                              name: 'valueType',
+                              type: 'enum',
+                              description: 'Private Metafield value types.',
+                              members: [['STRING', 'STRING'], ['INTEGER', 'INTEGER'], ['JSON_STRING', 'JSON_STRING']]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  name: 'taxCode',
+                  type: 'string',
+                  description: 'The tax code associated with the variant.',
+                  defaultValue: null
+                },
+                {
+                  name: 'weightUnit',
+                  type: 'enum',
+                  description: 'Units of measurement for weight.',
+                  members: [['KILOGRAMS', 'KILOGRAMS'], ["GRAMS", "GRAMS"], ["POUNDS", "POUNDS"], ["OUNCES", "OUNCES"]],
+                  defaultValue: null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          name: 'media',
+          type: 'array',
+          description: 'List of new media to be added to the product.',
+          defaultValue: null,
+          schema: [
+            {
+              name: 'CreateMediaInput',
+              type: 'object',
+              description: 'Specifies the input fields required to create a media object.',
+              schema: [
+                {
+                  name: 'originalSource',
+                  type: 'string',
+                  description: 'The original source of the media object. May be an external URL or signed upload URL.'
+                },
+                {
+                  name: 'mediaContentType',
+                  type: 'enum',
+                  description: 'The possible content types for a media object.',
+                  members: [['VIDEO', 'VIDEO'], ['EXTERNAL_VIDEO', 'EXTERNAL_VIDEO'], ['MODEL_3D', 'MODEL_3D'], ['IMAGE', 'IMAGE']]
                 }
               ]
             }
