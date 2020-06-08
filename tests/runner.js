@@ -721,6 +721,61 @@ describe('LibDoc', () => {
               ]
             }
           ]
+        },
+        {
+          name: 'obj2',
+          type: 'object',
+          description: '',
+          schema: [
+            {
+              name: 'operator',
+              type: 'enum',
+              description: 'Which data to retrieve: can be "text", "html" or "attr"',
+              members: [['text', 'text'], ['html', 'html'], ['attr', 'attr']]
+            },
+            {
+              name: 'selector',
+              type: 'string',
+              description: 'The selector to query'
+            },
+            {
+              name: 'attr',
+              type: 'string',
+              defaultValue: null,
+              description: 'If method is "attr", which attribute to retrieve'
+            }
+          ]
+        },
+        {
+          name: 'arr2',
+          type: 'array',
+          description: '',
+          schema: [
+            {
+              name: 'obj',
+              type: 'object',
+              description: '',
+              schema: [
+                {
+                  name: 'operator',
+                  type: 'enum',
+                  description: 'Which data to retrieve: can be "text", "html" or "attr"',
+                  members: [['text', 'text'], ['html', 'html'], ['attr', 'attr']]
+                },
+                {
+                  name: 'selector',
+                  type: 'string',
+                  description: 'The selector to query'
+                },
+                {
+                  name: 'attr',
+                  type: 'string',
+                  defaultValue: null,
+                  description: 'If method is "attr", which attribute to retrieve'
+                }
+              ]
+            }
+          ]
         }
       ]);
 
