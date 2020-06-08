@@ -2021,7 +2021,7 @@ module.exports = (expect) => {
   });
 
   it('Should accept keyql params', done => {
-    request('POST', {}, '/keyql/', { query: { name: 'steve' }, limit: { count: 0, offset: 0 } },
+    request('POST', {}, '/keyql/', { query: { name: 'steve' }, limit: { count: 0, offset: 0 }, order: { field: 'name', sort: 'ASC' } },
     (err, res, result) => {
 
       expect(err).to.not.exist;
@@ -2035,8 +2035,9 @@ module.exports = (expect) => {
   it('Should accept keyql params', done => {
     let query = JSON.stringify({ name: 'steve' });
     let limit = JSON.stringify({ count: 0, offset: 0 });
+    let order = JSON.stringify({field: 'name', sort: 'ASC'});
 
-    request('GET', {'x-convert-strings': true}, `/keyql/?query=${query}&limit=${limit}`, '', (err, res, result) => {
+    request('GET', {'x-convert-strings': true}, `/keyql/?query=${query}&limit=${limit}&order=${order}`, '', (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -2047,7 +2048,7 @@ module.exports = (expect) => {
   });
 
   it('Should reject invalid keyql limit', done => {
-    request('POST', {}, '/keyql/', { query: { name: 'steve' }, limit: { count: 0, wrong: 0 } },
+    request('POST', {}, '/keyql/', { query: { name: 'steve' }, limit: { count: 0, wrong: 0 }, order: { field: 'name', sort: 'ASC' }},
     (err, res, result) => {
 
       expect(err).to.not.exist;
@@ -2055,6 +2056,48 @@ module.exports = (expect) => {
       expect(result.error).to.exist;
       expect(result.error.details).to.exist;
       expect(result.error.details.limit).to.exist;
+      done();
+
+    });
+  });
+
+  it('Should reject invalid keyql order (no field)', done => {
+    request('POST', {}, '/keyql/', { query: { name: 'steve' }, limit: { count: 0, offset: 0 }, order: { field: null, sort: 'ASC' }},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      expect(result.error).to.exist;
+      expect(result.error.details).to.exist;
+      expect(result.error.details.order).to.exist;
+      done();
+
+    });
+  });
+
+  it('Should reject invalid keyql order (invalid sort)', done => {
+    request('POST', {}, '/keyql/', { query: { name: 'steve' }, limit: { count: 0, offset: 0 }, order: { field: 'name', sort: 'WRONG' }},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      expect(result.error).to.exist;
+      expect(result.error.details).to.exist;
+      expect(result.error.details.order).to.exist;
+      done();
+
+    });
+  });
+
+  it('Should reject invalid keyql order (overloaded)', done => {
+    request('POST', {}, '/keyql/', { query: { name: 'steve' }, limit: { count: 0, offset: 0 }, order: { field: 'name', sort: 'ASC', wrong: 'WRONG' }},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      expect(result.error).to.exist;
+      expect(result.error.details).to.exist;
+      expect(result.error.details.order).to.exist;
       done();
 
     });
@@ -2165,6 +2208,74 @@ module.exports = (expect) => {
 
   it('Should reject keyql array with incorrect options with an operator', done => {
     request('POST', {}, '/keyql_options_array/', {query: [{gamma__is: 'hello'}]},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      done();
+
+    });
+  });
+
+  it('Should accept keyql order with correct options', done => {
+    request('POST', {}, '/keyql_order_options/', {order: {field: 'alpha'}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.equal('hello');
+      done();
+
+    });
+  });
+
+  it('Should reject keyql order with incorrect options', done => {
+    request('POST', {}, '/keyql_order_options/', {order: {field: 'gamma'}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      done();
+
+    });
+  });
+
+  it('Should accept keyql array with correct options', done => {
+    request('POST', {}, '/keyql_order_options_array/', {order: [{field: 'alpha'}]},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.equal('hello');
+      done();
+
+    });
+  });
+
+  it('Should reject keyql array with incorrect options', done => {
+    request('POST', {}, '/keyql_order_options_array/', {order: [{field: 'gamma'}]},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      done();
+
+    });
+  });
+
+  it('Should accept keyql array with all correct options', done => {
+    request('POST', {}, '/keyql_order_options_array/', {order: [{field: 'alpha'}, {field: 'beta'}]},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      done();
+
+    });
+  });
+
+  it('Should reject keyql array with an incorrect option', done => {
+    request('POST', {}, '/keyql_order_options_array/', {order: [{field: 'alpha'}, {field: 'gamma'}]},
     (err, res, result) => {
 
       expect(err).to.not.exist;
