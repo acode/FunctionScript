@@ -1772,7 +1772,7 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should successfully return an enum varient (number)', done => {
+  it('Should successfully return an enum variant (number)', done => {
     request('POST', {}, '/enum/', { day: 'sunday' },
     (err, res, result) => {
 
@@ -1785,7 +1785,7 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should successfully return an enum varient (string)', done => {
+  it('Should successfully return an enum variant (string)', done => {
     request('POST', {}, '/enum/', { day: 'monday' },
     (err, res, result) => {
 
@@ -1798,7 +1798,7 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should successfully return an enum varient (object)', done => {
+  it('Should successfully return an enum variant (object)', done => {
     request('POST', {}, '/enum/', { day: 'tuesday' },
     (err, res, result) => {
 
@@ -1812,7 +1812,7 @@ module.exports = (expect) => {
   });
 
 
-  it('Should successfully return an enum varient (array)', done => {
+  it('Should successfully return an enum variant (array)', done => {
     request('POST', {}, '/enum/', { day: 'thursday' },
     (err, res, result) => {
 
@@ -1825,7 +1825,7 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should successfully return an enum varient (float)', done => {
+  it('Should successfully return an enum variant (float)', done => {
     request('POST', {}, '/enum/', { day: 'friday' },
     (err, res, result) => {
 
@@ -1838,7 +1838,7 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should return a default enum varient', done => {
+  it('Should return a default enum variant', done => {
     request('POST', {}, '/enum_default/', {},
     (err, res, result) => {
 
@@ -1872,7 +1872,7 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should return an enum varient when the return type is enum', done => {
+  it('Should return an enum variant when the return type is enum', done => {
     request('POST', {}, '/enum_return/', { a: 'a' },
     (err, res, result) => {
 
@@ -1885,7 +1885,7 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should reject returning an invalid enum varient  when the return type is enum', done => {
+  it('Should reject returning an invalid enum variant  when the return type is enum', done => {
     request('POST', {}, '/enum_return/', {},
     (err, res, result) => {
 
@@ -1978,7 +1978,7 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should successfully return an object with a schema that has an enum varient', done => {
+  it('Should successfully return an object with a schema that has an enum variant', done => {
     request(
       'POST',
       {},
@@ -2008,7 +2008,7 @@ module.exports = (expect) => {
     );
   });
 
-  it('Should return a default enum varient set to null', done => {
+  it('Should return a default enum variant set to null', done => {
     request('POST', {}, '/enum_null/', {},
     (err, res, result) => {
 
