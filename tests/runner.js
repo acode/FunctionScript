@@ -57,7 +57,7 @@ describe('LibDoc', () => {
 
     it('Should read all functions correctly', () => {
 
-      expect(Object.keys(definitions).length).to.equal(23);
+      expect(Object.keys(definitions).length).to.equal(24);
       expect(definitions).to.haveOwnProperty('');
       expect(definitions).to.haveOwnProperty('test');
       expect(definitions).to.haveOwnProperty('returns');
@@ -76,6 +76,7 @@ describe('LibDoc', () => {
       expect(definitions).to.haveOwnProperty('enum_nested_optional');
       expect(definitions).to.haveOwnProperty('options');
       expect(definitions).to.haveOwnProperty('keyql_options');
+      expect(definitions).to.haveOwnProperty('alternate_schemas');
 
     });
 
@@ -1071,6 +1072,70 @@ describe('LibDoc', () => {
 
     });
 
+    it('Should read "alternate_schemas" parameters', () => {
+
+      let params = definitions['alternate_schemas'].params;
+      let returns = definitions['alternate_schemas'].returns;
+      let schemaCheck = [
+        {
+          name: 'fileOrFolder',
+          description: '',
+          type: 'object',
+          schema: [
+            {
+              name: 'name',
+              description: '',
+              type: 'string'
+            },
+            {
+              name: 'size',
+              description: '',
+              type: 'integer'
+            }
+          ],
+          alternateSchemas: [
+            [
+              {
+                name: 'name',
+                description: '',
+                type: 'string'
+              },
+              {
+                name: 'files',
+                description: '',
+                type: 'array'
+              },
+              {
+                name: 'options',
+                description: '',
+                type: 'object',
+                schema: [
+                  {
+                    name: 'type',
+                    description: '',
+                    type: 'string'
+                  }
+                ],
+                alternateSchemas: [
+                  [
+                    {
+                      name: 'type',
+                      description: '',
+                      type: 'number'
+                    }
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      ];
+
+      expect(params).to.deep.equal(schemaCheck);
+      expect(returns).to.deep.equal(schemaCheck[0]);
+
+    });
+
   });
 
   describe('Types', () => {
@@ -1260,33 +1325,37 @@ describe('LibDoc', () => {
 
       expect(
         types.validate('object', { offset: '0 minutes' }, false, [
-          {
-            name: 'offset',
-            type: 'enum',
-            description: `How many minutes past the start of each hour you would like your API to execute`,
-            members: [
-              ['0 minutes', 0],
-              ['15 minutes', 60 * 15],
-              ['30 minutes', 60 * 30],
-              ['45 minutes', 60 * 45]
-            ]
-          }
+          [
+            {
+              name: 'offset',
+              type: 'enum',
+              description: `How many minutes past the start of each hour you would like your API to execute`,
+              members: [
+                ['0 minutes', 0],
+                ['15 minutes', 60 * 15],
+                ['30 minutes', 60 * 30],
+                ['45 minutes', 60 * 45]
+              ]
+            }
+          ]
         ])
       ).to.equal(true);
 
       expect(
         types.validate('object', { offset: '0 min' }, false, [
-          {
-            name: 'offset',
-            type: 'enum',
-            description: `How many minutes past the start of each hour you would like your API to execute`,
-            members: [
-              ['0 minutes', 0],
-              ['15 minutes', 60 * 15],
-              ['30 minutes', 60 * 30],
-              ['45 minutes', 60 * 45]
-            ]
-          }
+          [
+            {
+              name: 'offset',
+              type: 'enum',
+              description: `How many minutes past the start of each hour you would like your API to execute`,
+              members: [
+                ['0 minutes', 0],
+                ['15 minutes', 60 * 15],
+                ['30 minutes', 60 * 30],
+                ['45 minutes', 60 * 45]
+              ]
+            }
+          ]
         ])
       ).to.equal(false);
 
@@ -1296,33 +1365,37 @@ describe('LibDoc', () => {
 
       expect(
         types.validate('array', ['0 minutes'], false, [
-          {
-            name: 'offset',
-            type: 'enum',
-            description: `How many minutes past the start of each hour you would like your API to execute`,
-            members: [
-              ['0 minutes', 0],
-              ['15 minutes', 60 * 15],
-              ['30 minutes', 60 * 30],
-              ['45 minutes', 60 * 45]
-            ]
-          }
+          [
+            {
+              name: 'offset',
+              type: 'enum',
+              description: `How many minutes past the start of each hour you would like your API to execute`,
+              members: [
+                ['0 minutes', 0],
+                ['15 minutes', 60 * 15],
+                ['30 minutes', 60 * 30],
+                ['45 minutes', 60 * 45]
+              ]
+            }
+          ]
         ])
       ).to.equal(true);
 
       expect(
         types.validate('array', ['0 min'], false, [
-          {
-            name: 'offset',
-            type: 'enum',
-            description: `How many minutes past the start of each hour you would like your API to execute`,
-            members: [
-              ['0 minutes', 0],
-              ['15 minutes', 60 * 15],
-              ['30 minutes', 60 * 30],
-              ['45 minutes', 60 * 45]
-            ]
-          }
+          [
+            {
+              name: 'offset',
+              type: 'enum',
+              description: `How many minutes past the start of each hour you would like your API to execute`,
+              members: [
+                ['0 minutes', 0],
+                ['15 minutes', 60 * 15],
+                ['30 minutes', 60 * 30],
+                ['45 minutes', 60 * 45]
+              ]
+            }
+          ]
         ])
       ).to.equal(false);
 
@@ -1337,7 +1410,9 @@ describe('LibDoc', () => {
           {},
           false,
           [
-            {name: 'hello', type: 'string'}
+            [
+              {name: 'hello', type: 'string'}
+            ]
           ]
         )
       ).to.equal(false);
@@ -1349,7 +1424,9 @@ describe('LibDoc', () => {
           },
           false,
           [
-            {name: 'hello', type: 'string'}
+            [
+              {name: 'hello', type: 'string'}
+            ]
           ]
         )
       ).to.equal(true);
@@ -1368,7 +1445,7 @@ describe('LibDoc', () => {
           'object',
           {},
           false,
-          testSchema
+          [testSchema]
         )
       ).to.equal(false);
       expect(
@@ -1378,7 +1455,7 @@ describe('LibDoc', () => {
             hello: 'hey',
           },
           false,
-          testSchema
+          [testSchema]
         )
       ).to.equal(false);
       expect(
@@ -1390,7 +1467,7 @@ describe('LibDoc', () => {
             tf: true
           },
           false,
-          testSchema
+          [testSchema]
         )
       ).to.equal(true);
       expect(
@@ -1402,7 +1479,7 @@ describe('LibDoc', () => {
             tf: true
           },
           false,
-          testSchema
+          [testSchema]
         )
       ).to.equal(false);
 

@@ -1619,7 +1619,6 @@ module.exports = (expect) => {
     });
   });
 
-
   it('Should accept a request with the optional object (nested schema)', done => {
     request('POST', {}, '/optional_nested_schema_params/', {obj: {name: 'steve', options: {istest: true}}},
     (err, res, result) => {
@@ -1693,6 +1692,84 @@ module.exports = (expect) => {
       expect(res.statusCode).to.equal(200);
       expect(result).to.exist;
       expect(result).to.deep.equal({name: 'steve', options: {istest: true, threads: 4}});
+      done();
+
+    });
+  });
+
+  it('Should accept a request that matches first of two schemas', done => {
+    request('POST', {}, '/object_alternate_schema/', {fileOrFolder: {name: 'test', size: 100}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(result).to.exist;
+      expect(result.error).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      done();
+
+    });
+  });
+
+  it('Should accept a request that matches second of two schemas', done => {
+    request('POST', {}, '/object_alternate_schema/', {fileOrFolder: {name: 'test', files: [], options: {type: 'test'}}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(result).to.exist;
+      expect(result.error).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      done();
+
+    });
+  });
+
+  it('Should accept a request that matches second subsection of two schemas', done => {
+    request('POST', {}, '/object_alternate_schema/', {fileOrFolder: {name: 'test', files: [], options: {type: 100}}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(result).to.exist;
+      expect(result.error).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      done();
+
+    });
+  });
+
+  it('Should reject a request that matches no schema', done => {
+    request('POST', {}, '/object_alternate_schema/', {fileOrFolder: {name: 'test'}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(result).to.exist;
+      expect(result.error).to.exist;
+      expect(res.statusCode).to.equal(400);
+      done();
+
+    });
+  });
+
+  it('Should reject a request that matches no schema based on subsection', done => {
+    request('POST', {}, '/object_alternate_schema/', {fileOrFolder: {name: 'test', files: [], options: {}}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(result).to.exist;
+      expect(result.error).to.exist;
+      expect(res.statusCode).to.equal(400);
+      done();
+
+    });
+  });
+
+  it('Should reject a request that matches no schema based on subsection type mismatch', done => {
+    request('POST', {}, '/object_alternate_schema/', {fileOrFolder: {name: 'test', files: [], options: {type: false}}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(result).to.exist;
+      expect(result.error).to.exist;
+      expect(res.statusCode).to.equal(400);
       done();
 
     });
@@ -2404,6 +2481,18 @@ module.exports = (expect) => {
 
   it('Should throw an ValueError on an invalid Number type', done => {
     request('POST', {}, '/value_error/number_invalid/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(502);
+      expect(result).to.exist;
+      done();
+
+    });
+  });
+
+  it('Should throw an ValueError on an invalid Object type with alternate schema', done => {
+    request('POST', {}, '/value_error/object_alternate_schema_invalid/', {},
     (err, res, result) => {
 
       expect(err).to.not.exist;
