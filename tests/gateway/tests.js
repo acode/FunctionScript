@@ -1,4 +1,5 @@
 const http = require('http');
+const zlib = require('zlib');
 const FormData = require('form-data');
 const {Gateway, FunctionParser} = require('../../index.js');
 
@@ -32,6 +33,11 @@ function request(method, headers, path, data, callback) {
     res.on('data', chunk => buffers.push(chunk));
     res.on('end', () => {
       let result = Buffer.concat(buffers);
+      if (res.headers['content-encoding'] === 'gzip') {
+        result = zlib.gunzipSync(result);
+      } else if (res.headers['content-encoding'] === 'deflate') {
+        result = zlib.inflateSync(result);
+      }
       if ((res.headers['content-type'] || '').split(';')[0] === 'application/json') {
         result = JSON.parse(result.toString());
       }
@@ -162,6 +168,51 @@ module.exports = (expect) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.equal(6);
+      done();
+
+    });
+  });
+
+  it('Should return 200 OK + gzip result when executed with Accept-Encoding: gzip', done => {
+    request('GET', {'accept-encoding': 'gzip'}, '/my_function/', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-encoding']).to.equal('gzip');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.equal(6);
+      done();
+
+    });
+  });
+
+  it('Should return 200 OK + deflate result when executed with Accept-Encoding: deflate', done => {
+    request('GET', {'accept-encoding': 'deflate'}, '/my_function/', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-encoding']).to.equal('deflate');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.equal(6);
+      done();
+
+    });
+  });
+
+  it('Should return 200 OK + gzip result when executed with Accept-Encoding: gzip, deflate', done => {
+    request('GET', {'accept-encoding': 'gzip, deflate'}, '/my_function/', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-encoding']).to.equal('gzip');
       expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
       expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
       expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
