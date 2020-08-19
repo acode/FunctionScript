@@ -2419,6 +2419,22 @@ module.exports = (expect) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/octet-stream');
+      expect(result).to.exist;
+      expect(result).to.be.instanceof(Buffer);
+      expect(result.toString()).to.equal('lol');
+      done();
+
+    });
+  });
+
+  it('Should return a buffer properly with a .contentType set', done => {
+    request('POST', {}, '/buffer_return_content_type/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('image/png');
       expect(result).to.exist;
       expect(result).to.be.instanceof(Buffer);
       expect(result.toString()).to.equal('lol');
