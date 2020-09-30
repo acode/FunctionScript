@@ -57,7 +57,7 @@ describe('LibDoc', () => {
 
     it('Should read all functions correctly', () => {
 
-      expect(Object.keys(definitions).length).to.equal(25);
+      expect(Object.keys(definitions).length).to.equal(24);
       expect(definitions).to.haveOwnProperty('');
       expect(definitions).to.haveOwnProperty('test');
       expect(definitions).to.haveOwnProperty('returns');
@@ -77,7 +77,6 @@ describe('LibDoc', () => {
       expect(definitions).to.haveOwnProperty('options');
       expect(definitions).to.haveOwnProperty('keyql_options');
       expect(definitions).to.haveOwnProperty('alternate_schemas');
-      expect(definitions).to.haveOwnProperty('buffer_nested_in_params');
 
     });
 
@@ -997,47 +996,6 @@ describe('LibDoc', () => {
         }
       ]);
 
-    });
-
-
-    it('Should read "buffer_nested_in_params"', () => {
-
-      let params = definitions['buffer_nested_in_params'].params;
-      expect(params.length).to.equal(1);
-
-      expect(params).to.deep.equal([
-        {
-          name: 'upload',
-          type: 'object',
-          description: '',
-          schema: [
-            {
-              name: 'attributes',
-              type: 'object',
-              description: 'The additional attributes of the file being uploaded. Mainly the name and the parent folder. These attributes are part of the multi part request body and are in JSON format.  The `attributes` part of the body must come before the `file` part. Requests that do not follow this format when uploading the file will receive a HTTP `400` error with a `metadata_after_file_contents` error code.',
-              schema: [
-                {
-                  name: 'name',
-                  type: 'string',
-                  description: 'An optional new name for the file. If specified, the file will be renamed when the new version is uploaded.',
-                },
-                {
-                  name: 'content_modified_at',
-                  type: 'string',
-                  description: 'Defines the time the file was last modified at. If not set, the upload time will be used.',
-                  defaultValue: null
-                }
-              ]
-            },
-            {
-              name: 'file',
-              type: 'buffer',
-              description: 'The content of the file to upload to Box.  The `attributes` part of the body must come before the `file` part. Requests that do not follow this format when uploading the file will receive a HTTP `400` error with a `metadata_after_file_contents` error code.'
-            }
-          ],
-          defaultValue: null
-        }
-      ]);
     });
 
     it('Should read "options" parameters', () => {
