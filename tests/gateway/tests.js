@@ -79,7 +79,7 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should return 302 redirect when missing trailing / with user agent', done => {
+  it('Should return 302 redirect on GET request when missing trailing / with user agent', done => {
     request('GET', {'user-agent': 'testing'}, '/my_function', '', (err, res, result) => {
 
       expect(err).to.not.exist;
@@ -94,8 +94,21 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should not return 302 redirect when missing trailing / without user agent', done => {
+  it('Should not return 302 redirect on a GET request when missing trailing / without user agent', done => {
     request('GET', {}, '/my_function', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.not.equal(302);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      done();
+
+    });
+  });
+
+  it('Should not return 302 redirect for POST request with trailing slash with user agent', done => {
+    request('POST', {'user-agent': 'testing'}, '/my_function', '', (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.not.equal(302);
@@ -695,8 +708,8 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should return 302 redirect with correct url when running a background function missing a slash before :bg and at end of url', done => {
-    request('POST', {'user-agent': 'testing'}, '/bg:bg', '', (err, res, result) => {
+  it('Should return 302 redirect on a GET request with correct url when running a background function missing a slash before :bg and at end of url', done => {
+    request('GET', {'user-agent': 'testing'}, '/bg:bg', '', (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(302);
@@ -710,8 +723,8 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should return 302 redirect with correct url when running a background function missing a slash before :bg but with slash at end of url', done => {
-    request('POST', {'user-agent': 'testing'}, '/bg:bg/', '', (err, res, result) => {
+  it('Should return 302 redirect on a GET request with correct url when running a background function missing a slash before :bg but with slash at end of url', done => {
+    request('GET', {'user-agent': 'testing'}, '/bg:bg/', '', (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(302);
@@ -725,8 +738,8 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should return 302 redirect with correct url when running a background function missing a slash before :bg and at end of url with a query', done => {
-    request('POST', {'user-agent': 'testing'}, '/bg:bg?test=param', '', (err, res, result) => {
+  it('Should return 302 redirect on a GET request with correct url when running a background function missing a slash before :bg and at end of url with a query', done => {
+    request('GET', {'user-agent': 'testing'}, '/bg:bg?test=param', '', (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(302);
@@ -740,8 +753,8 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should return 302 redirect with correct url when running a background function missing a slash before :bg but with slash at end of url with a query', done => {
-    request('POST', {'user-agent': 'testing'}, '/bg:bg/?test=param', '', (err, res, result) => {
+  it('Should return 302 redirect on a GET request with correct url when running a background function missing a slash before :bg but with slash at end of url with a query', done => {
+    request('GET', {'user-agent': 'testing'}, '/bg:bg/?test=param', '', (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(302);
