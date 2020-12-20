@@ -57,7 +57,7 @@ describe('LibDoc', () => {
 
     it('Should read all functions correctly', () => {
 
-      expect(Object.keys(definitions).length).to.equal(24);
+      expect(Object.keys(definitions).length).to.equal(25);
       expect(definitions).to.haveOwnProperty('');
       expect(definitions).to.haveOwnProperty('test');
       expect(definitions).to.haveOwnProperty('returns');
@@ -77,6 +77,7 @@ describe('LibDoc', () => {
       expect(definitions).to.haveOwnProperty('options');
       expect(definitions).to.haveOwnProperty('keyql_options');
       expect(definitions).to.haveOwnProperty('alternate_schemas');
+      expect(definitions).to.haveOwnProperty('inline');
 
     });
 
@@ -106,6 +107,7 @@ describe('LibDoc', () => {
       expect(definitions['enum_nested'].pathname).to.equal('enum_nested.js');
       expect(definitions['enum_nested_optional'].pathname).to.equal('enum_nested_optional.js');
       expect(definitions['options'].pathname).to.equal('options.js');
+      expect(definitions['inline'].pathname).to.equal('inline.js');
 
     });
 
@@ -128,6 +130,7 @@ describe('LibDoc', () => {
       expect(definitions['enum_nested'].description).to.equal('Test Nested Enum');
       expect(definitions['enum_nested_optional'].description).to.equal('Test Optional Nested Enum');
       expect(definitions['options'].description).to.equal('Populate options properly');
+      expect(definitions['inline'].description).to.equal('');
 
     });
 
@@ -150,6 +153,8 @@ describe('LibDoc', () => {
       expect(definitions['enum_nested'].context).to.exist;
       expect(definitions['enum_nested_optional'].context).to.exist;
       expect(definitions['options'].context).to.equal(null);
+      expect(definitions['inline'].context).to.exist;
+
 
     });
 
@@ -171,6 +176,7 @@ describe('LibDoc', () => {
       expect(definitions['enum_nested'].returns.description).to.equal('A boolean value');
       expect(definitions['enum_nested_optional'].returns.description).to.equal('A boolean value');
       expect(definitions['options'].returns.description).to.equal('a Boolean?');
+      expect(definitions['inline'].returns.description).to.equal('');
 
     });
 
@@ -192,6 +198,7 @@ describe('LibDoc', () => {
       expect(definitions['enum_nested'].returns.type).to.equal('boolean');
       expect(definitions['enum_nested'].returns.type).to.equal('boolean');
       expect(definitions['options'].returns.type).to.equal('boolean');
+      expect(definitions['inline'].returns.type).to.equal('any');
 
     });
 
@@ -214,6 +221,7 @@ describe('LibDoc', () => {
       expect(definitions['enum_nested'].charge).to.equal(1);
       expect(definitions['enum_nested_optional'].charge).to.equal(1);
       expect(definitions['options'].charge).to.equal(1);
+      expect(definitions['inline'].charge).to.equal(1);
 
     });
 
@@ -255,6 +263,7 @@ describe('LibDoc', () => {
       expect(definitions['enum_nested_optional'].keys).to.have.length(0);
       expect(definitions['options'].keys).to.be.an('Array');
       expect(definitions['options'].keys).to.have.length(0);
+      expect(definitions['inline'].keys).to.have.length(0);
 
     });
 
@@ -606,6 +615,13 @@ describe('LibDoc', () => {
           description: 'a param'
         }
       ]);
+
+    });
+
+    it('Should read "inline" parameters', () => {
+
+      let params = definitions['inline'].params;
+      expect(params.length).to.equal(0);
 
     });
 

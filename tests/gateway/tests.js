@@ -314,7 +314,7 @@ module.exports = (expect) => {
       expect(res.statusCode).to.equal(400);
       expect(result.error).to.exist;
       expect(result.error.type).to.equal('ClientError');
-      expect(result.error.message).to.equal('Bad Request: Invalid JSON: Must be Object');
+      expect(result.error.message).to.equal('Bad Request: Invalid JSON: Must be an Object');
       done();
 
     });
@@ -2685,6 +2685,107 @@ module.exports = (expect) => {
       expect(res.statusCode).to.equal(200);
       expect(result).to.exist;
       expect(result.providers).to.deep.equal(headerValue);
+      done();
+
+    });
+  });
+
+  it('Should populate context in "inline/context"', done => {
+    request('POST', {}, '/inline/context/', {a: 1, b: 2}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(result).to.exist;
+      expect(result.http.method).to.equal('POST');
+      expect(result.params).to.deep.equal({a: 1, b: 2});
+      done();
+
+    });
+  });
+
+  it('Should output buffer from "inline/buffer"', done => {
+    request('POST', {}, '/inline/buffer/', {}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/html');
+      expect(result).to.exist;
+      expect(result).to.be.instanceof(Buffer);
+      expect(result.toString()).to.equal('lol');
+      done();
+
+    });
+  });
+
+  it('Should output buffer from "inline/buffer_mock"', done => {
+    request('POST', {}, '/inline/buffer_mock/', {}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/octet-stream');
+      expect(result).to.exist;
+      expect(result).to.be.instanceof(Buffer);
+      expect(result.toString()).to.equal('lol');
+      done();
+
+    });
+  });
+
+  it('Should output buffer from "inline/http"', done => {
+    request('POST', {}, '/inline/http/', {}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(429);
+      expect(res.headers['content-type']).to.equal('text/html');
+      expect(result).to.exist;
+      expect(result).to.be.instanceof(Buffer);
+      expect(result.toString()).to.equal('lol');
+      done();
+
+    });
+  });
+
+  it('Should output buffer from "inline/http_no_status"', done => {
+    request('POST', {}, '/inline/http_no_status/', {}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/html');
+      expect(result).to.exist;
+      expect(result).to.be.instanceof(Buffer);
+      expect(result.toString()).to.equal('lol');
+      done();
+
+    });
+  });
+
+  it('Should output object from "inline/extended_http_is_object"', done => {
+    request('POST', {}, '/inline/extended_http_is_object/', {}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(result).to.exist;
+      expect(result).to.deep.equal({
+        statusCode: 429,
+        headers: {'Content-Type': 'text/html'},
+        body: 'lol',
+        extend: true
+      });
+      done();
+
+    });
+  });
+
+  it('Should output object from "inline/number"', done => {
+    request('POST', {}, '/inline/number/', {}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(result).to.exist;
+      expect(result).to.equal(1988);
       done();
 
     });
