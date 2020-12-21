@@ -2791,6 +2791,19 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should allow you to use "require()"', done => {
+    request('POST', {}, '/inline/require/', {}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(result).to.exist;
+      expect(result).to.equal('hello');
+      done();
+
+    });
+  });
+
   after(() => FaaSGateway.close());
 
 };
