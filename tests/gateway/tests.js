@@ -2804,6 +2804,19 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should allow you to use "await"', done => {
+    request('POST', {}, '/inline/await/', {}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(result).to.exist;
+      expect(result).to.equal('hello world');
+      done();
+
+    });
+  });
+
   after(() => FaaSGateway.close());
 
 };
