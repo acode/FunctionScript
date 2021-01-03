@@ -372,6 +372,7 @@ module.exports = (expect) => {
       expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
       expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
       expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(res.headers['x-execution-uuid'].length).to.be.greaterThan(1);
       expect(result.error).to.exist;
       expect(result.error.type).to.equal('ValueError');
       expect(result.error.details).to.exist;
@@ -1073,6 +1074,7 @@ module.exports = (expect) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(403);
+      expect(res.headers['x-execution-uuid'].length).to.be.greaterThan(1);
       expect(result).to.exist;
       expect(result).to.be.an('object');
       expect(result.error).to.exist;
@@ -1088,6 +1090,7 @@ module.exports = (expect) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(500);
+      expect(res.headers['x-execution-uuid'].length).to.be.greaterThan(1);
       expect(result).to.exist;
       expect(result).to.be.an('object');
       expect(result.error).to.exist;
@@ -1104,6 +1107,7 @@ module.exports = (expect) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(500);
+      expect(res.headers['x-execution-uuid'].length).to.be.greaterThan(1);
       expect(result).to.exist;
       expect(result).to.be.an('object');
       expect(result.error).to.exist;
@@ -1120,6 +1124,7 @@ module.exports = (expect) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(403);
+      expect(res.headers['x-execution-uuid'].length).to.be.greaterThan(1);
       expect(result).to.exist;
       expect(result).to.be.an('object');
       expect(result.error).to.exist;
@@ -1135,6 +1140,7 @@ module.exports = (expect) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(403);
+      expect(res.headers['x-execution-uuid'].length).to.be.greaterThan(1);
       expect(result).to.exist;
       expect(result).to.be.an('object');
       expect(result.error).to.exist;
@@ -1150,6 +1156,7 @@ module.exports = (expect) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(403);
+      expect(res.headers['x-execution-uuid'].length).to.be.greaterThan(1);
       expect(result).to.exist;
       expect(result).to.be.an('object');
       expect(result.error).to.exist;
@@ -1165,6 +1172,7 @@ module.exports = (expect) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(403);
+      expect(res.headers['x-execution-uuid'].length).to.be.greaterThan(1);
       expect(result).to.exist;
       expect(result).to.be.an('object');
       expect(result.error).to.exist;
@@ -1180,6 +1188,7 @@ module.exports = (expect) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(403);
+      expect(res.headers['x-execution-uuid'].length).to.be.greaterThan(1);
       expect(result).to.exist;
       expect(result).to.be.an('object');
       expect(result.error).to.exist;
@@ -1195,6 +1204,7 @@ module.exports = (expect) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(403);
+      expect(res.headers['x-execution-uuid'].length).to.be.greaterThan(1);
       expect(result).to.exist;
       expect(result).to.be.an('object');
       expect(result.error).to.exist;
@@ -1210,6 +1220,7 @@ module.exports = (expect) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(403);
+      expect(res.headers['x-execution-uuid'].length).to.be.greaterThan(1);
       expect(result).to.exist;
       expect(result).to.be.an('object');
       expect(result.error).to.exist;
@@ -2101,6 +2112,7 @@ module.exports = (expect) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(502);
+      expect(res.headers['x-execution-uuid'].length).to.be.greaterThan(1);
       expect(result).to.exist;
       expect(result.error).to.deep.equal({
         type: 'ValueError',
@@ -2622,6 +2634,7 @@ module.exports = (expect) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(502);
+      expect(res.headers['x-execution-uuid'].length).to.be.greaterThan(1);
       expect(result).to.exist;
       done();
 
@@ -2634,6 +2647,7 @@ module.exports = (expect) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(502);
+      expect(res.headers['x-execution-uuid'].length).to.be.greaterThan(1);
       expect(result).to.exist;
       done();
 
@@ -2646,6 +2660,7 @@ module.exports = (expect) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(502);
+      expect(res.headers['x-execution-uuid'].length).to.be.greaterThan(1);
       expect(result).to.exist;
       done();
 
