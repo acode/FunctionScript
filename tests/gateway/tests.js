@@ -999,6 +999,75 @@ module.exports = (expect) => {
 
   });
 
+  it('Should register an error in the resolve step with type SaveError', done => {
+
+    let originalResolveFn = FaaSGateway.resolve;
+    FaaSGateway.resolve = (req, res, buffer, callback) => {
+      let error = new Error('There was a problem when saving your API.');
+      error.saveError = true;
+      return callback(error);
+    };
+
+    request('POST', {}, '/my_function/', {}, (err, res, result) => {
+
+      FaaSGateway.resolve = originalResolveFn;
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(503);
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('SaveError');
+      done();
+
+    });
+
+  });
+
+  it('Should register an error in the resolve step with type MaintenanceError', done => {
+
+    let originalResolveFn = FaaSGateway.resolve;
+    FaaSGateway.resolve = (req, res, buffer, callback) => {
+      let error = new Error('Your API is in maintenance mode.');
+      error.maintenanceError = true;
+      return callback(error);
+    };
+
+    request('POST', {}, '/my_function/', {}, (err, res, result) => {
+
+      FaaSGateway.resolve = originalResolveFn;
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('MaintenanceError');
+      done();
+
+    });
+
+  });
+
+  it('Should register an error in the resolve step with type UpdateError', done => {
+
+    let originalResolveFn = FaaSGateway.resolve;
+    FaaSGateway.resolve = (req, res, buffer, callback) => {
+      let error = new Error('Your API is currently updating.');
+      error.updateError = true;
+      return callback(error);
+    };
+
+    request('POST', {}, '/my_function/', {}, (err, res, result) => {
+
+      FaaSGateway.resolve = originalResolveFn;
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(409);
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('UpdateError');
+      done();
+
+    });
+
+  });
+
   it('Should register a runtime error properly', done => {
     request('POST', {}, '/runtime/', {}, (err, res, result) => {
 
