@@ -1080,6 +1080,24 @@ module.exports = (expect) => {
       expect(result.error).to.exist;
       expect(result.error).to.be.an('object');
       expect(result.error.type).to.equal('RuntimeError');
+      expect(result.error).to.not.haveOwnProperty('details');
+      done();
+
+    });
+  });
+
+  it('Should register a runtime error properly with details', done => {
+    request('POST', {}, '/runtime/details/', {}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(res.headers['x-execution-uuid'].length).to.be.greaterThan(1);
+      expect(result).to.exist;
+      expect(result).to.be.an('object');
+      expect(result.error).to.exist;
+      expect(result.error).to.be.an('object');
+      expect(result.error.type).to.equal('RuntimeError');
+      expect(result.error.details).to.deep.equal({objects: 'supported'});
       done();
 
     });
