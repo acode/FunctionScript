@@ -2576,6 +2576,42 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should parse buffers within object params', done => {
+    request('POST', {}, '/buffer_within_object_param/', {
+      objectParam: {
+        bufferVal: {
+          _base64: 'abcde'
+        }
+      }
+    }, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(result).to.exist;
+      expect(result).to.equal('ok');
+      done();
+
+    });
+  });
+
+  it('Should parse buffers within array params', done => {
+    request('POST', {}, '/buffer_within_array_param/', {
+      arrayParam: [{
+        _base64: 'abcde'
+      }]
+    }, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(result).to.exist;
+      expect(result).to.equal('ok');
+      done();
+
+    });
+  });
+
   it('Should return a mocked buffer as if it were a real one', done => {
     request('POST', {}, '/buffer_mocked_return/', {},
     (err, res, result) => {
