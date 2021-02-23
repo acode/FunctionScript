@@ -53,7 +53,7 @@ describe('LibDoc', () => {
   describe('Comprehensive Test', () => {
 
     let definitions = parser.load('./tests/files/comprehensive');
-    let ignoredDefinitions = parser.load('./tests/files/ignore', null, ['ignoreme.js']);
+    let ignoredDefinitions = parser.load('./tests/files/ignore', null, null, ['ignoreme.js']);
 
     it('Should read all functions correctly', () => {
 

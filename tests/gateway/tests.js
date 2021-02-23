@@ -52,7 +52,7 @@ module.exports = (expect) => {
 
   before(() => {
     FaaSGateway.listen(PORT);
-    FaaSGateway.define(parser.load(ROOT, 'functions'));
+    FaaSGateway.define(parser.load(ROOT, 'functions', 'www'));
   });
 
   it('Should setup correctly', () => {
