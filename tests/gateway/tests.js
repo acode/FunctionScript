@@ -2955,6 +2955,17 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should support static files in "www" directory properly', done => {
+    request('GET', {}, '/page.html', {}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result.toString()).to.equal('this is an html file\n');
+      done();
+
+    });
+  });
+
   after(() => FaaSGateway.close());
 
 };
