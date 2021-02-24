@@ -2956,11 +2956,215 @@ module.exports = (expect) => {
   });
 
   it('Should support static files in "www" directory properly', done => {
-    request('GET', {}, '/page.html', {}, (err, res, result) => {
+    request('GET', {}, '/page.html', '', (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/html; charset=utf-8');
       expect(result.toString()).to.equal('this is an html file\n');
+      done();
+
+    });
+  });
+
+  it('Should support POST to static files in "www" directory properly (noop)', done => {
+    request('POST', {}, '/page.html', {}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/html; charset=utf-8');
+      expect(result.toString()).to.equal('this is an html file\n');
+      done();
+
+    });
+  });
+
+  it('Should support static files in "www" directory properly, without .html', done => {
+    request('GET', {}, '/page/', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/html; charset=utf-8');
+      expect(result.toString()).to.equal('this is an html file\n');
+      done();
+
+    });
+  });
+
+  it('Should support static files in "www" directory properly, without .htm', done => {
+    request('GET', {}, '/page2/', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/html; charset=utf-8');
+      expect(result.toString()).to.equal('this is an htm file\n');
+      done();
+
+    });
+  });
+
+  it('Should support 404 not found in "www" directory properly by direct accession', done => {
+    request('GET', {}, '/error/404.html', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(404);
+      expect(res.headers['content-type']).to.equal('text/html; charset=utf-8');
+      expect(result.toString()).to.equal('error 404\n');
+      done();
+
+    });
+  });
+
+  it('Should support 404 not found in "www" directory properly by dir accession', done => {
+    request('GET', {}, '/error/', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(404);
+      expect(res.headers['content-type']).to.equal('text/html; charset=utf-8');
+      expect(result.toString()).to.equal('error 404\n');
+      done();
+
+    });
+  });
+
+  it('Should support 404 not found in "www" directory properly by non-existent file accession', done => {
+    request('GET', {}, '/error/nope.txt', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(404);
+      expect(res.headers['content-type']).to.equal('text/html; charset=utf-8');
+      expect(result.toString()).to.equal('error 404\n');
+      done();
+
+    });
+  });
+
+  it('Should support 404 not found in "www" directory properly by nested non-existent file accession', done => {
+    request('GET', {}, '/error/path/to/nope.txt', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(404);
+      expect(res.headers['content-type']).to.equal('text/html; charset=utf-8');
+      expect(result.toString()).to.equal('error 404\n');
+      done();
+
+    });
+  });
+
+  it('Should support 404 not found in "www" directory properly by nested non-existent file accession', done => {
+    request('GET', {}, '/error/path/to/nope.txt', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(404);
+      expect(res.headers['content-type']).to.equal('text/html; charset=utf-8');
+      expect(result.toString()).to.equal('error 404\n');
+      done();
+
+    });
+  });
+
+  it('Should support "index.html" mapping to root directory', done => {
+    request('GET', {}, '/static-test/', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/html; charset=utf-8');
+      expect(result.toString()).to.equal('this is an index.html file\n');
+      done();
+
+    });
+  });
+
+  it('Should support "index.html" also mapping to itself', done => {
+    request('GET', {}, '/static-test/index.html', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/html; charset=utf-8');
+      expect(result.toString()).to.equal('this is an index.html file\n');
+      done();
+
+    });
+  });
+
+  it('Should support "index.htm" mapping to root directory', done => {
+    request('GET', {}, '/static-test/htm/', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/html; charset=utf-8');
+      expect(result.toString()).to.equal('this is an index.htm file\n');
+      done();
+
+    });
+  });
+
+  it('Should support "index.htm" also mapping to itself', done => {
+    request('GET', {}, '/static-test/htm/index.htm', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/html; charset=utf-8');
+      expect(result.toString()).to.equal('this is an index.htm file\n');
+      done();
+
+    });
+  });
+
+  it('Should support static (www) ".png" files properly', done => {
+    request('GET', {}, '/fs-wordmark.png', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('image/png');
+      expect(result.byteLength).to.equal(parseInt(res.headers['content-length']));
+      done();
+
+    });
+  });
+
+  it('Should support static (www) ".mp4" files properly', done => {
+    request('GET', {}, '/video.mp4', '', (err, res, result, headers) => {
+
+      let size = parseInt(res.headers['content-length']);
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('video/mp4');
+      expect(res.headers['content-range']).to.equal('bytes 0-' + (size - 1) + '/' + size);
+      expect(res.headers['accept-ranges']).to.equal('bytes');
+      expect(result.byteLength).to.equal(size);
+      done();
+
+    });
+  });
+
+  it('Should support static (www) ".mp4" files properly with range header', done => {
+    request('GET', {range: '27-255'}, '/video.mp4', '', (err, res, result) => {
+
+      let size = parseInt(res.headers['content-length']);
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(206);
+      expect(res.headers['content-type']).to.equal('video/mp4');
+      expect(res.headers['content-range']).to.equal('bytes 27-255/574823');
+      expect(res.headers['accept-ranges']).to.equal('bytes');
+      expect(size).to.equal(255 - 27 + 1);
+      expect(result.byteLength).to.equal(size);
+      done();
+
+    });
+  });
+
+  it('Should support static (www) ".mp4" files properly with range header (suffix)', done => {
+    request('GET', {range: '-500'}, '/video.mp4', '', (err, res, result) => {
+
+      let size = parseInt(res.headers['content-length']);
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(206);
+      expect(res.headers['content-type']).to.equal('video/mp4');
+      expect(res.headers['content-range']).to.equal('bytes 574323-574822/574823');
+      expect(res.headers['accept-ranges']).to.equal('bytes');
+      expect(size).to.equal(500);
+      expect(result.byteLength).to.equal(size);
       done();
 
     });
