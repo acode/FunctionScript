@@ -2979,25 +2979,21 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should support static files in "www" directory properly, without .html', done => {
+  it('Should NOT support static files in "www" directory properly, without .html', done => {
     request('GET', {}, '/page/', '', (err, res, result) => {
 
       expect(err).to.not.exist;
-      expect(res.statusCode).to.equal(200);
-      expect(res.headers['content-type']).to.equal('text/html; charset=utf-8');
-      expect(result.toString()).to.equal('this is an html file\n');
+      expect(res.statusCode).to.equal(404);
       done();
 
     });
   });
 
-  it('Should support static files in "www" directory properly, without .htm', done => {
+  it('Should NOT support static files in "www" directory properly, without .htm', done => {
     request('GET', {}, '/page2/', '', (err, res, result) => {
 
       expect(err).to.not.exist;
-      expect(res.statusCode).to.equal(200);
-      expect(res.headers['content-type']).to.equal('text/html; charset=utf-8');
-      expect(result.toString()).to.equal('this is an htm file\n');
+      expect(res.statusCode).to.equal(404);
       done();
 
     });
