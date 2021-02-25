@@ -3154,6 +3154,36 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should support static (www) ".mp4" files properly with range header (prefix)', done => {
+    request('GET', {range: '0-'}, '/video.mp4', '', (err, res, result) => {
+
+      let size = parseInt(res.headers['content-length']);
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('video/mp4');
+      expect(res.headers['content-range']).to.equal('bytes 0-' + (size - 1) + '/' + size);
+      expect(res.headers['accept-ranges']).to.equal('bytes');
+      expect(result.byteLength).to.equal(size);
+      done();
+
+    });
+  });
+
+  it('Should support static (www) ".mp4" files properly with range header (prefix + 1)', done => {
+    request('GET', {range: '1-'}, '/video.mp4', '', (err, res, result) => {
+
+      let size = parseInt(res.headers['content-length']);
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(206);
+      expect(res.headers['content-type']).to.equal('video/mp4');
+      expect(res.headers['content-range']).to.equal('bytes 1-574822/574823');
+      expect(res.headers['accept-ranges']).to.equal('bytes');
+      expect(result.byteLength).to.equal(size);
+      done();
+
+    });
+  });
+
   it('Should support static (www) ".mp4" files properly with range header (suffix)', done => {
     request('GET', {range: '-500'}, '/video.mp4', '', (err, res, result) => {
 
