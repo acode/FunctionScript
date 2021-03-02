@@ -1137,6 +1137,22 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should register a timeout error properly', done => {
+    request('POST', {}, '/runtime/timeout/', {}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(504);
+      expect(res.headers['x-execution-uuid'].length).to.be.greaterThan(1);
+      expect(result).to.exist;
+      expect(result).to.be.an('object');
+      expect(result.error).to.exist;
+      expect(result.error).to.be.an('object');
+      expect(result.error.type).to.equal('TimeoutError');
+      done();
+
+    });
+  });
+
   it('Should register a thrown error properly', done => {
     request('POST', {}, '/runtime/thrown/', {}, (err, res, result) => {
 
