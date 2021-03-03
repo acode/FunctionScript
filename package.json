@@ -1,6 +1,6 @@
 {
   "name": "functionscript",
-  "version": "2.2.6",
+  "version": "2.2.7",
   "description": "A language and specification for turning JavaScript functions into typed HTTP APIs",
   "author": "Keith Horwood <keithwhor@gmail.com>",
   "main": "index.js",
@@ -13,6 +13,7 @@
     "keyql": "^0.2.2",
     "mime": "^2.5.2",
     "minimatch": "^3.0.4",
+    "node-sass": "^5.0.0",
     "uuid": "^3.0.1"
   },
   "devDependencies": {
