@@ -7,7 +7,7 @@ const PORT = 7357;
 const HOST = 'localhost'
 const ROOT = './tests/gateway';
 
-const FaaSGateway = new Gateway({debug: false, root: ROOT});
+const FaaSGateway = new Gateway({debug: false, root: ROOT, defaultTimeout: 1000});
 const parser = new FunctionParser();
 
 function request(method, headers, path, data, callback) {
@@ -3207,62 +3207,6 @@ module.exports = (expect) => {
       expect(res.headers['accept-ranges']).to.equal('bytes');
       expect(size).to.equal(500);
       expect(result.byteLength).to.equal(size);
-      done();
-
-    });
-  });
-
-  it('Should compile ".scss" files properly', done => {
-    request('GET', {}, '/compile/test-sass.scss', '', (err, res, result) => {
-
-      expect(err).to.not.exist;
-      expect(res.statusCode).to.equal(200);
-      expect(res.headers['content-type']).to.equal('text/css; charset=utf-8');
-      expect(res.headers['x-autoformat']).to.equal('true');
-      expect(result.byteLength).to.equal(parseInt(res.headers['content-length']));
-      expect(result.toString()).to.equal('body div{font-family:Arial}\n');
-      done();
-
-    });
-  });
-
-  it('Should avoid ".scss" compilation when "raw" is set to true (raw=t)', done => {
-    request('GET', {}, '/compile/test-sass.scss?raw=t', '', (err, res, result) => {
-
-      expect(err).to.not.exist;
-      expect(res.statusCode).to.equal(200);
-      expect(res.headers['content-type']).to.equal('text/x-scss; charset=utf-8');
-      expect(res.headers['x-autoformat']).to.not.exist;
-      expect(result.byteLength).to.equal(parseInt(res.headers['content-length']));
-      expect(result.toString()).to.equal('body {\n  div {\n    font-family: Arial;\n  }\n}\n');
-      done();
-
-    });
-  });
-
-  it('Should throw runtime error for improper .scss compilation', done => {
-    request('GET', {}, '/compile/test-sass-error.scss', '', (err, res, result) => {
-
-      expect(err).to.not.exist;
-      expect(res.statusCode).to.equal(415);
-      expect(result).to.exist;
-      expect(result.error).to.exist;
-      expect(result.error.type).to.equal('AutoformatError');
-      expect(result.error.details.retry).to.equal('You can try this request again with ?raw=t set in the HTTP query parameters to see the raw file contents');
-      done();
-
-    });
-  });
-
-  it('Should avoid ".scss" compilation (even an error) when "raw" is set to true (raw=t)', done => {
-    request('GET', {}, '/compile/test-sass-error.scss?raw=t', '', (err, res, result) => {
-
-      expect(err).to.not.exist;
-      expect(res.statusCode).to.equal(200);
-      expect(res.headers['content-type']).to.equal('text/x-scss; charset=utf-8');
-      expect(res.headers['x-autoformat']).to.not.exist;
-      expect(result.byteLength).to.equal(parseInt(res.headers['content-length']));
-      expect(result.toString()).to.equal('body {\n  div {\n    font-family:\n  }\n}\n');
       done();
 
     });
