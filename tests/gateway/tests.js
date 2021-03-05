@@ -307,14 +307,12 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should not parse arguments from POST (JSON Array)', done => {
+  it('Should successfully parse arguments from POST (JSON Array)', done => {
     request('POST', {}, '/my_function/', [10, 20, 30], (err, res, result) => {
 
       expect(err).to.not.exist;
-      expect(res.statusCode).to.equal(400);
-      expect(result.error).to.exist;
-      expect(result.error.type).to.equal('ClientError');
-      expect(result.error.message).to.equal('Bad Request: Invalid JSON: Must be an Object');
+      expect(res.statusCode).to.equal(200);
+      expect(result.error).to.not.exist;
       done();
 
     });
@@ -3207,6 +3205,58 @@ module.exports = (expect) => {
       expect(res.headers['accept-ranges']).to.equal('bytes');
       expect(size).to.equal(500);
       expect(result.byteLength).to.equal(size);
+      done();
+
+    });
+  });
+
+  it('Should support POST with nonstandard JSON (array)', done => {
+    request('POST', {}, '/nonstandard/json/', [1, 2, 3], (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(result.http.json).to.exist;
+      expect(result.http.json).to.deep.equal([1, 2, 3]);
+      done();
+
+    });
+  });
+
+  it('Should support POST with nonstandard JSON (string)', done => {
+    request('POST', {}, '/nonstandard/json/', '"hello"', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(result.http.json).to.exist;
+      expect(result.http.json).to.equal('hello');
+      done();
+
+    });
+  });
+
+  it('Should support POST with nonstandard JSON (boolean)', done => {
+    request('POST', {}, '/nonstandard/json/', 'true', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(result.http.json).to.exist;
+      expect(result.http.json).to.equal(true);
+      done();
+
+    });
+  });
+
+  it('Should support POST with nonstandard JSON (number)', done => {
+    request('POST', {}, '/nonstandard/json/', '1.2', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(result.http.json).to.exist;
+      expect(result.http.json).to.equal(1.2);
       done();
 
     });
