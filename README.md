@@ -5,7 +5,7 @@
 ![travis-ci build](https://travis-ci.org/FunctionScript/FunctionScript.svg?branch=master)
 ![npm version](https://badge.fury.io/js/functionscript.svg)
 
-## Turn JavaScript Functions into Typed HTTP APIs
+## An API gateway and framework for turning functions into web services
 
 FunctionScript is a language and specification for turning JavaScript
 functions into typed HTTP APIs. It allows JavaScript (Node.js) functions to be
@@ -19,16 +19,8 @@ interfaces. For this reason, the goals of the language are significantly differe
 [TypeScript](https://github.com/microsoft/TypeScript).
 **FunctionScript is intended to provide an easy introduction to API development for those of any skill level, while maintaining professional power and flexibility.**
 
-FunctionScript is the primary specification underpinning the [Standard Library](https://stdlib.com)
-API development and integration platform. You can start building with FunctionScript **immediately** using
-[Code on Standard Library](https://code.stdlib.com/?sample=t&filename=functions/__main__.js), right in
-your web browser. An animated example has been provided below.
-
-**Note:** *In order to use Code on Standard Library you must have a registered account on [stdlib.com](https://stdlib.com), available for free.*
-
-https://code.stdlib.com/?sample=t&filename=functions/__main__.js
-
-[![Demo](/images/demo-api.gif)](https://code.stdlib.com/?sample=t&filename=functions/__main__.js)
+FunctionScript is the primary specification underpinning the [Autocode](https://autocode.com)
+platform and its standard library of APIs.
 
 ### Quick Example of a FunctionScript API
 
@@ -89,7 +81,7 @@ It will return an `object`:
 ## Background
 
 The impetus for creating FunctionScript is simple: it stems from the initial
-vision of [Standard Library](https://stdlib.com). We believe the modern web is
+vision of [Autocode](https://autocode.com). We believe the modern web is
 missing a base primitive - the API. Daily, computer systems and developers around
 the planet make trillions of requests to perform specific tasks: process
 credit card payments with [Stripe](https://stripe.com), send team messages via
@@ -106,11 +98,6 @@ instead of a framework, FunctionScript truly treats the web API as a base primit
 software development instead of an afterthought. This allows teams to be able to
 deliver high-quality APIs with the same fidelity as organizations like
 Stripe in a fraction of the time without requiring any additional tooling.
-
-FunctionScript has been developed by the team at Polybit Inc., responsible for
-[Standard Library](https://stdlib.com).
-Ongoing development is, in part, funded by both [Stripe](https://stripe.com) and
-[Slack](https://slack.com) as venture investments in the parent organization.
 
 # Table of Contents
 
@@ -144,7 +131,7 @@ Ongoing development is, in part, funded by both [Stripe](https://stripe.com) and
 To put it simply, FunctionScript defines semantics and rules for turning exported
 JavaScript (Node.js) functions into strongly-typed, HTTP-accessible web APIs.
 In order to use FunctionScript, you'd set up your own [FunctionScript Gateway](#functionscript-server-and-gateway-implementation) or you would use an existing FunctionScript-compliant service
-like [Standard Library](https://stdlib.com/).
+like [Autocode](https://autocode.com/).
 
 FunctionScript allows you to turn something like this...
 
@@ -195,7 +182,7 @@ Or, when a type mismatch occurs (like `{"name":10}`):
 ## Why FunctionScript?
 
 FunctionScript is intended primarily to provide a scaffold to build and deliver
-APIs easily. It works best in conjunction with the [Standard Library](https://stdlib.com/)
+APIs easily. It works best as a part of the [Autocode](https://autocode.com/)
 platform which consumes the FunctionScript API definitions, hosts the code,
 generates documentation from the definitions, and automatically handles versioning and
 environment management. The reason we've open sourced the language specification
@@ -689,53 +676,26 @@ is available with this package, simply clone it and run `npm test` or look
 at the `/tests` folder for more information.
 
 The FunctionScript specification is used as the platform specification
-for [Standard Library](https://stdlib.com), and is available for local use with the
-[Standard Library CLI Package](https://github.com/stdlib/lib) which relies on this
+for [Autocode](https://autocode.com), and is available for local use with the
+[Autocode CLI](https://github.com/acode/cli) which relies on this
 repository as a dependency.
 
 # Acknowledgements
 
 FunctionScript is the result of years of concerted effort working to make API
 development easier. It would not be possible without the personal and financial
-commitments of some very amazing people and companies.
-
-## Corporate Interests
-
-Via investments in Polybit Inc., parent of [Standard Library](https://stdlib.com),
-the following companies have invested countless hours in and provided financial
-support for our team, which has made this project possible.
-
-[Stripe](https://stripe.com), the global leader in online payments
-
-[![Stripe Logo](/images/stripe-logo-300.png)](https://stripe.com)
-
-[Slack](https://slack.com), the online platform for work and communication
-
-[![Slack Logo](/images/slack-logo-300.png)](https://slack.com)
-
-## Special Thanks
-
-There have been a number of helpful supporters and contributors along the way,
-and FunctionScript would not be possible without any of them.
+commitments of some very amazing people and companies. We'd like to thank our
+customers, investors, supporters, friends and family.
 
 ### Core Contributors
 
 - [**Keith Horwood**](https://twitter.com/keithwhor)
 - [**Jacob Lee**](https://twitter.com/hacubu)
 - [**Steve Meyer**](https://twitter.com/notoriaga)
-
-### Friends and Supporters
-
-- [**Chad Fowler**](https://twitter.com/chadfowler)
-- [**Bear Douglas**](https://twitter.com/beardigsit)
-- [**Romain Huet**](https://twitter.com/romainhuet)
-- [**Will Gaybrick**](https://twitter.com/gaybrick)
-- [**Patrick Collison**](https://twitter.com/patrickc)
-- [**Patrick McKenzie**](https://twitter.com/patio11)
-- [**David Singleton**](https://twitter.com/dps)
+- [**Yusuf Musleh**](https://twitter.com/yusuf-musleh)
 
 # Notes
 
 The software contained within this repository has been developed and is
-copyrighted by the [Standard Library](https://stdlib.com) Team at Polybit Inc.
+copyrighted by the [Autocode](https://autocode.com) team (Polybit Inc.)
 and is MIT licensed.
