@@ -601,6 +601,38 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should return a proper error for invalid header names', done => {
+    request('GET', {}, '/sanitize/http_object_invalid_header_names/', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(502);
+      expect(result.error).to.exist;
+      expect(result.error.details).to.exist;
+      expect(Object.keys(result.error.details).length).to.equal(4);
+      expect(result.error.details['content-type ']).to.exist;
+      expect(result.error.details['x authorization key']).to.exist;
+      expect(result.error.details[' anotherheader']).to.exist;
+      expect(result.error.details['multilinename\n']).to.exist;
+      done();
+
+    });
+  });
+
+  it('Should return a proper error for invalid header values', done => {
+    request('GET', {}, '/sanitize/http_object_invalid_header_values/', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(502);
+      expect(result.error).to.exist;
+      expect(result.error.details).to.exist;
+      expect(Object.keys(result.error.details).length).to.equal(2);
+      expect(result.error.details['undefined-value']).to.exist;
+      expect(result.error.details['null-value']).to.exist;
+      done();
+
+    });
+  });
+
   it('Should not accept object.http with null body', done => {
     request('GET', {}, '/sanitize/http_object/', '', (err, res, result) => {
 
