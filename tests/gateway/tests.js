@@ -625,7 +625,8 @@ module.exports = (expect) => {
       expect(res.statusCode).to.equal(502);
       expect(result.error).to.exist;
       expect(result.error.details).to.exist;
-      expect(Object.keys(result.error.details).length).to.equal(2);
+      expect(Object.keys(result.error.details).length).to.equal(3);
+      expect(result.error.details['object-value']).to.exist;
       expect(result.error.details['undefined-value']).to.exist;
       expect(result.error.details['null-value']).to.exist;
       done();

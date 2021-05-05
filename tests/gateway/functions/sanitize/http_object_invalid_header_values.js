@@ -13,6 +13,7 @@ module.exports = (contentType = 'text/html', callback) => {
       'Object-Value': {
         'a': 'b'
       },
+      'Number-Value': 0xdeadbeef,
       'Boolean-Value': false,
       'Empty-String-Value': ''
     }
