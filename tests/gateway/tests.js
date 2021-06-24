@@ -19,7 +19,10 @@ function request(method, headers, path, data, callback) {
     data = JSON.stringify(data);
     headers['Content-Type'] = 'application/json';
   } else if (typeof data === 'string') {
-    headers['Content-Type'] = 'application/x-www-form-urlencoded';
+    let contentType = Object.keys(headers).find(k => k.toLowerCase() === 'content-type');
+    if (!(contentType && headers[contentType] === 'application/xml')) {
+      headers['Content-Type'] = 'application/x-www-form-urlencoded';
+    }
   }
   data = data || '';
   let req = http.request({
@@ -3290,6 +3293,240 @@ module.exports = (expect) => {
       expect(res.headers['content-type']).to.equal('application/json');
       expect(result.http.json).to.exist;
       expect(result.http.json).to.equal(1.2);
+      done();
+
+    });
+  });
+
+  it('Should support POST with XML', done => {
+
+    let xmlData = `
+      <Company>
+        <Employee>
+            <FirstName>John</FirstName>
+            <LastName>Doe</LastName>
+            <ContactNo>1234567890</ContactNo>
+            <Email>johndoe@example.com</Email>
+            <Address>
+                 <City>San Francisco</City>
+                 <State>California</State>
+                 <Zip>123456</Zip>
+            </Address>
+            <Fulltime>True</Fulltime>
+        </Employee>
+        <Employee>
+            <FirstName>Jane</FirstName>
+            <LastName>Smith</LastName>
+            <ContactNo>0987654321</ContactNo>
+            <Email>janesmith@example.com</Email>
+            <Address>
+                 <City>Los Angeles</City>
+                 <State>California</State>
+                 <Zip>654321</Zip>
+            </Address>
+            <Fulltime>False</Fulltime>
+        </Employee>
+      </Company>`;
+
+    let parsedData = {
+      Company: {
+        Employee: [
+          {
+            FirstName: 'John',
+            LastName: 'Doe',
+            ContactNo: "1234567890",
+            Email: 'johndoe@example.com',
+            Address: {
+              City: 'San Francisco',
+              State: 'California',
+              Zip: '123456'
+            },
+            Fulltime: 'True',
+          },
+          {
+            FirstName: 'Jane',
+            LastName: 'Smith',
+            ContactNo: '0987654321',
+            Email: 'janesmith@example.com',
+            Address: {
+              City: 'Los Angeles',
+              State: 'California',
+              Zip: '654321'
+            },
+            Fulltime: 'False',
+          }
+        ]
+      }
+    }
+
+    request('POST', {'Content-Type': 'application/xml'}, '/reflect/', xmlData, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.deep.equal(parsedData);
+      done();
+
+    });
+  });
+
+  it('Should support POST with XML (containing attributes)', done => {
+
+    let xmlData = `<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015"
+         xmlns="http://www.w3.org/2005/Atom">
+      <link rel="hub" href="https://pubsubhubbub.appspot.com"/>
+      <link rel="self" href="https://www.youtube.com/xml/feeds/videos.xml?channel_id=CHANNEL_ID"/>
+      <title>YouTube video feed</title>
+      <updated>2015-04-01T19:05:24.552394234+00:00</updated>
+      <entry>
+        <id>yt:video:VIDEO_ID</id>
+        <yt:videoId>VIDEO_ID</yt:videoId>
+        <yt:channelId>CHANNEL_ID</yt:channelId>
+        <title>Video title</title>
+        <link rel="alternate" href="http://www.youtube.com/watch?v=VIDEO_ID"/>
+        <author>
+         <name>Channel title</name>
+         <uri>http://www.youtube.com/channel/CHANNEL_ID</uri>
+        </author>
+        <published>2015-03-06T21:40:57+00:00</published>
+        <updated>2015-03-09T19:05:24.552394234+00:00</updated>
+      </entry>
+    </feed>`;
+
+    let parsedData = {
+      "feed": {
+        "@_xmlns:yt": "http://www.youtube.com/xml/schemas/2015",
+        "@_xmlns": "http://www.w3.org/2005/Atom",
+        "link": [
+          {
+            "@_rel": "hub",
+            "@_href": "https://pubsubhubbub.appspot.com"
+          },
+          {
+            "@_rel": "self",
+            "@_href": "https://www.youtube.com/xml/feeds/videos.xml?channel_id=CHANNEL_ID"
+          }
+        ],
+        "title": "YouTube video feed",
+        "updated": "2015-04-01T19:05:24.552394234+00:00",
+        "entry": {
+          "id": "yt:video:VIDEO_ID",
+          "yt:videoId": "VIDEO_ID",
+          "yt:channelId": "CHANNEL_ID",
+          "title": "Video title",
+          "link": {
+            "@_rel": "alternate",
+            "@_href": "http://www.youtube.com/watch?v=VIDEO_ID"
+          },
+          "author": {
+            "name": "Channel title",
+            "uri": "http://www.youtube.com/channel/CHANNEL_ID"
+          },
+          "published": "2015-03-06T21:40:57+00:00",
+          "updated": "2015-03-09T19:05:24.552394234+00:00"
+        }
+      }
+    }
+
+    request('POST', {'Content-Type': 'application/xml'}, '/reflect/', xmlData, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.deep.equal(parsedData);
+      done();
+
+    });
+
+  });
+
+
+  it('Should reject invalid XML', done => {
+
+    let xmlData = `
+      <Company>
+        <Employee>
+            <FirstName>John</FirstName>
+            <LastName>Doe</LastName>
+            <ContactNo>1234567890</ContactNo>
+            <Email>johndoe@example.com</Email>
+            <Address>
+                 <City>San Francisco</City>
+                 <State>California</State>
+                 <Zip>123456</Zip>
+            </Address>
+            <Fulltime>True</Fulltime>
+        </Employee>
+        <Employee>
+            <FirstName>Jane</FirstName>
+            <LastName>Smith</LastName>
+            <ContactNo>0987654321</ContactNo>
+            <Email>janesmith@example.com</Email>
+            <Address>
+                 <City>Los Angeles</City>
+                 <State>California</State>
+                 <Zip>654321</Zip>
+            </Address>
+            <Fulltime>False</Fulltime>
+        </Employee>
+      </Companyyy>`;
+
+    request('POST', {'Content-Type': 'application/xml'}, '/reflect/', xmlData, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.exist;
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('ClientError');
+      done();
+
+    });
+  });
+
+  it('Should not reject nor parse XML if no Content-Type headers are passed in', done => {
+
+    let xmlData = `
+      <Company>
+        <Employee>
+            <FirstName>John</FirstName>
+            <LastName>Doe</LastName>
+            <ContactNo>1234567890</ContactNo>
+            <Email>johndoe@example.com</Email>
+            <Address>
+                 <City>San Francisco</City>
+                 <State>California</State>
+                 <Zip>123456</Zip>
+            </Address>
+            <Fulltime>True</Fulltime>
+        </Employee>
+        <Employee>
+            <FirstName>Jane</FirstName>
+            <LastName>Smith</LastName>
+            <ContactNo>0987654321</ContactNo>
+            <Email>janesmith@example.com</Email>
+            <Address>
+                 <City>Los Angeles</City>
+                 <State>California</State>
+                 <Zip>654321</Zip>
+            </Address>
+            <Fulltime>False</Fulltime>
+        </Employee>
+      </Company>`;
+
+    request('POST', {}, '/reflect/', xmlData, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
       done();
 
     });
