@@ -1,6 +1,6 @@
 {
   "name": "functionscript",
-  "version": "2.3.3",
+  "version": "2.3.4",
   "description": "An API gateway and framework for turning functions into web services",
   "author": "Keith Horwood <keithwhor@gmail.com>",
   "main": "index.js",
@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@babel/parser": "^7.12.11",
+    "fast-xml-parser": "^3.19.0",
     "keyql": "^0.2.2",
     "mime": "^2.5.2",
     "minimatch": "^3.0.4",
