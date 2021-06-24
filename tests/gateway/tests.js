@@ -3490,7 +3490,7 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should not reject nor reject XML if no Content-Type headers are passed in', done => {
+  it('Should not reject nor parse XML if no Content-Type headers are passed in', done => {
 
     let xmlData = `
       <Company>
@@ -3518,7 +3518,7 @@ module.exports = (expect) => {
             </Address>
             <Fulltime>False</Fulltime>
         </Employee>
-      </Companyyy>`;
+      </Company>`;
 
     request('POST', {}, '/reflect/', xmlData, (err, res, result) => {
 
