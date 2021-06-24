@@ -20,7 +20,7 @@ function request(method, headers, path, data, callback) {
     headers['Content-Type'] = 'application/json';
   } else if (typeof data === 'string') {
     let contentType = Object.keys(headers).find(k => k.toLowerCase() === 'content-type');
-    if (!(contentType && headers[contentType] === 'application/xml')) {
+    if (!contentType) {
       headers['Content-Type'] = 'application/x-www-form-urlencoded';
     }
   }
@@ -3444,7 +3444,6 @@ module.exports = (expect) => {
 
   });
 
-
   it('Should reject invalid XML', done => {
 
     let xmlData = `
@@ -3527,6 +3526,174 @@ module.exports = (expect) => {
       expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
       expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
       expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      done();
+
+    });
+  });
+
+  it('Should support POST with XML for content type "application/atom+xml"', done => {
+
+    let xmlData = `
+      <Company>
+        <Employee>
+            <FirstName>John</FirstName>
+            <LastName>Doe</LastName>
+            <ContactNo>1234567890</ContactNo>
+            <Email>johndoe@example.com</Email>
+            <Address>
+                 <City>San Francisco</City>
+                 <State>California</State>
+                 <Zip>123456</Zip>
+            </Address>
+            <Fulltime>True</Fulltime>
+        </Employee>
+        <Employee>
+            <FirstName>Jane</FirstName>
+            <LastName>Smith</LastName>
+            <ContactNo>0987654321</ContactNo>
+            <Email>janesmith@example.com</Email>
+            <Address>
+                 <City>Los Angeles</City>
+                 <State>California</State>
+                 <Zip>654321</Zip>
+            </Address>
+            <Fulltime>False</Fulltime>
+        </Employee>
+      </Company>`;
+
+    let parsedData = {
+      Company: {
+        Employee: [
+          {
+            FirstName: 'John',
+            LastName: 'Doe',
+            ContactNo: "1234567890",
+            Email: 'johndoe@example.com',
+            Address: {
+              City: 'San Francisco',
+              State: 'California',
+              Zip: '123456'
+            },
+            Fulltime: 'True',
+          },
+          {
+            FirstName: 'Jane',
+            LastName: 'Smith',
+            ContactNo: '0987654321',
+            Email: 'janesmith@example.com',
+            Address: {
+              City: 'Los Angeles',
+              State: 'California',
+              Zip: '654321'
+            },
+            Fulltime: 'False',
+          }
+        ]
+      }
+    }
+
+    request('POST', {'Content-Type': 'application/atom+xml'}, '/reflect/', xmlData, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.deep.equal(parsedData);
+      done();
+
+    });
+  });
+
+  it('Should support POST with XML for content type "application/atom+xml" (containing attributes)', done => {
+
+    let xmlData = `<entry>
+      <id>yt:video:abdefghijklmnop</id>
+      <yt:videoId>abdefghijklmnop</yt:videoId>
+      <yt:channelId>abcdefghijklmnop</yt:channelId>
+      <title>Some Video Title</title>
+      <link rel="alternate" href="https://www.youtube.com/watch?v=abcdefghijklmnop"/>
+      <author>
+        <name>Video Name</name>
+        <uri>https://www.youtube.com/channel/abcdefghijklmnop</uri>
+      </author>
+      <published>2021-06-24T23:37:28+00:00</published>
+      <updated>2021-06-24T23:37:58.731601431+00:00</updated>
+    </entry>`;
+
+    let parsedData = {
+      "entry": {
+        "author": {
+            "name": "Video Name",
+            "uri": "https://www.youtube.com/channel/abcdefghijklmnop"
+        },
+        "id": "yt:video:abdefghijklmnop",
+        "link": {
+          "@_href": "https://www.youtube.com/watch?v=abcdefghijklmnop",
+          "@_rel": "alternate",
+        },
+        "published": "2021-06-24T23:37:28+00:00",
+        "title": "Some Video Title",
+        "updated": "2021-06-24T23:37:58.731601431+00:00",
+        "yt:channelId": "abcdefghijklmnop",
+        "yt:videoId": "abdefghijklmnop"
+      }
+    };
+
+    request('POST', {'Content-Type': 'application/atom+xml'}, '/reflect/', xmlData, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.deep.equal(parsedData);
+      done();
+
+    });
+
+  });
+
+  it('Should reject invalid XML for content type "application/atom+xml"', done => {
+
+    let xmlData = `
+      <Company>
+        <Employee>
+            <FirstName>John</FirstName>
+            <LastName>Doe</LastName>
+            <ContactNo>1234567890</ContactNo>
+            <Email>johndoe@example.com</Email>
+            <Address>
+                 <City>San Francisco</City>
+                 <State>California</State>
+                 <Zip>123456</Zip>
+            </Address>
+            <Fulltime>True</Fulltime>
+        </Employee>
+        <Employee>
+            <FirstName>Jane</FirstName>
+            <LastName>Smith</LastName>
+            <ContactNo>0987654321</ContactNo>
+            <Email>janesmith@example.com</Email>
+            <Address>
+                 <City>Los Angeles</City>
+                 <State>California</State>
+                 <Zip>654321</Zip>
+            </Address>
+            <Fulltime>False</Fulltime>
+        </Employee>
+      </Companyyy>`;
+
+    request('POST', {'Content-Type': 'application/atom+xml'}, '/reflect/', xmlData, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.exist;
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('ClientError');
       done();
 
     });
