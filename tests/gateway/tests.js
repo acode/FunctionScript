@@ -1,5 +1,6 @@
 const http = require('http');
 const zlib = require('zlib');
+const fs = require('fs')
 const FormData = require('form-data');
 const {Gateway, FunctionParser} = require('../../index.js');
 
@@ -1331,7 +1332,7 @@ module.exports = (expect) => {
   });
 
   it('Should handle multipart/form-data with buffer', done => {
-    const fs = require('fs')
+
     let pkgJson = fs.readFileSync(process.cwd() + '/package.json')
 
     let form = new FormData();
@@ -1422,6 +1423,37 @@ module.exports = (expect) => {
         let results = JSON.parse(body);
         expect(results.error).to.exist
         expect(results.error.message).to.equal('Bad Request: Invalid multipart form-data with key: my_json')
+        done();
+      });
+
+      response.on('err', function(err) {
+        expect(err).to.not.exist;
+        done();
+      })
+
+    })
+  });
+
+  it('Should handle multipart/form-data with a png', done => {
+
+    let image = fs.readFileSync(process.cwd() + '/tests/gateway/www/fs-wordmark.png');
+
+    let form = new FormData();
+    form.append('bufferParam', image);
+
+    form.submit(`http://${HOST}:${PORT}/buffer_reflect`, (err, response) => {
+
+      expect(err).to.not.exist;
+      expect(response.statusCode).to.equal(200);
+
+      let body = [];
+      response.on('readable', function() {
+          body.push(response.read());
+      });
+
+      response.on('end', function() {
+        let result = Buffer.concat(body);
+        expect(image.equals(result)).to.equal(true);
         done();
       });
 
