@@ -1417,6 +1417,13 @@ describe('LibDoc', () => {
 
     });
 
+    it('should throw on invalid schema type', () => {
+      const throws = () => {
+        types.validate('object', {}, false, {})
+      }
+      expect(throws).to.throw(/Array/)
+    })
+
     it('should validate "object" with schema', () => {
 
       expect(types.validate('object', {})).to.equal(true);
