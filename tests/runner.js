@@ -1838,6 +1838,113 @@ describe('LibDoc', () => {
 
     });
 
+    it('Should generateSchema for javascript', () => {
+
+      try {
+        types.generateSchema.javascript([1, 2, null, 4]);
+      } catch (e) {
+        expect(e).to.exist;
+        expect(e.message).to.contain('from an object');
+      }
+
+      let result;
+
+      result = types.generateSchema.javascript({list: [1, 2, 3, 4]});
+      expect(result).to.equal([
+        ` * @param {array} list`,
+        ` * @ {number}`
+      ].join('\n'));
+
+      result = types.generateSchema.javascript({list: [1, 2, null, 4]});
+      expect(result).to.equal([
+        ` * @param {array} list`,
+        ` * @ {?number}`
+      ].join('\n'));
+
+      result = types.generateSchema.javascript({list: [null, null, 1, null, 2, 3]});
+      expect(result).to.equal([
+        ` * @param {array} list`,
+        ` * @ {?number}`
+      ].join('\n'));
+
+      result = types.generateSchema.javascript({list: [null]});
+      expect(result).to.equal([
+        ` * @param {array} list`,
+        ` * @ {?any}`
+      ].join('\n'));
+
+      result = types.generateSchema.javascript({list: [1, 'two', null, 4]});
+      expect(result).to.equal([
+        ` * @param {array} list`,
+        ` * @ {?any}`
+      ].join('\n'));
+
+      result = types.generateSchema.javascript({
+        nested: ['one', 2, 3, null],
+        nestedObjects: [{
+          one: 'one',
+          two: 2,
+          three: 3,
+          four: 4,
+          five: 'five'
+        }, {
+          one: null,
+          two: null,
+          three: null,
+          four: 44,
+          five: '5ive'
+        }, {
+          one: 'uno',
+          two: 2,
+          three: 'three',
+          four: 444
+        }]
+      });
+      expect(result).to.deep.equal([
+        ` * @param {array} nested`,
+        ` * @ {?any}`,
+        ` * @param {array} nestedObjects`,
+        ` * @ {object}`,
+        ` * @   {?any} one`,
+        ` * @   {?any} two`,
+        ` * @   {?any} three`,
+        ` * @   {number} four`
+      ].join('\n'));
+
+      result = types.generateSchema.javascript({
+        nested: ['one', 2, 3, null],
+        nestedObjects: [{
+          one: 'one',
+          two: 2,
+          three: 3,
+          four: 4,
+          five: 'five'
+        }, {
+          one: null,
+          two: null,
+          three: null,
+          four: 44,
+          five: '5ive'
+        }, {
+          one: 'uno',
+          two: 2,
+          three: 'three',
+          four: 444
+        }]
+      }, 1);
+      expect(result).to.deep.equal([
+        ` * @ {array} nested`,
+        ` * @   {?any}`,
+        ` * @ {array} nestedObjects`,
+        ` * @   {object}`,
+        ` * @     {?any} one`,
+        ` * @     {?any} two`,
+        ` * @     {?any} three`,
+        ` * @     {number} four`
+      ].join('\n'));
+
+    });
+
     it('Should parse valid Node.js variable names', () => {
 
       expect(NodeJsFunctionParser.validateFunctionParamName('test')).to.equal(true);
