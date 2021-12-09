@@ -1528,7 +1528,7 @@ describe('LibDoc', () => {
       expect(
         types.validate('object.keyql.limit', {
           offset: 0,
-          limit: 0
+          count: 0
         })
       ).to.equal(true);
 

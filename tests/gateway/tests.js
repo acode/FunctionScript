@@ -2607,6 +2607,139 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should reject keyql limit count out of range, hard limit', done => {
+    request('POST', {}, '/keyql_limit/', {limit: {count: -1, offset: 0}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      done();
+
+    });
+  });
+
+  it('Should reject keyql limit offset out of range, hard limit', done => {
+    request('POST', {}, '/keyql_limit/', {limit: {count: 0, offset: -1}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      done();
+
+    });
+  });
+
+  it('Should reject keyql limit count non-integer, hard limit', done => {
+    request('POST', {}, '/keyql_limit/', {limit: {count: 0.256, offset: 0}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      done();
+
+    });
+  });
+
+  it('Should reject keyql limit count out of lowerbound range, user limit', done => {
+    request('POST', {}, '/keyql_limit_range/', {limit: {count: 1, offset: 0}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      done();
+
+    });
+  });
+
+  it('Should reject keyql limit count out of upperbound range, user limit', done => {
+    request('POST', {}, '/keyql_limit_range/', {limit: {count: 30, offset: 0}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      done();
+
+    });
+  });
+
+  it('Should accept keyql limit count in range', done => {
+    request('POST', {}, '/keyql_limit_range/', {limit: {count: 5}},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      done();
+
+    });
+  });
+
+  it('Should accept number inside integer range', done => {
+    request('POST', {}, '/range_integer/', {ranged: 1},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      console.log(result);
+      expect(res.statusCode).to.equal(200);
+      done();
+
+    });
+  });
+
+  it('Should reject number outside integer range, lowerbound', done => {
+    request('POST', {}, '/range_integer/', {ranged: -1},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      done();
+
+    });
+  });
+
+  it('Should reject number outside integer range, upperbound', done => {
+    request('POST', {}, '/range_integer/', {ranged: 201},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      done();
+
+    });
+  });
+
+  it('Should accept number inside number range', done => {
+    request('POST', {}, '/range_number/', {ranged: 1.5},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      done();
+
+    });
+  });
+
+  it('Should reject number outside number range, lowerbound', done => {
+    request('POST', {}, '/range_number/', {ranged: 1},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      done();
+
+    });
+  });
+
+  it('Should reject number outside number range, upperbound', done => {
+    request('POST', {}, '/range_number/', {ranged: 200},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      done();
+
+    });
+  });
+
   it('Should return a buffer properly', done => {
     request('POST', {}, '/buffer_return/', {},
     (err, res, result) => {
