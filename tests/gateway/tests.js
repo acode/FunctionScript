@@ -1005,9 +1005,10 @@ module.exports = (expect) => {
 
   it('Should register an error in the resolve step with type RateLimitError', done => {
 
+    let errorMessage = 'You have called this API too many times.';
     let originalResolveFn = FaaSGateway.resolve;
     FaaSGateway.resolve = (req, res, buffer, callback) => {
-      let error = new Error('You have called this API too many times.');
+      let error = new Error(errorMessage);
       error.rateLimitError = true;
       error.rate = {
         count: 1,
@@ -1023,7 +1024,76 @@ module.exports = (expect) => {
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(429);
       expect(result.error).to.exist;
+      expect(result.error.message).to.equal(errorMessage);
       expect(result.error.type).to.equal('RateLimitError');
+      expect(result.error.details).to.haveOwnProperty('rate');
+      expect(result.error.details.rate).to.haveOwnProperty('count');
+      expect(result.error.details.rate).to.haveOwnProperty('period');
+      expect(result.error.details.rate.count).to.equal(1);
+      expect(result.error.details.rate.period).to.equal(3600);
+      done();
+
+    });
+
+  });
+
+  it('Should register an error in the resolve step with type AuthRateLimitError', done => {
+
+    let errorMessage = 'You have called this API authenticated too many times.';
+    let originalResolveFn = FaaSGateway.resolve;
+    FaaSGateway.resolve = (req, res, buffer, callback) => {
+      let error = new Error(errorMessage);
+      error.authRateLimitError = true;
+      error.rate = {
+        count: 1,
+        period: 3600
+      };
+      return callback(error);
+    };
+
+    request('POST', {}, '/my_function/', {}, (err, res, result) => {
+
+      FaaSGateway.resolve = originalResolveFn;
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(429);
+      expect(result.error).to.exist;
+      expect(result.error.message).to.equal(errorMessage);
+      expect(result.error.type).to.equal('AuthRateLimitError');
+      expect(result.error.details).to.haveOwnProperty('rate');
+      expect(result.error.details.rate).to.haveOwnProperty('count');
+      expect(result.error.details.rate).to.haveOwnProperty('period');
+      expect(result.error.details.rate.count).to.equal(1);
+      expect(result.error.details.rate.period).to.equal(3600);
+      done();
+
+    });
+
+  });
+
+  it('Should register an error in the resolve step with type UnauthRateLimitError', done => {
+
+    let errorMessage = 'You have called this API unauthenticated too many times.';
+    let originalResolveFn = FaaSGateway.resolve;
+    FaaSGateway.resolve = (req, res, buffer, callback) => {
+      let error = new Error(errorMessage);
+      error.unauthRateLimitError = true;
+      error.rate = {
+        count: 1,
+        period: 3600
+      };
+      return callback(error);
+    };
+
+    request('POST', {}, '/my_function/', {}, (err, res, result) => {
+
+      FaaSGateway.resolve = originalResolveFn;
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(429);
+      expect(result.error).to.exist;
+      expect(result.error.message).to.equal(errorMessage);
+      expect(result.error.type).to.equal('UnauthRateLimitError');
       expect(result.error.details).to.haveOwnProperty('rate');
       expect(result.error.details.rate).to.haveOwnProperty('count');
       expect(result.error.details.rate).to.haveOwnProperty('period');
