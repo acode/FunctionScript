@@ -335,12 +335,25 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should parse arguments from URL into array, obj.field format, setting the top-level field', done => {
+    request('GET', {}, '/my_function_test_parsing/?b.lol=1&b.wat=23&b.cool.beans=hi', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.deep.equal({a: [], b: {lol: '1', wat: '23', 'cool.beans': 'hi'}});
+      done();
+
+    });
+  });
+
   it('Should return bad request if object populated by value and set', done => {
     request('GET', {}, '/my_function_test_parsing/?b.lol=1&b={}', '', (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(400);
-      console.log(result);
       expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
       expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
       expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
@@ -3633,7 +3646,6 @@ module.exports = (expect) => {
     request('POST', {}, '/nonstandard/json/', '1.2', (err, res, result) => {
 
       expect(err).to.not.exist;
-      console.log(result);
       expect(res.statusCode).to.equal(200);
       expect(res.headers['content-type']).to.equal('application/json');
       expect(result.http.json).to.exist;
