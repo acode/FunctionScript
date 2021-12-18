@@ -253,6 +253,116 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should parse arguments from URL into array, var[] format', done => {
+    request('GET', {}, '/my_function_test_parsing/?a[]=1&a[]=2&a[]=3', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.deep.equal({a: ['1', '2', '3'], b: {}});
+      done();
+
+    });
+  });
+
+  it('Should parse arguments from URL into array, var[0] format, with push', done => {
+    request('GET', {}, '/my_function_test_parsing/?a[1]=1&a[0]=2&a[]=100&a[5]=3&a[]=7', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.deep.equal({a: ['2', '1', null, null, null, '3', '100', '7'], b: {}});
+      done();
+
+    });
+  });
+
+  it('Should return bad request if array populated by pushing and set', done => {
+    request('GET', {}, '/my_function_test_parsing/?a[]=1&a[]=2&a=[1,2,3]', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      done();
+
+    });
+  });
+
+  it('Should return bad request if non-integer value used as index in array', done => {
+    request('GET', {}, '/my_function_test_parsing/?a[1.5]=1', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      done();
+
+    });
+  });
+
+  it('Should parse arguments from URL into array, var[0] format, with push and covert to type', done => {
+    request('GET', {}, '/my_function_test_parsing_convert/?a[1]=1&a[0]=2&a[]=100&a[5]=3&a[]=7', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.deep.equal({a: [2, 1, null, null, null, 3, 100, 7], b: {}});
+      done();
+
+    });
+  });
+
+  it('Should parse arguments from URL into array, obj.field format', done => {
+    request('GET', {}, '/my_function_test_parsing/?b.lol=1&b.wat=23', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.deep.equal({a: [], b: {lol: '1', wat: '23'}});
+      done();
+
+    });
+  });
+
+  it('Should return bad request if object populated by value and set', done => {
+    request('GET', {}, '/my_function_test_parsing/?b.lol=1&b={}', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      console.log(result);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      done();
+
+    });
+  });
+
+  it('Should parse arguments from URL into object, obj.field format, and convert to type', done => {
+    request('GET', {}, '/my_function_test_parsing_convert/?b.lol=1&b.wat=23', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.deep.equal({a: [], b: {lol: 1, wat: '23'}});
+      done();
+
+    });
+  });
+
   it('Should parse arguments from POST (URL encoded)', done => {
     request('POST', {}, '/my_function/', 'a=10&b=20&c=30', (err, res, result) => {
 
@@ -2748,7 +2858,6 @@ module.exports = (expect) => {
     (err, res, result) => {
 
       expect(err).to.not.exist;
-      console.log(result);
       expect(res.statusCode).to.equal(200);
       done();
 
@@ -3524,6 +3633,7 @@ module.exports = (expect) => {
     request('POST', {}, '/nonstandard/json/', '1.2', (err, res, result) => {
 
       expect(err).to.not.exist;
+      console.log(result);
       expect(res.statusCode).to.equal(200);
       expect(res.headers['content-type']).to.equal('application/json');
       expect(result.http.json).to.exist;
