@@ -335,7 +335,7 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should parse arguments from URL into array, obj.field format, setting the top-level field', done => {
+  it('Should parse arguments from URL into array, obj.field format, setting multiple field levels', done => {
     request('GET', {}, '/my_function_test_parsing/?b.lol=1&b.wat=23&b.cool.beans=hi', '', (err, res, result) => {
 
       expect(err).to.not.exist;
@@ -343,7 +343,75 @@ module.exports = (expect) => {
       expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
       expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
       expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
-      expect(result).to.deep.equal({a: [], b: {lol: '1', wat: '23', 'cool.beans': 'hi'}});
+      expect(result).to.deep.equal({a: [], b: {lol: '1', wat: '23', cool: {beans: 'hi'}}});
+      done();
+
+    });
+  });
+
+  it('Should parse arguments from URL into array, obj.field format, setting multiple field levels with array', done => {
+    request('GET', {}, '/my_function_test_parsing/?b.lol=1&b.wat=23&b.cool.beans[]=hi', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.deep.equal({a: [], b: {lol: '1', wat: '23', cool: {beans: ['hi']}}});
+      done();
+
+    });
+  });
+
+  it('Should parse arguments from URL into array, obj.field format, setting multiple field levels with array and sub object', done => {
+    request('GET', {}, '/my_function_test_parsing/?b.lol=1&b.wat=23&b.cool[].beans=hi', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.deep.equal({a: [], b: {lol: '1', wat: '23', cool: [{beans: 'hi'}]}});
+      done();
+
+    });
+  });
+
+  it('Should parse arguments from URL into array, obj.field format, setting multiple field levels with 2d array and sub object', done => {
+    request('GET', {}, '/my_function_test_parsing/?b.lol=1&b.wat=23&b.cool[][].beans=hi', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.deep.equal({a: [], b: {lol: '1', wat: '23', cool: [[{beans: 'hi'}]]}});
+      done();
+
+    });
+  });
+
+  it('Should reject obj.field format, setting multiple field levels with array', done => {
+    request('GET', {}, '/my_function_test_parsing/?b.lol=1&b.wat=23&b.cool[]=hi&b.cool=hi', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      done();
+
+    });
+  });
+
+  it('Should reject obj.field format, overwriting child object', done => {
+    request('GET', {}, '/my_function_test_parsing/?b.lol=1&b.wat=23&b.cool.beans=hi&b.cool=beans', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
       done();
 
     });
