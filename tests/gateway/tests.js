@@ -164,7 +164,7 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should return 400 Bad Request + ClientError when no Content-Type specified on POST', done => {
+  it('Should return 400 Bad Request + ParameterParseError when no Content-Type specified on POST', done => {
     request('POST', {}, '/my_function/', undefined, (err, res, result) => {
 
       expect(err).to.not.exist;
@@ -174,7 +174,7 @@ module.exports = (expect) => {
       expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
       expect(result).to.exist;
       expect(result.error).to.exist;
-      expect(result.error.type).to.equal('ClientError');
+      expect(result.error.type).to.equal('ParameterParseError');
       done();
 
     });
@@ -405,6 +405,36 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should reject obj.field format for an argument in the URL that is already typed as a non-object with a ParameterParseError', done => {
+    request('GET', {}, '/my_function_test_parsing/?c=1&c.field=1', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('ParameterParseError');
+      done();
+
+    });
+  });
+
+  it('Should reject obj.field format for a nested argument in the URL that is already typed as a non object with a ParameterParseError', done => {
+    request('GET', {}, '/my_function_test_parsing/?b.field=1&b.field.test=2', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('ParameterParseError');
+      done();
+
+    });
+  });
+
   it('Should reject obj.field format, setting multiple field levels with array', done => {
     request('GET', {}, '/my_function_test_parsing/?b.lol=1&b.wat=23&b.cool[]=hi&b.cool=hi', '', (err, res, result) => {
 
@@ -481,7 +511,7 @@ module.exports = (expect) => {
       expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
       expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
       expect(result.error).to.exist;
-      expect(result.error.type).to.equal('ClientError');
+      expect(result.error.type).to.equal('ParameterParseError');
       done();
 
     });
@@ -510,7 +540,7 @@ module.exports = (expect) => {
       expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
       expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
       expect(result.error).to.exist;
-      expect(result.error.type).to.equal('ClientError');
+      expect(result.error.type).to.equal('ParameterParseError');
       done();
 
     });
@@ -1697,7 +1727,8 @@ module.exports = (expect) => {
       response.on('end', function() {
         let results = JSON.parse(body);
         expect(results.error).to.exist
-        expect(results.error.message).to.equal('Bad Request: Invalid multipart form-data with key: my_json')
+        expect(results.error.type).to.equal('ParameterParseError');
+        expect(results.error.message).to.equal('Invalid multipart form-data with key: my_json');
         done();
       });
 
@@ -3922,7 +3953,7 @@ module.exports = (expect) => {
       expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
       expect(result).to.exist;
       expect(result.error).to.exist;
-      expect(result.error.type).to.equal('ClientError');
+      expect(result.error.type).to.equal('ParameterParseError');
       done();
 
     });
@@ -4132,7 +4163,7 @@ module.exports = (expect) => {
       expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
       expect(result).to.exist;
       expect(result.error).to.exist;
-      expect(result.error.type).to.equal('ClientError');
+      expect(result.error.type).to.equal('ParameterParseError');
       done();
 
     });
