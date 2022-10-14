@@ -19,6 +19,6 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "form-data": "^2.3.2",
-    "mocha": "^7.2.0"
+    "mocha": "^10.0.0"
   }
 }
