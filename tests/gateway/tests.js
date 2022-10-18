@@ -55,8 +55,14 @@ function request(method, headers, path, data, callback) {
 module.exports = (expect) => {
 
   before(() => {
+    const preloadFiles = {
+      'functions/sample_preload.js': Buffer.from(`module.exports = async () => { return true; };`)
+    };
     FaaSGateway.listen(PORT);
-    FaaSGateway.define(parser.load(ROOT, 'functions', 'www'));
+    FaaSGateway.define(
+      parser.load(ROOT, 'functions', 'www', null, preloadFiles),
+      preloadFiles
+    );
   });
 
   it('Should setup correctly', () => {
@@ -64,6 +70,52 @@ module.exports = (expect) => {
     expect(FaaSGateway.server).to.exist;
     expect(FaaSGateway.definitions).to.exist;
     expect(FaaSGateway.definitions).to.haveOwnProperty('my_function');
+    expect(FaaSGateway.definitions).to.haveOwnProperty('sample_preload');
+    expect(FaaSGateway.preloadFiles).to.haveOwnProperty('functions/sample_preload.js');
+
+  });
+
+  it('Should have the parser preload correctly', () => {
+
+    const preloadFiles = {
+      'functions/preload.js': Buffer.from(`
+        module.exports = async (a, context) => {
+          return true;
+        };
+      `),
+      'functions/preload2.js': Buffer.from(`
+        module.exports = async (b, c) => {
+          return true;
+        };
+      `)
+    };
+
+    let definitions = parser.load(ROOT, 'functions', 'www', null, preloadFiles);
+    expect(definitions).to.haveOwnProperty('preload');
+    expect(definitions['preload'].params.length).to.equal(1);
+    expect(definitions['preload'].context).to.deep.equal({});
+    expect(definitions['preload2'].params.length).to.equal(2);
+    expect(definitions['preload2'].context).to.equal(null);
+
+  });
+
+  it('Should parser error if trying to load a preloaded file name', () => {
+
+    const preloadFiles = {
+      'functions/my_function.js': Buffer.from(`
+        module.exports = async (a, context) => {
+          return true;
+        };
+      `)
+    };
+
+    let definitions;
+    try {
+      definitions = parser.load(ROOT, 'functions', 'www', null, preloadFiles);
+    } catch (e) {
+      expect(e).to.exist;
+      expect(e.message).to.contain('preload');
+    }
 
   });
 
@@ -189,6 +241,20 @@ module.exports = (expect) => {
       expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
       expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
       expect(result).to.equal(6);
+      done();
+
+    });
+  });
+
+  it('Should return 200 OK + result when preloadFile executed', done => {
+    request('GET', {}, '/sample_preload/', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.equal(true);
       done();
 
     });
