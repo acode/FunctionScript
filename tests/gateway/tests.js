@@ -1281,6 +1281,52 @@ module.exports = (expect) => {
 
   });
 
+  it('Should register an error in the resolve step with type OwnerSuspendedError', done => {
+
+    let originalResolveFn = FaaSGateway.resolve;
+    FaaSGateway.resolve = (req, res, buffer, callback) => {
+      let error = new Error('You are not allowed to access this API.');
+      error.ownerSuspendedError = true;
+      return callback(error);
+    };
+
+    request('POST', {}, '/my_function/', {}, (err, res, result) => {
+
+      FaaSGateway.resolve = originalResolveFn;
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(401);
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('OwnerSuspendedError');
+      done();
+
+    });
+
+  });
+
+  it('Should register an error in the resolve step with type OwnerPaymentRequiredError', done => {
+
+    let originalResolveFn = FaaSGateway.resolve;
+    FaaSGateway.resolve = (req, res, buffer, callback) => {
+      let error = new Error('You are not allowed to access this API.');
+      error.ownerPaymentRequiredError = true;
+      return callback(error);
+    };
+
+    request('POST', {}, '/my_function/', {}, (err, res, result) => {
+
+      FaaSGateway.resolve = originalResolveFn;
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(401);
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('OwnerPaymentRequiredError');
+      done();
+
+    });
+
+  });
+
   it('Should register an error in the resolve step with type PaymentRequiredError', done => {
 
     let originalResolveFn = FaaSGateway.resolve;
