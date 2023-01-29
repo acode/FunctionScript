@@ -747,6 +747,17 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should toJSON object properly', done => {
+    request('POST', {}, '/object_tojson/', {}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.deep.equal({name: 'hello world', description: 'MyClass'});
+      done();
+
+    });
+  });
+
   it('Should populate HTTP body', done => {
     request('POST', {}, '/http_body/', {abc: 123}, (err, res, result) => {
 
@@ -3141,6 +3152,8 @@ module.exports = (expect) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(400);
+      expect(result.error).to.exist;
+      expect(result.error.details.ranged.message).to.equal('must be greater than or equal to 1.01');
       done();
 
     });
