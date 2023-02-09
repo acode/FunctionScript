@@ -3170,6 +3170,31 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should accept string within provided options', done => {
+    request('POST', {}, '/string_options/', {value: 'one'},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(result).to.equal('one');
+      done();
+
+    });
+  });
+
+  it('Should reject string outside provided options', done => {
+    request('POST', {}, '/string_options/', {value: 'four'},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      expect(result.error.details.value.message).to.contain('["one","two","three"]');
+      expect(result.error.details.value.expected.values).to.deep.equal(['one', 'two', 'three']);
+      done();
+
+    });
+  });
+
   it('Should return a buffer properly', done => {
     request('POST', {}, '/buffer_return/', {},
     (err, res, result) => {
