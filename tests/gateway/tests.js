@@ -3195,6 +3195,96 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should identify mismatch in a returns statement (unnamed, non-array)', done => {
+    request('POST', {}, '/mismatch_returns_anon/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(502);
+      expect(result.error.details.returns.mismatch).to.exist;
+      expect(result.error.details.returns.mismatch).to.equal('$.user.name');
+      done();
+
+    });
+  });
+
+  it('Should identify mismatch in a returns statement (unnamed, array)', done => {
+    request('POST', {}, '/mismatch_returns_anon_array/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(502);
+      expect(result.error.details.returns.mismatch).to.exist;
+      expect(result.error.details.returns.mismatch).to.equal('$.user.names[1]');
+      done();
+
+    });
+  });
+
+  it('Should identify mismatch in a returns statement (named, non-array)', done => {
+    request('POST', {}, '/mismatch_returns_named/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(502);
+      expect(result.error.details.returns.mismatch).to.exist;
+      expect(result.error.details.returns.mismatch).to.equal('myObject.user.name');
+      done();
+
+    });
+  });
+
+  it('Should identify mismatch in a returns statement (named, array)', done => {
+    request('POST', {}, '/mismatch_returns_named_array/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(502);
+      expect(result.error.details.returns.mismatch).to.exist;
+      expect(result.error.details.returns.mismatch).to.equal('myObject.user.names[1]');
+      done();
+
+    });
+  });
+
+  it('Should identify mismatch in a returns statement (deep)', done => {
+    request('POST', {}, '/mismatch_returns_deep/', {},
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(502);
+      expect(result.error.details.returns.mismatch).to.exist;
+      expect(result.error.details.returns.mismatch).to.equal('$.user.posts[0].messages[2]');
+      done();
+
+    });
+  });
+
+  it('Should identify mismatch in a param statement (deep)', done => {
+    request('POST', {}, '/mismatch_params_deep/',
+    {
+      userData: {
+        user: {
+          posts: [
+            {
+              title: 'sup',
+              messages: ['hey', 'there', 7]
+            }
+          ]
+        }
+      }
+    },
+    (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      expect(result.error.details.userData).to.exist;
+      expect(result.error.details.userData.mismatch).to.equal('userData.user.posts[0].messages[2]');
+      done();
+
+    });
+  });
+
   it('Should return a buffer properly', done => {
     request('POST', {}, '/buffer_return/', {},
     (err, res, result) => {
