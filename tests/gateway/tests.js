@@ -279,7 +279,7 @@ module.exports = (expect) => {
   });
 
   it('Should return 200 OK when Content-Type: text/plain specified on POST with valid doubly-stringified JSON object', done => {
-    request('POST', {'Content-Type': 'text/plain'}, '/my_function/', '"{}"', (err, res, result) => {
+    request('POST', {'Content-Type': 'text/plain;charset=UTF-8'}, '/my_function/', '"{}"', (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
