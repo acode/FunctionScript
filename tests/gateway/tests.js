@@ -278,6 +278,20 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should return 200 OK when Content-Type: text/plain specified on POST with valid doubly-stringified JSON object', done => {
+    request('POST', {'Content-Type': 'text/plain'}, '/my_function/', '"{}"', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.equal(6);
+      done();
+
+    });
+  });
+
   it('Should return 200 OK + result when executed', done => {
     request('GET', {}, '/my_function/', '', (err, res, result) => {
 
