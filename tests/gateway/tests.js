@@ -11,6 +11,33 @@ const ROOT = './tests/gateway';
 const FaaSGateway = new Gateway({debug: false, root: ROOT, defaultTimeout: 1000});
 const parser = new FunctionParser();
 
+function parseServerSentEvents (buffer) {
+  let events = {};
+  let entries = buffer.toString().split('\n\n');
+  entries
+    .filter(entry => !!entry)
+    .forEach(entry => {
+      let event = '';
+      let data = '';
+      let lines = entry.split('\n').map((line, i) => {
+        let lineData = line.split(': ');
+        let type = lineData[0];
+        let contents = lineData.slice(1).join(': ');
+        if (i === 0 && type === 'event') {
+          event = contents;
+        } else if (type === 'data') {
+          data = data + contents + '\n';
+        }
+      });
+      if (data.endsWith('\n')) {
+        data = data.slice(0, -1);
+      }
+      events[event] = events[event] || [];
+      events[event].push(data);
+    });
+  return events;
+}
+
 function request(method, headers, path, data, callback) {
   headers = headers || {};
   method = method || 'GET';
@@ -4464,6 +4491,132 @@ module.exports = (expect) => {
       expect(result).to.exist;
       expect(result.error).to.exist;
       expect(result.error.type).to.equal('ParameterParseError');
+      done();
+
+    });
+  });
+
+  it('Should support POST with streaming (generic, no name)', done => {
+    request('POST', {}, '/stream/basic_no_name/', {alpha: 'hello'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/event-stream');
+      expect(result).to.exist;
+
+      let events = parseServerSentEvents(result);
+      expect(events['']).to.exist;
+      expect(events[''][0]).to.equal('true');
+      expect(events['@response']).to.exist;
+
+      let response = JSON.parse(events['@response'][0]);
+      expect(response.headers['Content-Type']).to.equal('application/json');
+      expect(response.body).to.equal('true');
+
+      done();
+
+    });
+  });
+
+  it('Should support POST with streaming', done => {
+    request('POST', {}, '/stream/basic/', {alpha: 'hello'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/event-stream');
+      expect(result).to.exist;
+
+      let events = parseServerSentEvents(result);
+      expect(events['hello']).to.exist;
+      expect(events['hello'][0]).to.equal('true');
+      expect(events['@response']).to.exist;
+
+      let response = JSON.parse(events['@response'][0]);
+      expect(response.headers['Content-Type']).to.equal('application/json');
+      expect(response.body).to.equal('true');
+
+      done();
+
+    });
+  });
+
+  it('Should error POST with invalid stream name in execution', done => {
+    request('POST', {}, '/stream/invalid_stream_name/', {alpha: 'hello'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/event-stream');
+      expect(result).to.exist;
+
+      let events = parseServerSentEvents(result);
+      expect(events['hello']).to.not.exist;
+      expect(events['@response']).to.exist;
+
+      let response = JSON.parse(events['@response'][0]);
+      expect(response.headers['Content-Type']).to.equal('application/json');
+      expect(response.statusCode).to.equal(403);
+
+      let body = JSON.parse(response.body);
+      expect(body.error.type).to.equal('RuntimeError');
+      expect(body.error.message).to.satisfy(msg => msg.startsWith(`No such stream "hello2" in function definition.`));
+      done();
+
+    });
+  });
+
+  it('Should error POST with invalid stream name in execution', done => {
+    request('POST', {}, '/stream/invalid_stream_param/', {alpha: 'hello'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/event-stream');
+      expect(result).to.exist;
+
+      let events = parseServerSentEvents(result);
+      expect(events['hello']).to.not.exist;
+      expect(events['@response']).to.exist;
+
+      let response = JSON.parse(events['@response'][0]);
+      expect(response.headers['Content-Type']).to.equal('application/json');
+      expect(response.statusCode).to.equal(403);
+
+      let body = JSON.parse(response.body);
+      expect(body.error.type).to.equal('RuntimeError');
+      expect(body.error.message).to.satisfy(msg => msg.startsWith(`Stream Parameter Error: "hello".`));
+      expect(body.error.details).to.haveOwnProperty('stream.hello');
+      expect(body.error.details['stream.hello'].invalid).to.equal(true);
+      expect(body.error.details['stream.hello'].expected.type).to.equal('boolean');
+      expect(body.error.details['stream.hello'].actual.type).to.equal('string');
+      expect(body.error.details['stream.hello'].actual.value).to.equal('what');
+      done();
+
+    });
+  });
+
+  it('Should support POST with streaming and stream components between sleep() calls', done => {
+    request('POST', {}, '/stream/sleep/', {alpha: 'hello'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/event-stream');
+      expect(result).to.exist;
+
+      let events = parseServerSentEvents(result);
+      expect(events['hello']).to.exist;
+      expect(events['hello'].length).to.equal(3);
+      expect(events['hello'][0]).to.equal('"Hello?"');
+      expect(events['hello'][1]).to.equal('"How are you?"');
+      expect(events['hello'][2]).to.equal('"Is it me you\'re looking for?"');
+
+      expect(events['goodbye']).to.exist;
+      expect(events['goodbye'].length).to.equal(1);
+      expect(events['goodbye'][0]).to.equal('"Nice to see ya"');
+
+      expect(events['@response']).to.exist;
+      let response = JSON.parse(events['@response'][0]);
+      expect(response.headers['Content-Type']).to.equal('application/json');
+      expect(response.body).to.equal('true');
+
       done();
 
     });
