@@ -4550,15 +4550,18 @@ module.exports = (expect) => {
 
       let events = parseServerSentEvents(result);
       expect(events['hello']).to.not.exist;
+      expect(events['@error']).to.exist;
       expect(events['@response']).to.exist;
+
+      let error = JSON.parse(events['@error'][0]);
+      expect(error.type).to.equal('StreamError');
+      expect(error.message).to.satisfy(msg => msg.startsWith(`No such stream "hello2" in function definition.`));
 
       let response = JSON.parse(events['@response'][0]);
       expect(response.headers['Content-Type']).to.equal('application/json');
-      expect(response.statusCode).to.equal(403);
+      expect(response.statusCode).to.equal(200);
+      expect(response.body).to.equal('true');
 
-      let body = JSON.parse(response.body);
-      expect(body.error.type).to.equal('RuntimeError');
-      expect(body.error.message).to.satisfy(msg => msg.startsWith(`No such stream "hello2" in function definition.`));
       done();
 
     });
@@ -4574,20 +4577,23 @@ module.exports = (expect) => {
 
       let events = parseServerSentEvents(result);
       expect(events['hello']).to.not.exist;
+      expect(events['@error']).to.exist;
       expect(events['@response']).to.exist;
+
+      let error = JSON.parse(events['@error'][0]);
+      expect(error.type).to.equal('StreamError');
+      expect(error.message).to.satisfy(msg => msg.startsWith(`Stream Parameter Error: "hello".`));
+      expect(error.details).to.haveOwnProperty('hello');
+      expect(error.details['hello'].invalid).to.equal(true);
+      expect(error.details['hello'].expected.type).to.equal('boolean');
+      expect(error.details['hello'].actual.type).to.equal('string');
+      expect(error.details['hello'].actual.value).to.equal('what');
 
       let response = JSON.parse(events['@response'][0]);
       expect(response.headers['Content-Type']).to.equal('application/json');
-      expect(response.statusCode).to.equal(403);
+      expect(response.statusCode).to.equal(200);
+      expect(response.body).to.equal('true');
 
-      let body = JSON.parse(response.body);
-      expect(body.error.type).to.equal('RuntimeError');
-      expect(body.error.message).to.satisfy(msg => msg.startsWith(`Stream Parameter Error: "hello".`));
-      expect(body.error.details).to.haveOwnProperty('stream.hello');
-      expect(body.error.details['stream.hello'].invalid).to.equal(true);
-      expect(body.error.details['stream.hello'].expected.type).to.equal('boolean');
-      expect(body.error.details['stream.hello'].actual.type).to.equal('string');
-      expect(body.error.details['stream.hello'].actual.value).to.equal('what');
       done();
 
     });
