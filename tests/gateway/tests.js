@@ -4540,6 +4540,112 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should support POST with streaming (buffer)', done => {
+    request('POST', {}, '/stream/basic_buffer/', {alpha: 'hello'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/event-stream');
+      expect(result).to.exist;
+
+      let events = parseServerSentEvents(result);
+      expect(events['hello']).to.exist;
+      expect(events['@response']).to.exist;
+
+      let stream = JSON.parse(events['hello'][0]);
+      expect(stream).to.be.an.object;
+      expect(stream).to.haveOwnProperty('_base64');
+      expect(stream._base64).to.equal(Buffer.from('123').toString('base64'));
+
+      let response = JSON.parse(events['@response'][0]);
+      expect(response.headers['Content-Type']).to.equal('application/json');
+      expect(response.body).to.equal('true');
+
+      done();
+
+    });
+  });
+
+  it('Should support POST with streaming (mocked buffer)', done => {
+    request('POST', {}, '/stream/basic_buffer_mocked/', {alpha: 'hello'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/event-stream');
+      expect(result).to.exist;
+
+      let events = parseServerSentEvents(result);
+      expect(events['hello']).to.exist;
+      expect(events['@response']).to.exist;
+
+      let stream = JSON.parse(events['hello'][0]);
+      expect(stream).to.be.an.object;
+      expect(stream).to.haveOwnProperty('_base64');
+      expect(stream._base64).to.equal(Buffer.from('123').toString('base64'));
+
+      let response = JSON.parse(events['@response'][0]);
+      expect(response.headers['Content-Type']).to.equal('application/json');
+      expect(response.body).to.equal('true');
+
+      done();
+
+    });
+  });
+
+  it('Should support POST with streaming (nested buffer)', done => {
+    request('POST', {}, '/stream/basic_buffer_nested/', {alpha: 'hello'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/event-stream');
+      expect(result).to.exist;
+
+      let events = parseServerSentEvents(result);
+      expect(events['hello']).to.exist;
+      expect(events['@response']).to.exist;
+
+      let stream = JSON.parse(events['hello'][0]);
+      expect(stream).to.be.an.object;
+      expect(stream).to.haveOwnProperty('mybuff');
+      expect(stream.mybuff).to.haveOwnProperty('_base64');
+      expect(stream.mybuff._base64).to.equal(Buffer.from('123').toString('base64'));
+
+      let response = JSON.parse(events['@response'][0]);
+      expect(response.headers['Content-Type']).to.equal('application/json');
+      expect(response.body).to.equal('true');
+
+      done();
+
+    });
+  });
+
+  it('Should support POST with streaming (nested mocked buffer)', done => {
+    request('POST', {}, '/stream/basic_buffer_nested_mocked/', {alpha: 'hello'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/event-stream');
+      expect(result).to.exist;
+
+      let events = parseServerSentEvents(result);
+      expect(events['hello']).to.exist;
+      expect(events['@response']).to.exist;
+
+      let stream = JSON.parse(events['hello'][0]);
+      expect(stream).to.be.an.object;
+      expect(stream).to.haveOwnProperty('mybuff');
+      expect(stream.mybuff).to.haveOwnProperty('_base64');
+      expect(stream.mybuff._base64).to.equal(Buffer.from('123').toString('base64'));
+
+      let response = JSON.parse(events['@response'][0]);
+      expect(response.headers['Content-Type']).to.equal('application/json');
+      expect(response.body).to.equal('true');
+
+      done();
+
+    });
+  });
+
   it('Should error POST with invalid stream name in execution', done => {
     request('POST', {}, '/stream/invalid_stream_name/', {alpha: 'hello'}, (err, res, result) => {
 
