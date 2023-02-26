@@ -180,8 +180,6 @@ module.exports = (expect) => {
   it('Should not return 302 redirect on a GET request when missing trailing / without user agent', done => {
     request('GET', {}, '/my_function', '', (err, res, result) => {
 
-      console.log(result.toString());
-
       expect(err).to.not.exist;
       expect(res.statusCode).to.not.equal(302);
       expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
@@ -4528,6 +4526,20 @@ module.exports = (expect) => {
     });
   });
 
+  it('Streaming endpoints should default to normal request with _stream falsy in query params', done => {
+    request('POST', {}, '/stream/basic_no_name/?alpha=hello&_stream=false', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(result).to.exist;
+      expect(result).to.equal(true);
+
+      done();
+
+    });
+  });
+
   it('Streaming endpoints should fail with StreamError if contains an invalid stream', done => {
     request('POST', {}, '/stream/basic_no_name/', {alpha: 'hello', _stream: {test: true}}, (err, res, result) => {
 
@@ -4538,6 +4550,50 @@ module.exports = (expect) => {
       expect(result.error).to.exist;
       expect(result.error.type).to.equal('StreamListenerError');
       expect(result.error.details).to.haveOwnProperty('test');
+
+      done();
+
+    });
+  });
+
+  it('Should support POST with streaming (generic, no name) with _stream in query params', done => {
+    request('POST', {}, '/stream/basic_no_name/?alpha=hello&_stream', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/event-stream');
+      expect(result).to.exist;
+
+      let events = parseServerSentEvents(result);
+      expect(events['']).to.exist;
+      expect(events[''][0]).to.equal('true');
+      expect(events['@response']).to.exist;
+
+      let response = JSON.parse(events['@response'][0]);
+      expect(response.headers['Content-Type']).to.equal('application/json');
+      expect(response.body).to.equal('true');
+
+      done();
+
+    });
+  });
+
+  it('Should support POST with streaming (generic, no name) with _stream in query params with truthy value', done => {
+    request('POST', {}, '/stream/basic_no_name/?alpha=hello&_stream=lol', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/event-stream');
+      expect(result).to.exist;
+
+      let events = parseServerSentEvents(result);
+      expect(events['']).to.exist;
+      expect(events[''][0]).to.equal('true');
+      expect(events['@response']).to.exist;
+
+      let response = JSON.parse(events['@response'][0]);
+      expect(response.headers['Content-Type']).to.equal('application/json');
+      expect(response.body).to.equal('true');
 
       done();
 
