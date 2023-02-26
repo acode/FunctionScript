@@ -1,7 +1,7 @@
 /**
 * Valid function for streaming
 * @param {string} alpha Some value
-* @streams {any} hello
+* @stream {any} hello
 */
 module.exports = async (alpha, context) => {
 

@@ -1,6 +1,6 @@
 /**
 * Valid Streaming
-* @streams {string}
+* @stream {string}
 * @returns {boolean}
 */
 module.exports = async (context) => {
