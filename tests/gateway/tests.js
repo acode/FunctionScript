@@ -18,22 +18,26 @@ function parseServerSentEvents (buffer) {
     .filter(entry => !!entry)
     .forEach(entry => {
       let event = '';
-      let data = '';
+      let data = null;
       let lines = entry.split('\n').map((line, i) => {
-        let lineData = line.split(': ');
+        let lineData = line.split(':');
         let type = lineData[0];
-        let contents = lineData.slice(1).join(': ');
-        if (type === 'event') {
+        let contents = lineData.slice(1).join(':');
+        if (contents.startsWith(' ')) {
+          contents = contents.slice(1);
+        }
+        if (type === 'event' && data === null) {
           event = contents;
         } else if (type === 'data') {
+          data = data || '';
           data = data + contents + '\n';
         }
       });
-      if (data.endsWith('\n')) {
+      if (data && data.endsWith('\n')) {
         data = data.slice(0, -1);
       }
       events[event] = events[event] || [];
-      events[event].push(data);
+      events[event].push(data || '');
     });
   return events;
 }
