@@ -180,11 +180,14 @@ module.exports = (expect) => {
   it('Should not return 302 redirect on a GET request when missing trailing / without user agent', done => {
     request('GET', {}, '/my_function', '', (err, res, result) => {
 
+      console.log(result.toString());
+
       expect(err).to.not.exist;
       expect(res.statusCode).to.not.equal(302);
       expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
       expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
       expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+
       done();
 
     });
@@ -1011,11 +1014,12 @@ module.exports = (expect) => {
       expect(res.statusCode).to.equal(502);
       expect(result.error).to.exist;
       expect(result.error.details).to.exist;
-      expect(Object.keys(result.error.details).length).to.equal(4);
+      expect(Object.keys(result.error.details).length).to.equal(5);
       expect(result.error.details['content-type ']).to.exist;
       expect(result.error.details['x authorization key']).to.exist;
       expect(result.error.details[' anotherheader']).to.exist;
       expect(result.error.details['multilinename\n']).to.exist;
+      expect(result.error.details['weirdname!@#$%^&*()œ∑´®†¥¨ˆøπåß∂ƒ©˙∆˚¬≈ç√∫˜µ≤:|{}🔥🔥🔥']).to.exist;
       done();
 
     });
