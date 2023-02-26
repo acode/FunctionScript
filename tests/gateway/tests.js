@@ -23,7 +23,7 @@ function parseServerSentEvents (buffer) {
         let lineData = line.split(': ');
         let type = lineData[0];
         let contents = lineData.slice(1).join(': ');
-        if (i === 0 && type === 'event') {
+        if (type === 'event') {
           event = contents;
         } else if (type === 'data') {
           data = data + contents + '\n';
@@ -4499,7 +4499,7 @@ module.exports = (expect) => {
   });
 
   it('Streaming endpoints should default to normal request with no _stream sent', done => {
-    request('POST', {}, '/stream/basic_no_name/', {alpha: 'hello'}, (err, res, result) => {
+    request('POST', {}, '/stream/basic/', {alpha: 'hello'}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -4513,7 +4513,7 @@ module.exports = (expect) => {
   });
 
   it('Streaming endpoints should default to normal request with _stream falsy', done => {
-    request('POST', {}, '/stream/basic_no_name/', {alpha: 'hello', _stream: false}, (err, res, result) => {
+    request('POST', {}, '/stream/basic/', {alpha: 'hello', _stream: false}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -4527,7 +4527,7 @@ module.exports = (expect) => {
   });
 
   it('Streaming endpoints should default to normal request with _stream falsy in query params', done => {
-    request('POST', {}, '/stream/basic_no_name/?alpha=hello&_stream=false', '', (err, res, result) => {
+    request('POST', {}, '/stream/basic/?alpha=hello&_stream=false', '', (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -4541,7 +4541,7 @@ module.exports = (expect) => {
   });
 
   it('Streaming endpoints should fail with StreamError if contains an invalid stream', done => {
-    request('POST', {}, '/stream/basic_no_name/', {alpha: 'hello', _stream: {test: true}}, (err, res, result) => {
+    request('POST', {}, '/stream/basic/', {alpha: 'hello', _stream: {test: true}}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(400);
@@ -4556,8 +4556,8 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should support POST with streaming (generic, no name) with _stream in query params', done => {
-    request('POST', {}, '/stream/basic_no_name/?alpha=hello&_stream', '', (err, res, result) => {
+  it('Should support POST with streaming with _stream in query params', done => {
+    request('POST', {}, '/stream/basic/?alpha=hello&_stream', '', (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -4565,8 +4565,8 @@ module.exports = (expect) => {
       expect(result).to.exist;
 
       let events = parseServerSentEvents(result);
-      expect(events['']).to.exist;
-      expect(events[''][0]).to.equal('true');
+      expect(events['hello']).to.exist;
+      expect(events['hello'][0]).to.equal('true');
       expect(events['@response']).to.exist;
 
       let response = JSON.parse(events['@response'][0]);
@@ -4578,8 +4578,8 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should support POST with streaming (generic, no name) with _stream in query params with truthy value', done => {
-    request('POST', {}, '/stream/basic_no_name/?alpha=hello&_stream=lol', '', (err, res, result) => {
+  it('Should support POST with streaming with _stream in query params with truthy value', done => {
+    request('POST', {}, '/stream/basic/?alpha=hello&_stream=lol', '', (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -4587,8 +4587,8 @@ module.exports = (expect) => {
       expect(result).to.exist;
 
       let events = parseServerSentEvents(result);
-      expect(events['']).to.exist;
-      expect(events[''][0]).to.equal('true');
+      expect(events['hello']).to.exist;
+      expect(events['hello'][0]).to.equal('true');
       expect(events['@response']).to.exist;
 
       let response = JSON.parse(events['@response'][0]);
@@ -4600,8 +4600,8 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should support POST with streaming (generic, no name) with _stream set to valid stream', done => {
-    request('POST', {}, '/stream/basic_no_name/', {alpha: 'hello', _stream: {'': true}}, (err, res, result) => {
+  it('Should support POST with streaming with _stream set to valid stream', done => {
+    request('POST', {}, '/stream/basic/', {alpha: 'hello', _stream: {'hello': true}}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -4609,8 +4609,8 @@ module.exports = (expect) => {
       expect(result).to.exist;
 
       let events = parseServerSentEvents(result);
-      expect(events['']).to.exist;
-      expect(events[''][0]).to.equal('true');
+      expect(events['hello']).to.exist;
+      expect(events['hello'][0]).to.equal('true');
       expect(events['@response']).to.exist;
 
       let response = JSON.parse(events['@response'][0]);
@@ -4622,8 +4622,8 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should support POST with streaming (generic, no name) with _stream set to *', done => {
-    request('POST', {}, '/stream/basic_no_name/', {alpha: 'hello', _stream: {'*': true}}, (err, res, result) => {
+  it('Should support POST with streaming with _stream set to *', done => {
+    request('POST', {}, '/stream/basic/', {alpha: 'hello', _stream: {'*': true}}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -4631,8 +4631,8 @@ module.exports = (expect) => {
       expect(result).to.exist;
 
       let events = parseServerSentEvents(result);
-      expect(events['']).to.exist;
-      expect(events[''][0]).to.equal('true');
+      expect(events['hello']).to.exist;
+      expect(events['hello'][0]).to.equal('true');
       expect(events['@response']).to.exist;
 
       let response = JSON.parse(events['@response'][0]);
@@ -4644,8 +4644,8 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should support POST with streaming (generic, no name) with _stream set to valid stream or *', done => {
-    request('POST', {}, '/stream/basic_no_name/', {alpha: 'hello', _stream: {'': true, '*': true}}, (err, res, result) => {
+  it('Should support POST with streaming with _stream set to valid stream or *', done => {
+    request('POST', {}, '/stream/basic/', {alpha: 'hello', _stream: {'hello': true, '*': true}}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -4653,30 +4653,8 @@ module.exports = (expect) => {
       expect(result).to.exist;
 
       let events = parseServerSentEvents(result);
-      expect(events['']).to.exist;
-      expect(events[''][0]).to.equal('true');
-      expect(events['@response']).to.exist;
-
-      let response = JSON.parse(events['@response'][0]);
-      expect(response.headers['Content-Type']).to.equal('application/json');
-      expect(response.body).to.equal('true');
-
-      done();
-
-    });
-  });
-
-  it('Should support POST with streaming (generic, no name) with _stream set', done => {
-    request('POST', {}, '/stream/basic_no_name/', {alpha: 'hello', _stream: true}, (err, res, result) => {
-
-      expect(err).to.not.exist;
-      expect(res.statusCode).to.equal(200);
-      expect(res.headers['content-type']).to.equal('text/event-stream');
-      expect(result).to.exist;
-
-      let events = parseServerSentEvents(result);
-      expect(events['']).to.exist;
-      expect(events[''][0]).to.equal('true');
+      expect(events['hello']).to.exist;
+      expect(events['hello'][0]).to.equal('true');
       expect(events['@response']).to.exist;
 
       let response = JSON.parse(events['@response'][0]);

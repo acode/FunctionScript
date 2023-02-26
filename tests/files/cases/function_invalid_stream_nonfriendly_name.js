@@ -1,6 +1,6 @@
 /**
-* Valid stream - has name
-* @stream {string} message
+* Invalid stream - nonfriendly name
+* @stream {string} ?stream
 * @returns {boolean}
 */
 module.exports = async (context) => {
