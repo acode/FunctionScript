@@ -4500,8 +4500,52 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should support POST with streaming (generic, no name)', done => {
+  it('Streaming endpoints should default to normal request with no _stream sent', done => {
     request('POST', {}, '/stream/basic_no_name/', {alpha: 'hello'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(result).to.exist;
+      expect(result).to.equal(true);
+
+      done();
+
+    });
+  });
+
+  it('Streaming endpoints should default to normal request with _stream falsy', done => {
+    request('POST', {}, '/stream/basic_no_name/', {alpha: 'hello', _stream: false}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(result).to.exist;
+      expect(result).to.equal(true);
+
+      done();
+
+    });
+  });
+
+  it('Streaming endpoints should fail with StreamError if contains an invalid stream', done => {
+    request('POST', {}, '/stream/basic_no_name/', {alpha: 'hello', _stream: {test: true}}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(result).to.exist;
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('StreamListenerError');
+      expect(result.error.details).to.haveOwnProperty('test');
+
+      done();
+
+    });
+  });
+
+  it('Should support POST with streaming (generic, no name) with _stream set', done => {
+    request('POST', {}, '/stream/basic_no_name/', {alpha: 'hello', _stream: true}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -4522,8 +4566,8 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should support POST with streaming', done => {
-    request('POST', {}, '/stream/basic/', {alpha: 'hello'}, (err, res, result) => {
+  it('Should support POST with streaming with _stream set', done => {
+    request('POST', {}, '/stream/basic/', {alpha: 'hello', _stream: true}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -4544,8 +4588,8 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should support POST with streaming (buffer)', done => {
-    request('POST', {}, '/stream/basic_buffer/', {alpha: 'hello'}, (err, res, result) => {
+  it('Should support POST with streaming (buffer) with _stream set', done => {
+    request('POST', {}, '/stream/basic_buffer/', {alpha: 'hello', _stream: true}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -4570,8 +4614,8 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should support POST with streaming (mocked buffer)', done => {
-    request('POST', {}, '/stream/basic_buffer_mocked/', {alpha: 'hello'}, (err, res, result) => {
+  it('Should support POST with streaming (mocked buffer) with _stream set', done => {
+    request('POST', {}, '/stream/basic_buffer_mocked/', {alpha: 'hello', _stream: true}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -4596,8 +4640,8 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should support POST with streaming (nested buffer)', done => {
-    request('POST', {}, '/stream/basic_buffer_nested/', {alpha: 'hello'}, (err, res, result) => {
+  it('Should support POST with streaming (nested buffer) with _stream set', done => {
+    request('POST', {}, '/stream/basic_buffer_nested/', {alpha: 'hello', _stream: true}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -4623,8 +4667,8 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should support POST with streaming (nested mocked buffer)', done => {
-    request('POST', {}, '/stream/basic_buffer_nested_mocked/', {alpha: 'hello'}, (err, res, result) => {
+  it('Should support POST with streaming (nested mocked buffer) with _stream set', done => {
+    request('POST', {}, '/stream/basic_buffer_nested_mocked/', {alpha: 'hello', _stream: true}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -4650,8 +4694,8 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should error POST with invalid stream name in execution', done => {
-    request('POST', {}, '/stream/invalid_stream_name/', {alpha: 'hello'}, (err, res, result) => {
+  it('Should error POST with invalid stream name in execution with _stream set', done => {
+    request('POST', {}, '/stream/invalid_stream_name/', {alpha: 'hello', _stream: true}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -4677,8 +4721,21 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should error POST with invalid stream name in execution', done => {
-    request('POST', {}, '/stream/invalid_stream_param/', {alpha: 'hello'}, (err, res, result) => {
+  it('Should quietly fail if invalid stream name in execution without _stream set', done => {
+    request('POST', {}, '/stream/invalid_stream_name/', {alpha: 'hello'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(result).to.equal(true);
+
+      done();
+
+    });
+  });
+
+  it('Should stream error POST with invalid stream value in execution with _stream set', done => {
+    request('POST', {}, '/stream/invalid_stream_param/', {alpha: 'hello', _stream: true}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -4709,8 +4766,8 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should support POST with streaming and stream components between sleep() calls', done => {
-    request('POST', {}, '/stream/sleep/', {alpha: 'hello'}, (err, res, result) => {
+  it('Should support POST with streaming and stream components between sleep() calls with _stream set', done => {
+    request('POST', {}, '/stream/sleep/', {alpha: 'hello', _stream: true}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -4732,6 +4789,19 @@ module.exports = (expect) => {
       let response = JSON.parse(events['@response'][0]);
       expect(response.headers['Content-Type']).to.equal('application/json');
       expect(response.body).to.equal('true');
+
+      done();
+
+    });
+  });
+
+  it('Should POST normally with streaming and stream components between sleep() calls without _stream set', done => {
+    request('POST', {}, '/stream/sleep/', {alpha: 'hello'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(result).to.equal(true);
 
       done();
 
