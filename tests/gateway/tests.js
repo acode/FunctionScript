@@ -4600,6 +4600,72 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should support POST with streaming (generic, no name) with _stream set to valid stream', done => {
+    request('POST', {}, '/stream/basic_no_name/', {alpha: 'hello', _stream: {'': true}}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/event-stream');
+      expect(result).to.exist;
+
+      let events = parseServerSentEvents(result);
+      expect(events['']).to.exist;
+      expect(events[''][0]).to.equal('true');
+      expect(events['@response']).to.exist;
+
+      let response = JSON.parse(events['@response'][0]);
+      expect(response.headers['Content-Type']).to.equal('application/json');
+      expect(response.body).to.equal('true');
+
+      done();
+
+    });
+  });
+
+  it('Should support POST with streaming (generic, no name) with _stream set to *', done => {
+    request('POST', {}, '/stream/basic_no_name/', {alpha: 'hello', _stream: {'*': true}}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/event-stream');
+      expect(result).to.exist;
+
+      let events = parseServerSentEvents(result);
+      expect(events['']).to.exist;
+      expect(events[''][0]).to.equal('true');
+      expect(events['@response']).to.exist;
+
+      let response = JSON.parse(events['@response'][0]);
+      expect(response.headers['Content-Type']).to.equal('application/json');
+      expect(response.body).to.equal('true');
+
+      done();
+
+    });
+  });
+
+  it('Should support POST with streaming (generic, no name) with _stream set to valid stream or *', done => {
+    request('POST', {}, '/stream/basic_no_name/', {alpha: 'hello', _stream: {'': true, '*': true}}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/event-stream');
+      expect(result).to.exist;
+
+      let events = parseServerSentEvents(result);
+      expect(events['']).to.exist;
+      expect(events[''][0]).to.equal('true');
+      expect(events['@response']).to.exist;
+
+      let response = JSON.parse(events['@response'][0]);
+      expect(response.headers['Content-Type']).to.equal('application/json');
+      expect(response.body).to.equal('true');
+
+      done();
+
+    });
+  });
+
   it('Should support POST with streaming (generic, no name) with _stream set', done => {
     request('POST', {}, '/stream/basic_no_name/', {alpha: 'hello', _stream: true}, (err, res, result) => {
 
