@@ -4965,6 +4965,7 @@ module.exports = (expect) => {
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
       expect(res.headers['content-type']).to.equal('text/event-stream');
+      expect(res.headers['x-debug']).to.equal('true');
       expect(result).to.exist;
 
       let events = parseServerSentEvents(result);
@@ -5005,6 +5006,7 @@ module.exports = (expect) => {
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
       expect(res.headers['content-type']).to.equal('text/event-stream');
+      expect(res.headers['x-debug']).to.equal('true');
       expect(result).to.exist;
 
       let events = parseServerSentEvents(result);
@@ -5045,6 +5047,7 @@ module.exports = (expect) => {
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(400);
       expect(res.headers['content-type']).to.equal('application/json');
+      expect(res.headers['x-debug']).to.equal('true');
       expect(result).to.exist;
       expect(result.error).to.exist;
       expect(result.error.type).to.equal('StreamListenerError');
@@ -5061,6 +5064,7 @@ module.exports = (expect) => {
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
       expect(res.headers['content-type']).to.equal('text/event-stream');
+      expect(res.headers['x-debug']).to.equal('true');
       expect(result).to.exist;
 
       let events = parseServerSentEvents(result);
@@ -5091,6 +5095,7 @@ module.exports = (expect) => {
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(403);
       expect(res.headers['content-type']).to.equal('application/json');
+      expect(res.headers['x-debug']).to.equal('true');
       expect(result).to.exist;
       expect(result.error).to.exist;
       expect(result.error.type).to.equal('ExecutionModeError');
@@ -5123,6 +5128,7 @@ module.exports = (expect) => {
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(403);
       expect(res.headers['content-type']).to.equal('application/json');
+      expect(res.headers['x-debug']).to.equal('true');
       expect(result).to.exist;
       expect(result.error).to.exist;
       expect(result.error.type).to.equal('DebugError');
@@ -5139,6 +5145,7 @@ module.exports = (expect) => {
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(403);
       expect(res.headers['content-type']).to.equal('application/json');
+      expect(res.headers['x-debug']).to.equal('true');
       expect(result).to.exist;
       expect(result.error).to.exist;
       expect(result.error.type).to.equal('DebugError');
