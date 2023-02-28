@@ -1174,7 +1174,7 @@ module.exports = (expect) => {
       expect(result).to.exist;
       expect(result).to.be.instanceof(Buffer);
       expect(result.length).to.be.greaterThan(0);
-      expect(result.toString()).to.equal(`Initiated "bg"...`);
+      expect(result.toString()).to.equal(`initiated "bg"...`);
       done();
 
     });
@@ -4922,6 +4922,211 @@ module.exports = (expect) => {
       expect(res.statusCode).to.equal(200);
       expect(res.headers['content-type']).to.equal('application/json');
       expect(result).to.equal(true);
+
+      done();
+
+    });
+  });
+
+  it('Should support POST with streaming without _debug set', done => {
+    request('POST', {}, '/stream/debug/', {alpha: 'hello', _stream: true}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/event-stream');
+      expect(result).to.exist;
+
+      let events = parseServerSentEvents(result);
+      expect(Object.keys(events).length).to.equal(3);
+
+      expect(events['hello']).to.exist;
+      expect(events['hello'].length).to.equal(3);
+      expect(events['hello'][0]).to.equal('"Hello?"');
+      expect(events['hello'][1]).to.equal('"How are you?"');
+      expect(events['hello'][2]).to.equal('"Is it me you\'re looking for?"');
+
+      expect(events['goodbye']).to.exist;
+      expect(events['goodbye'].length).to.equal(1);
+      expect(events['goodbye'][0]).to.equal('"Nice to see ya"');
+
+      expect(events['@response']).to.exist;
+      let response = JSON.parse(events['@response'][0]);
+      expect(response.headers['Content-Type']).to.equal('application/json');
+      expect(response.body).to.equal('true');
+
+      done();
+
+    });
+  });
+
+  it('Should support POST with streaming with _debug set without _stream set', done => {
+    request('POST', {}, '/stream/debug/', {alpha: 'hello', _debug: true}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/event-stream');
+      expect(result).to.exist;
+
+      let events = parseServerSentEvents(result);
+      expect(Object.keys(events).length).to.equal(5);
+
+      expect(events['hello']).to.exist;
+      expect(events['hello'].length).to.equal(3);
+      expect(events['hello'][0]).to.equal('"Hello?"');
+      expect(events['hello'][1]).to.equal('"How are you?"');
+      expect(events['hello'][2]).to.equal('"Is it me you\'re looking for?"');
+
+      expect(events['goodbye']).to.exist;
+      expect(events['goodbye'].length).to.equal(1);
+      expect(events['goodbye'][0]).to.equal('"Nice to see ya"');
+
+      expect(events['@stdout']).to.exist;
+      expect(events['@stdout'].length).to.equal(2);
+      expect(events['@stdout'][0]).to.equal('"what? who?"');
+      expect(events['@stdout'][1]).to.equal('"finally"');
+
+      expect(events['@stderr']).to.exist;
+      expect(events['@stderr'].length).to.equal(1);
+      expect(events['@stderr'][0]).to.equal('"oh no"');
+
+      expect(events['@response']).to.exist;
+      let response = JSON.parse(events['@response'][0]);
+      expect(response.headers['Content-Type']).to.equal('application/json');
+      expect(response.body).to.equal('true');
+
+      done();
+
+    });
+  });
+
+  it('Should support POST with streaming with _debug set without _stream set', done => {
+    request('POST', {}, '/stream/debug/', {alpha: 'hello', _debug: true}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/event-stream');
+      expect(result).to.exist;
+
+      let events = parseServerSentEvents(result);
+      expect(Object.keys(events).length).to.equal(5);
+
+      expect(events['hello']).to.exist;
+      expect(events['hello'].length).to.equal(3);
+      expect(events['hello'][0]).to.equal('"Hello?"');
+      expect(events['hello'][1]).to.equal('"How are you?"');
+      expect(events['hello'][2]).to.equal('"Is it me you\'re looking for?"');
+
+      expect(events['goodbye']).to.exist;
+      expect(events['goodbye'].length).to.equal(1);
+      expect(events['goodbye'][0]).to.equal('"Nice to see ya"');
+
+      expect(events['@stdout']).to.exist;
+      expect(events['@stdout'].length).to.equal(2);
+      expect(events['@stdout'][0]).to.equal('"what? who?"');
+      expect(events['@stdout'][1]).to.equal('"finally"');
+
+      expect(events['@stderr']).to.exist;
+      expect(events['@stderr'].length).to.equal(1);
+      expect(events['@stderr'][0]).to.equal('"oh no"');
+
+      expect(events['@response']).to.exist;
+      let response = JSON.parse(events['@response'][0]);
+      expect(response.headers['Content-Type']).to.equal('application/json');
+      expect(response.body).to.equal('true');
+
+      done();
+
+    });
+  });
+
+  it('Streaming endpoints should fail with StreamError if contains an invalid stream when _debug', done => {
+    request('POST', {}, '/stream/basic/', {alpha: 'hello', _stream: {test: true}, _debug: true}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(400);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(result).to.exist;
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('StreamListenerError');
+      expect(result.error.details).to.haveOwnProperty('test');
+
+      done();
+
+    });
+  });
+
+  it('Should support POST with streaming with _debug to a function with no stream', done => {
+    request('POST', {}, '/stream/debug_no_stream/', {alpha: 'hello', _debug: true}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/event-stream');
+      expect(result).to.exist;
+
+      let events = parseServerSentEvents(result);
+      expect(Object.keys(events).length).to.equal(3);
+
+      expect(events['@stdout']).to.exist;
+      expect(events['@stdout'].length).to.equal(2);
+      expect(events['@stdout'][0]).to.equal('"what? who?"');
+      expect(events['@stdout'][1]).to.equal('"finally"');
+
+      expect(events['@stderr']).to.exist;
+      expect(events['@stderr'].length).to.equal(1);
+      expect(events['@stderr'][0]).to.equal('"oh no"');
+
+      expect(events['@response']).to.exist;
+      let response = JSON.parse(events['@response'][0]);
+      expect(response.headers['Content-Type']).to.equal('application/json');
+      expect(response.body).to.equal('true');
+
+      done();
+
+    });
+  });
+
+  it('Endpoint without stream should fail with ExecutionModeError if _debug set and _stream set', done => {
+    request('POST', {}, '/stream/debug_no_stream/', {alpha: 'hello', _stream: {test: true}, _debug: true}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(result).to.exist;
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('ExecutionModeError');
+      expect(result.error.message).to.contain('"stream"');
+
+      done();
+
+    });
+  });
+
+  it('Endpoint without stream should fail with ExecutionModeError if _debug not set and _stream set', done => {
+    request('POST', {}, '/stream/debug_no_stream/', {alpha: 'hello', _stream: {test: true}}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(result).to.exist;
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('ExecutionModeError');
+      expect(result.error.message).to.contain('"stream"');
+
+      done();
+
+    });
+  });
+
+  it('Endpoint without stream should fail with ExecutionModeError if _debug not set and _background set', done => {
+    request('POST', {}, '/stream/debug_no_stream/', {alpha: 'hello', _debug: true, _background: true}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(result).to.exist;
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('DebugError');
+      expect(result.error.message).to.equal('Can not debug with "background" mode set');
 
       done();
 
