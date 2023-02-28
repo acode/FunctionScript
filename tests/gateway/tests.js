@@ -4999,8 +4999,8 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should support POST with streaming with _debug set without _stream set', done => {
-    request('POST', {}, '/stream/debug/', {alpha: 'hello', _debug: true}, (err, res, result) => {
+  it('Should support POST with streaming with _debug set to valid channels without _stream set', done => {
+    request('POST', {}, '/stream/debug/', {alpha: 'hello', _debug: {'*': true, '@stdout': true, '@stderr': true}}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -5117,7 +5117,23 @@ module.exports = (expect) => {
     });
   });
 
-  it('Endpoint without stream should fail with ExecutionModeError if _debug not set and _background set', done => {
+  it('Endpoint without stream should fail with DebugError if _debug set to an invalid listener', done => {
+    request('POST', {}, '/stream/debug_no_stream/', {alpha: 'hello', _debug: {test: true}}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(result).to.exist;
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('DebugError');
+      expect(result.error.message).to.contain('"test"');
+
+      done();
+
+    });
+  });
+
+  it('Endpoint without stream should fail with DebugError if _debug set and _background set', done => {
     request('POST', {}, '/stream/debug_no_stream/', {alpha: 'hello', _debug: true, _background: true}, (err, res, result) => {
 
       expect(err).to.not.exist;
