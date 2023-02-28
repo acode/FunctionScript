@@ -5133,6 +5133,282 @@ module.exports = (expect) => {
     });
   });
 
+  it('Endpoint triggered with request origin "autocode.com" should not work', done => {
+    request('POST', {'origin': 'autocode.com'}, '/origin/allow/', {alpha: 'hello'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(res.headers['access-control-allow-origin']).to.equal('!');
+      expect(result).to.exist;
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('OriginError');
+      expect(result.error.message).to.contain(`"autocode.com"`)
+
+      done();
+
+    });
+  });
+
+  it('Endpoint triggered with request origin "https://sub.autocode.com" should not work', done => {
+    request('POST', {'origin': 'https://sub.autocode.com'}, '/origin/allow/', {alpha: 'hello'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(res.headers['access-control-allow-origin']).to.equal('!');
+      expect(result).to.exist;
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('OriginError');
+      expect(result.error.message).to.contain(`"https://sub.autocode.com"`)
+
+      done();
+
+    });
+  });
+
+  it('Endpoint triggered with request origin "http://autocode.com" should work', done => {
+    request('POST', {'origin': 'http://autocode.com'}, '/origin/allow/', {alpha: 'hello'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(res.headers['access-control-allow-origin']).to.equal('http://autocode.com');
+      expect(result).to.exist;
+
+      done();
+
+    });
+  });
+
+  it('Endpoint triggered with request origin "https://autocode.com" should work', done => {
+    request('POST', {'origin': 'https://autocode.com'}, '/origin/allow/', {alpha: 'hello'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(res.headers['access-control-allow-origin']).to.equal('https://autocode.com');
+      expect(result).to.exist;
+
+      done();
+
+    });
+  });
+
+  it('Endpoint triggered with request origin "localhost:8000" should not work', done => {
+    request('POST', {'origin': 'localhost:8000'}, '/origin/allow/', {alpha: 'hello'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(res.headers['access-control-allow-origin']).to.equal('!');
+      expect(result).to.exist;
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('OriginError');
+      expect(result.error.message).to.contain(`"localhost:8000"`)
+
+      done();
+
+    });
+  });
+
+  it('Endpoint triggered with request origin "http://localhost:8000" should work', done => {
+    request('POST', {'origin': 'http://localhost:8000'}, '/origin/allow/', {alpha: 'hello'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(res.headers['access-control-allow-origin']).to.equal('http://localhost:8000');
+      expect(result).to.exist;
+
+      done();
+
+    });
+  });
+
+  it('Endpoint triggered with request origin "https://localhost:8000" should work', done => {
+    request('POST', {'origin': 'https://localhost:8000'}, '/origin/allow/', {alpha: 'hello'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(res.headers['access-control-allow-origin']).to.equal('https://localhost:8000');
+      expect(result).to.exist;
+
+      done();
+
+    });
+  });
+
+  it('Endpoint triggered with request origin "test.some-url.com:9999" should not work', done => {
+    request('POST', {'origin': 'test.some-url.com:9999'}, '/origin/allow/', {alpha: 'hello'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(res.headers['access-control-allow-origin']).to.equal('!');
+      expect(result).to.exist;
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('OriginError');
+      expect(result.error.message).to.contain(`"test.some-url.com:9999"`)
+
+      done();
+
+    });
+  });
+
+  it('Endpoint triggered with request origin "http://test.some-url.com:9999" should work', done => {
+    request('POST', {'origin': 'http://test.some-url.com:9999'}, '/origin/allow/', {alpha: 'hello'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(res.headers['access-control-allow-origin']).to.equal('http://test.some-url.com:9999');
+      expect(result).to.exist;
+
+      done();
+
+    });
+  });
+
+  it('Endpoint triggered with request origin "https://test.some-url.com:9999" should work', done => {
+    request('POST', {'origin': 'https://test.some-url.com:9999'}, '/origin/allow/', {alpha: 'hello'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(res.headers['access-control-allow-origin']).to.equal('https://test.some-url.com:9999');
+      expect(result).to.exist;
+
+      done();
+
+    });
+  });
+
+  it('Endpoint triggered with request origin "http://hello.com" should not work', done => {
+    request('POST', {'origin': 'http://hello.com'}, '/origin/allow/', {alpha: 'hello'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(res.headers['access-control-allow-origin']).to.equal('!');
+      expect(result).to.exist;
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('OriginError');
+      expect(result.error.message).to.contain(`"http://hello.com"`)
+
+      done();
+
+    });
+  });
+
+  it('Endpoint triggered with request origin "http://hello.com" should not work with _stream', done => {
+    request('POST', {'origin': 'http://hello.com'}, '/origin/allow/', {alpha: 'hello', _stream: true}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(res.headers['access-control-allow-origin']).to.equal('!');
+      expect(result).to.exist;
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('OriginError');
+      expect(result.error.message).to.contain(`"http://hello.com"`)
+
+      done();
+
+    });
+  });
+
+  it('Endpoint triggered with request origin "http://hello.com" should not work with _debug', done => {
+    request('POST', {'origin': 'http://hello.com'}, '/origin/allow/', {alpha: 'hello', _debug: true}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(res.headers['access-control-allow-origin']).to.equal('!');
+      expect(result).to.exist;
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('OriginError');
+      expect(result.error.message).to.contain(`"http://hello.com"`)
+
+      done();
+
+    });
+  });
+
+  it('Endpoint triggered with request origin "http://hello.com" should not work with _background', done => {
+    request('POST', {'origin': 'http://hello.com'}, '/origin/allow/', {alpha: 'hello', _background: true}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(res.headers['access-control-allow-origin']).to.equal('!');
+      expect(result).to.exist;
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('OriginError');
+      expect(result.error.message).to.contain(`"http://hello.com"`)
+
+      done();
+
+    });
+  });
+
+  it('Endpoint triggered with request origin "https://hello.com" should work', done => {
+    request('POST', {'origin': 'https://hello.com'}, '/origin/allow/', {alpha: 'hello'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(res.headers['access-control-allow-origin']).to.equal('https://hello.com');
+      expect(result).to.exist;
+
+      done();
+
+    });
+  });
+
+  it('Endpoint triggered with request origin "https://hello.com" should work with _stream', done => {
+    request('POST', {'origin': 'https://hello.com'}, '/origin/allow/', {alpha: 'hello', _stream: true}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/event-stream');
+      expect(res.headers['access-control-allow-origin']).to.equal('https://hello.com');
+      expect(result).to.exist;
+
+      done();
+
+    });
+  });
+
+  it('Endpoint triggered with request origin "https://hello.com" should work with _debug', done => {
+    request('POST', {'origin': 'https://hello.com'}, '/origin/allow/', {alpha: 'hello', _debug: true}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/event-stream');
+      expect(res.headers['access-control-allow-origin']).to.equal('https://hello.com');
+      expect(result).to.exist;
+
+      done();
+
+    });
+  });
+
+  it('Endpoint triggered with request origin "https://hello.com" should work with _background', done => {
+    request('POST', {'origin': 'https://hello.com'}, '/origin/allow/', {alpha: 'hello', _background: true}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(202);
+      expect(res.headers['content-type']).to.equal('text/plain');
+      expect(res.headers['access-control-allow-origin']).to.equal('https://hello.com');
+      expect(result).to.exist;
+
+      done();
+
+    });
+  });
+
   after(() => FaaSGateway.close());
 
 };
