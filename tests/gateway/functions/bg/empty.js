@@ -1,5 +1,5 @@
 /**
-* @bg empty
+* @background empty
 * @returns {string}
 */
 module.exports = (callback) => {

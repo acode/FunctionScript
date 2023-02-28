@@ -1,5 +1,5 @@
 /**
-* @bg info
+* @background info
 * @returns {string}
 */
 module.exports = (callback) => {

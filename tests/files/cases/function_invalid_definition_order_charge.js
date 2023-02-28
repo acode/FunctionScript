@@ -1,6 +1,6 @@
 /**
 * Function with invalid function definition order due to charge
-* @bg empty
+* @background empty
 * @acl *
 *   user_username faas_tester deny
 *   user_username faas_tester2 deny

@@ -1,6 +1,6 @@
 /**
 * Function with valid function definition order
-* @bg empty
+* @background empty
 * @charge 10
 * @acl *
 *   user_username faas_tester deny

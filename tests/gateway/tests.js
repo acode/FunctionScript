@@ -1136,8 +1136,38 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should fail to run a background function without @background specified', done => {
+    request('POST', {}, '/a_standard_function/', {_background: true}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(result).to.exist;
+      expect(result).to.be.an.object;
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('ExecutionModeError');
+      expect(result.error.message).to.contain('"background"');
+      done();
+
+    });
+  });
+
+  it('Should fail to run a background function without @stream specified', done => {
+    request('POST', {}, '/a_standard_function/', {_stream: true}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(result).to.exist;
+      expect(result).to.be.an.object;
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('ExecutionModeError');
+      expect(result.error.message).to.contain('"stream"');
+      done();
+
+    });
+  });
+
   it('Should run a background function', done => {
-    request('POST', {}, '/bg/', {data: 'xxx', _bg: true}, (err, res, result) => {
+    request('POST', {}, '/bg/', {data: 'xxx', _background: true}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(202);
@@ -1149,8 +1179,8 @@ module.exports = (expect) => {
     });
   });
 
-  it('Should return 302 redirect on a GET request with correct url when running a background function missing a slash before ?_bg and at end of url', done => {
-    request('GET', {'user-agent': 'testing'}, '/bg?_bg', '', (err, res, result) => {
+  it('Should return 302 redirect on a GET request with correct url when running a background function missing a slash before ?_background and at end of url', done => {
+    request('GET', {'user-agent': 'testing'}, '/bg?_background', '', (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(302);
@@ -1158,14 +1188,14 @@ module.exports = (expect) => {
       expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
       expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
       expect(res.headers).to.haveOwnProperty('location');
-      expect(res.headers.location).to.equal('/bg/?_bg');
+      expect(res.headers.location).to.equal('/bg/?_background');
       done();
 
     });
   });
 
-  it('Should return 302 redirect on a GET request with correct url when running a background function missing a slash before ?_bg but with slash at end of url', done => {
-    request('GET', {'user-agent': 'testing'}, '/bg?_bg/', '', (err, res, result) => {
+  it('Should return 302 redirect on a GET request with correct url when running a background function missing a slash before ?_background but with slash at end of url', done => {
+    request('GET', {'user-agent': 'testing'}, '/bg?_background/', '', (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(302);
@@ -1173,14 +1203,14 @@ module.exports = (expect) => {
       expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
       expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
       expect(res.headers).to.haveOwnProperty('location');
-      expect(res.headers.location).to.equal('/bg/?_bg/');
+      expect(res.headers.location).to.equal('/bg/?_background/');
       done();
 
     });
   });
 
-  it('Should return 302 redirect on a GET request with correct url when running a background function missing a slash before ?_bg and at end of url with a query', done => {
-    request('GET', {'user-agent': 'testing'}, '/bg?_bg&test=param', '', (err, res, result) => {
+  it('Should return 302 redirect on a GET request with correct url when running a background function missing a slash before ?_background and at end of url with a query', done => {
+    request('GET', {'user-agent': 'testing'}, '/bg?_background&test=param', '', (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(302);
@@ -1188,14 +1218,14 @@ module.exports = (expect) => {
       expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
       expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
       expect(res.headers).to.haveOwnProperty('location');
-      expect(res.headers.location).to.equal('/bg/?_bg&test=param');
+      expect(res.headers.location).to.equal('/bg/?_background&test=param');
       done();
 
     });
   });
 
   it('Should run a background function with bg mode "info"', done => {
-    request('POST', {}, '/bg/info/', {data: 'xxx', _bg: true}, (err, res, result) => {
+    request('POST', {}, '/bg/info/', {data: 'xxx', _background: true}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(202);
@@ -1208,7 +1238,7 @@ module.exports = (expect) => {
   });
 
   it('Should run a background function with bg mode "empty"', done => {
-    request('POST', {}, '/bg/empty/', {data: 'xxx', _bg: true}, (err, res, result) => {
+    request('POST', {}, '/bg/empty/', {data: 'xxx', _background: true}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(202);
@@ -1221,7 +1251,7 @@ module.exports = (expect) => {
   });
 
   it('Should run a background function with bg mode "params"', done => {
-    request('POST', {}, '/bg/params/', {data: 'xxx', _bg: true}, (err, res, result) => {
+    request('POST', {}, '/bg/params/', {data: 'xxx', _background: true}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(202);
@@ -1235,7 +1265,7 @@ module.exports = (expect) => {
   });
 
   it('Should run a background function with bg mode "params" looking for a specific parameter', done => {
-    request('POST', {}, '/bg/paramsSpecific1/', {data: 'xxx', discarded: 'xxx', _bg: true}, (err, res, result) => {
+    request('POST', {}, '/bg/paramsSpecific1/', {data: 'xxx', discarded: 'xxx', _background: true}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(202);
@@ -1250,7 +1280,7 @@ module.exports = (expect) => {
   });
 
   it('Should run a background function with bg mode "params" looking for two specific parameters', done => {
-    request('POST', {}, '/bg/paramsSpecific2/', {data: 'xxx', otherdata: 'xxx', discarded: 'xxx', _bg: true}, (err, res, result) => {
+    request('POST', {}, '/bg/paramsSpecific2/', {data: 'xxx', otherdata: 'xxx', discarded: 'xxx', _background: true}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(202);
@@ -1266,7 +1296,7 @@ module.exports = (expect) => {
   });
 
   it('Should run a background function with bg mode "params" looking for specific param that is not there', done => {
-    request('POST', {}, '/bg/paramsSpecific3/', {otherdata: 'xxx', _bg: true}, (err, res, result) => {
+    request('POST', {}, '/bg/paramsSpecific3/', {otherdata: 'xxx', _background: true}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(202);

@@ -1,6 +1,6 @@
 /**
 * Comment for the function is here
-* @bg params 
+* @background params 
 * data 
 * @returns {string}
 */
