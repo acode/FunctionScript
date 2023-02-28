@@ -1174,6 +1174,7 @@ module.exports = (expect) => {
       expect(result).to.exist;
       expect(result).to.be.instanceof(Buffer);
       expect(result.length).to.be.greaterThan(0);
+      expect(result.toString()).to.equal(`Initiated "bg"...`);
       done();
 
     });
