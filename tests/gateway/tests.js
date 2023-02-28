@@ -1136,6 +1136,94 @@ module.exports = (expect) => {
     });
   });
 
+  it('Should run a function with an empty response', done => {
+    request('POST', {}, '/empty/:bg', {intValue: 1}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(202);
+      expect(result).to.exist;
+      expect(result).to.be.instanceof(Buffer);
+      expect(result.length).to.be.greaterThan(0);
+      expect(result.toString()).to.equal('202 accepted');
+      done();
+
+    });
+  });
+
+  it('Should run a function with an empty response even if it has an invalid parameter', done => {
+    request('POST', {}, '/empty/:bg', {intValue: 'what'}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(202);
+      expect(result).to.exist;
+      expect(result).to.be.instanceof(Buffer);
+      expect(result.length).to.be.greaterThan(0);
+      expect(result.toString()).to.equal('202 accepted');
+      done();
+
+    });
+  });
+
+  it('Should return 302 redirect on a GET request with correct url when running a background function missing a slash before :bg and at end of url', done => {
+    request('GET', {'user-agent': 'testing'}, '/empty:bg', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(302);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(res.headers).to.haveOwnProperty('location');
+      expect(res.headers.location).to.equal('/empty/:bg');
+      done();
+
+    });
+  });
+
+  it('Should return 302 redirect on a GET request with correct url when running a background function missing a slash before :bg but with slash at end of url', done => {
+    request('GET', {'user-agent': 'testing'}, '/empty:bg/', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(302);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(res.headers).to.haveOwnProperty('location');
+      expect(res.headers.location).to.equal('/empty/:bg');
+      done();
+
+    });
+  });
+
+  it('Should return 302 redirect on a GET request with correct url when running a background function missing a slash before :bg and at end of url with a query', done => {
+    request('GET', {'user-agent': 'testing'}, '/empty:bg?test=param', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(302);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(res.headers).to.haveOwnProperty('location');
+      expect(res.headers.location).to.equal('/empty/:bg?test=param');
+      done();
+
+    });
+  });
+
+  it('Should return 302 redirect on a GET request with correct url when running a background function missing a slash before :bg but with slash at end of url with a query', done => {
+    request('GET', {'user-agent': 'testing'}, '/empty:bg/?test=param', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(302);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(res.headers).to.haveOwnProperty('location');
+      expect(res.headers.location).to.equal('/empty/:bg?test=param');
+      done();
+
+    });
+  });
+
   it('Should fail to run a background function without @background specified', done => {
     request('POST', {}, '/a_standard_function/', {_background: true}, (err, res, result) => {
 
