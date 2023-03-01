@@ -5097,7 +5097,7 @@ module.exports = (expect) => {
   });
 
   it('Should support POST with streaming with _debug set to valid channels without _stream set', done => {
-    request('POST', {}, '/stream/debug/', {alpha: 'hello', _debug: {'*': true, '@begin': true, '@stdout': true, '@stderr': true}}, (err, res, result) => {
+    request('POST', {}, '/stream/debug/', {alpha: 'hello', _debug: {'*': true, '@begin': true, '@stdout': true, '@stderr': true, '@error': true}}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
