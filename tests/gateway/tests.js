@@ -5025,7 +5025,7 @@ module.exports = (expect) => {
       expect(result).to.exist;
 
       let events = parseServerSentEvents(result);
-      expect(Object.keys(events).length).to.equal(3);
+      expect(Object.keys(events).length).to.equal(4);
 
       expect(events['hello']).to.exist;
       expect(events['hello'].length).to.equal(3);
@@ -5036,6 +5036,10 @@ module.exports = (expect) => {
       expect(events['goodbye']).to.exist;
       expect(events['goodbye'].length).to.equal(1);
       expect(events['goodbye'][0]).to.equal('"Nice to see ya"');
+
+      expect(events['@begin']).to.exist;
+      expect(events['@begin'].length).to.equal(1);
+      expect(events['@begin'][0]).to.be.a.string;
 
       expect(events['@response']).to.exist;
       let response = JSON.parse(events['@response'][0]);
@@ -5057,7 +5061,7 @@ module.exports = (expect) => {
       expect(result).to.exist;
 
       let events = parseServerSentEvents(result);
-      expect(Object.keys(events).length).to.equal(5);
+      expect(Object.keys(events).length).to.equal(6);
 
       expect(events['hello']).to.exist;
       expect(events['hello'].length).to.equal(3);
@@ -5068,6 +5072,10 @@ module.exports = (expect) => {
       expect(events['goodbye']).to.exist;
       expect(events['goodbye'].length).to.equal(1);
       expect(events['goodbye'][0]).to.equal('"Nice to see ya"');
+
+      expect(events['@begin']).to.exist;
+      expect(events['@begin'].length).to.equal(1);
+      expect(events['@begin'][0]).to.be.a.string;
 
       expect(events['@stdout']).to.exist;
       expect(events['@stdout'].length).to.equal(2);
@@ -5089,7 +5097,7 @@ module.exports = (expect) => {
   });
 
   it('Should support POST with streaming with _debug set to valid channels without _stream set', done => {
-    request('POST', {}, '/stream/debug/', {alpha: 'hello', _debug: {'*': true, '@stdout': true, '@stderr': true}}, (err, res, result) => {
+    request('POST', {}, '/stream/debug/', {alpha: 'hello', _debug: {'*': true, '@begin': true, '@stdout': true, '@stderr': true}}, (err, res, result) => {
 
       expect(err).to.not.exist;
       expect(res.statusCode).to.equal(200);
@@ -5098,7 +5106,7 @@ module.exports = (expect) => {
       expect(result).to.exist;
 
       let events = parseServerSentEvents(result);
-      expect(Object.keys(events).length).to.equal(5);
+      expect(Object.keys(events).length).to.equal(6);
 
       expect(events['hello']).to.exist;
       expect(events['hello'].length).to.equal(3);
@@ -5109,6 +5117,10 @@ module.exports = (expect) => {
       expect(events['goodbye']).to.exist;
       expect(events['goodbye'].length).to.equal(1);
       expect(events['goodbye'][0]).to.equal('"Nice to see ya"');
+
+      expect(events['@begin']).to.exist;
+      expect(events['@begin'].length).to.equal(1);
+      expect(events['@begin'][0]).to.be.a.string;
 
       expect(events['@stdout']).to.exist;
       expect(events['@stdout'].length).to.equal(2);
@@ -5156,7 +5168,11 @@ module.exports = (expect) => {
       expect(result).to.exist;
 
       let events = parseServerSentEvents(result);
-      expect(Object.keys(events).length).to.equal(3);
+      expect(Object.keys(events).length).to.equal(4);
+
+      expect(events['@begin']).to.exist;
+      expect(events['@begin'].length).to.equal(1);
+      expect(events['@begin'][0]).to.be.a.string;
 
       expect(events['@stdout']).to.exist;
       expect(events['@stdout'].length).to.equal(2);
