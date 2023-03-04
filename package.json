@@ -1,6 +1,6 @@
 {
   "name": "functionscript",
-  "version": "2.9.0",
+  "version": "2.9.1",
   "description": "An API gateway and framework for turning functions into web services",
   "author": "Keith Horwood <keithwhor@gmail.com>",
   "main": "index.js",

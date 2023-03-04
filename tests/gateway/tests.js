@@ -5141,6 +5141,53 @@ module.exports = (expect) => {
     });
   });
 
+  it('Streaming endpoints should succeed if contains a valid stream in _debug', done => {
+    request('POST', {}, '/stream/basic/', {alpha: 'hello', _stream: {}, _debug: {hello: true}}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers['content-type']).to.equal('text/event-stream');
+      expect(res.headers['x-debug']).to.equal('true');
+      expect(result).to.exist;
+
+      let events = parseServerSentEvents(result);
+      expect(Object.keys(events).length).to.equal(3);
+
+      expect(events['@begin']).to.exist;
+      expect(events['@begin'].length).to.equal(1);
+      expect(events['@begin'][0]).to.be.a.string;
+
+      expect(events['hello']).to.exist;
+      expect(events['hello'].length).to.equal(1);
+      expect(events['hello'][0]).to.equal('true');
+
+      expect(events['@response']).to.exist;
+      let response = JSON.parse(events['@response'][0]);
+      expect(response.headers['Content-Type']).to.equal('application/json');
+      expect(response.body).to.equal('true');
+
+      done();
+
+    });
+  });
+
+  it('Streaming endpoints should fail if contains an invalid stream in _debug', done => {
+    request('POST', {}, '/stream/basic/', {alpha: 'hello', _stream: {}, _debug: {test: true}}, (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(403);
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(res.headers['x-debug']).to.equal('true');
+      expect(result).to.exist;
+      expect(result.error).to.exist;
+      expect(result.error.type).to.equal('DebugError');
+      expect(result.error.message).to.contain('"test"');
+
+      done();
+      
+    });
+  });
+
   it('Streaming endpoints should fail with StreamError if contains an invalid stream when _debug', done => {
     request('POST', {}, '/stream/basic/', {alpha: 'hello', _stream: {test: true}, _debug: true}, (err, res, result) => {
 
