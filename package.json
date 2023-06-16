@@ -11,6 +11,7 @@
   "dependencies": {
     "@babel/parser": "^7.12.11",
     "fast-xml-parser": "^3.19.0",
+    "json-to-pretty-yaml": "^1.2.2",
     "keyql": "^0.2.2",
     "mime": "^2.5.2",
     "minimatch": "^3.0.4",
