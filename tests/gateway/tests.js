@@ -42,7 +42,7 @@ function parseServerSentEvents (buffer) {
   return events;
 }
 
-function request(method, headers, path, data, callback) {
+function request (method, headers, path, data, callback) {
   headers = headers || {};
   method = method || 'GET';
   path = path || '';
@@ -5184,7 +5184,7 @@ module.exports = (expect) => {
       expect(result.error.message).to.contain('"test"');
 
       done();
-      
+
     });
   });
 
@@ -5578,6 +5578,122 @@ module.exports = (expect) => {
       expect(res.headers['access-control-allow-origin']).to.equal('https://hello.com');
       expect(result).to.exist;
 
+      done();
+
+    });
+  });
+
+  it('Should return a valid /.well-known/ai-plugin.json', done => {
+    request('GET', {}, '/.well-known/ai-plugin.json', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.exist;
+      expect(result.schema_version).to.equal('v1');
+      expect(result.name_for_human).to.equal('(No name provided)');
+      expect(result.name_for_model).to.equal('(No name provided)');
+      expect(result.description_for_human).to.equal('(No description provided)');
+      expect(result.description_for_model).to.equal('(No description provided)');
+      expect(result.api).to.exist;
+      expect(result.api.type).to.equal('openapi');
+      expect(result.api.url).to.equal('localhost/.well-known/openapi.yaml');
+      done();
+
+    });
+  });
+
+  it('Should return a valid /.well-known/openapi.json', done => {
+    request('GET', {}, '/.well-known/openapi.json', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(result).to.exist;
+      expect(result.openapi).to.equal('3.1.0');
+      expect(result.info).to.exist;
+      expect(result.info.version).to.equal('local');
+      expect(result.info.title).to.equal('(No name provided)');
+      expect(result.info.description).to.equal('(No description provided)');
+      expect(result.servers).to.be.an('Array');
+      expect(result.servers[0]).to.exist;
+      expect(result.servers[0].url).to.equal('localhost');
+      expect(result.servers[0].description).to.equal('FunctionScript Gateway');
+      expect(result.paths).to.be.an('Object');
+      expect(result.paths['/my_function/']).to.exist;
+      expect(result.paths['/my_function/'].post).to.exist;
+      expect(result.paths['/my_function/'].post.description).to.equal('My function');
+      expect(result.paths['/my_function/'].post.operationId).to.equal('service.localhost.my_function');
+      expect(result.paths['/my_function/'].post.requestBody).to.exist;
+      expect(result.paths['/my_function/'].post.requestBody.content).to.exist;
+      expect(result.paths['/my_function/'].post.requestBody.content['application/json']).to.exist;
+      expect(result.paths['/my_function/'].post.requestBody.content['application/json']).to.deep.equal({
+        "schema": {
+          "type": "object",
+          "properties": {
+            "a": {
+              "type": "number",
+              "default": 1
+            },
+            "b": {
+              "type": "number",
+              "default": 2
+            },
+            "c": {
+              "type": "number",
+              "default": 3
+            }
+          }
+        }
+      });
+      expect(result.paths['/my_function/'].post.responses).to.exist;
+      expect(result.paths['/my_function/'].post.responses['200']).to.exist;
+      expect(result.paths['/my_function/'].post.responses['200'].content).to.exist;
+      expect(result.paths['/my_function/'].post.responses['200'].content['application/json']).to.exist;
+      expect(result.paths['/my_function/'].post.responses['200'].content['application/json']).to.deep.equal({
+        "schema": {
+          "type": "number"
+        }
+      });
+      expect(result.paths['/a_standard_function/']).to.exist;
+      expect(result.paths['/reflect/']).to.exist;
+      done();
+
+    });
+  });
+
+  it('Should return a valid /.well-known/openapi.yaml', done => {
+    request('GET', {}, '/.well-known/openapi.yaml', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(res.headers['content-type']).to.equal('application/yaml');
+      let yaml = result.toString();
+      expect(yaml.startsWith('openapi: "3.1.0"')).to.equal(true);
+      done();
+
+    });
+  });
+
+  it('Should return a valid /.well-known/schema.json', done => {
+    request('GET', {}, '/.well-known/schema.json', '', (err, res, result) => {
+
+      expect(err).to.not.exist;
+      expect(res.statusCode).to.equal(200);
+      expect(res.headers).to.haveOwnProperty('access-control-allow-origin');
+      expect(res.headers).to.haveOwnProperty('access-control-allow-headers');
+      expect(res.headers).to.haveOwnProperty('access-control-expose-headers');
+      expect(res.headers['content-type']).to.equal('application/json');
+      expect(result).to.exist;
+      expect(result.functions).to.exist;
+      expect(result.functions.length).to.be.greaterThan(1);
       done();
 
     });
