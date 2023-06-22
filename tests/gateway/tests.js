@@ -5594,7 +5594,7 @@ module.exports = (expect) => {
       expect(result).to.exist;
       expect(result.schema_version).to.equal('v1');
       expect(result.name_for_human).to.equal('(No name provided)');
-      expect(result.name_for_model).to.equal('(No name provided)');
+      expect(result.name_for_model).to.equal('No_name_provided');
       expect(result.description_for_human).to.equal('(No description provided)');
       expect(result.description_for_model).to.equal('(No description provided)');
       expect(result.api).to.exist;
@@ -5627,7 +5627,7 @@ module.exports = (expect) => {
       expect(result.paths['/my_function/']).to.exist;
       expect(result.paths['/my_function/'].post).to.exist;
       expect(result.paths['/my_function/'].post.description).to.equal('My function');
-      expect(result.paths['/my_function/'].post.operationId).to.equal('service.localhost.my_function');
+      expect(result.paths['/my_function/'].post.operationId).to.equal('service_localhost_my_function');
       expect(result.paths['/my_function/'].post.requestBody).to.exist;
       expect(result.paths['/my_function/'].post.requestBody.content).to.exist;
       expect(result.paths['/my_function/'].post.requestBody.content['application/json']).to.exist;
